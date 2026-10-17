@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cake Crush HR{% endblock %}</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-pink: #be2552;
+            --primary-pink-hover: #a01a40;
+            --primary-pink-light: #fdeaf1;
+            --primary-pink-subtle: #fff5f8;
+            --sidebar-width: 250px;
+            --header-height: 64px;
+            --bg-canvas: #faf7f8;
+            --border-color: #f2e7ec;
+            --text-heading: #1e293b;
+            --text-body: #475569;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-body);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #ffffff;
+            border-right: 1px solid var(--border-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px 18px;
+            flex-shrink: 0;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            padding: 0 4px 28px 4px;
+        }
+
+        .brand-logo-box {
+            width: 38px;
+            height: 38px;
+            background: #ffeef3;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-pink);
+            font-size: 18px;
+        }
+
+        .brand-name-group h3 {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-heading);
+            line-height: 1.1;
+        }
+
+        .brand-name-group span {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .nav-section-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            padding-left: 8px;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item a:hover {
+            background-color: var(--primary-pink-subtle);
+            color: var(--primary-pink);
+        }
+
+        .nav-item.active a {
+            background-color: #f1f5f9;
+            color: var(--text-heading);
+        }
+
+        .nav-item a i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* SIDEBAR BOTTOM */
+        .sidebar-bottom {
+            border-top: 1px solid #f6edf1;
+            padding-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .user-mini-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 4px;
+        }
+
+        .avatar-circle {
+            width: 36px;
+            height: 36px;
+            background-color: #ffdbe8;
+            color: var(--primary-pink);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .user-details {
+            line-height: 1.25;
+            overflow: hidden;
+        }
+
+        .user-details .full-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-heading);
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .user-details .role-title {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 8px;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            color: var(--primary-pink);
+            background-color: #fff2f6;
+        }
+
+        /* MAIN WRAPPER */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-canvas);
+            overflow-y: auto;
+        }
+
+        .top-navbar {
+            height: var(--header-height);
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            flex-shrink: 0;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #f8fafc;
+            border: 1px solid #edf2f7;
+            padding: 8px 16px;
+            border-radius: 20px;
+            width: 360px;
+        }
+
+        .search-container i {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .search-container input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 13px;
+            color: #475569;
+            width: 100%;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .role-pill {
+            background-color: #fff0f5;
+            color: var(--primary-pink);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .role-pill::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background-color: #22c55e;
+            border-radius: 50%;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 16px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .icon-btn .badge-dot {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 6px;
+            height: 6px;
+            background-color: var(--primary-pink);
+            border-radius: 50%;
+        }
+
+        .user-top-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div>
+            <a href="{% url 'trang_chu' %}" class="brand-header">
+                <div class="brand-logo-box">
+                    <i class="fa-solid fa-cake-candles"></i>
+                </div>
+                <div class="brand-name-group">
+                    <h3>Cake Crush</h3>
+                    <span>{% if user.is_staff or user.is_superuser %}HUMAN RESOURCES{% else %}Staff{% endif %}</span>
+                </div>
+            </a>
+
+            <div class="nav-section-title">KHÔNG GIAN QUẢN LÝ</div>
+            <ul class="nav-list">
+                {% if user.is_staff or user.is_superuser %}
+                <li class="nav-item">
+                    <a href="{% url 'trang_quan_ly' %}"><i class="fa-solid fa-house"></i> Dashboard</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a href="#"><i class="fa-solid fa-user-group"></i> Hồ sơ nhân viên</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fa-regular fa-file-lines"></i> Hợp đồng</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fa-regular fa-clock"></i> Chấm công</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fa-regular fa-calendar-check"></i> Nghỉ phép</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fa-solid fa-graduation-cap"></i> Đào tạo</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fa-regular fa-star"></i> Đánh giá</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-bottom">
+            <div class="user-mini-card">
+                <div class="avatar-circle">
+                    {% if user.is_staff or user.is_superuser %}HV{% else %}MA{% endif %}
+                </div>
+                <div class="user-details">
+                    <div class="full-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+                    <div class="role-title">
+                        {% if user.is_staff or user.is_superuser %}Quản lý cửa hàng{% else %}Nhân viên{% endif %}
+                    </div>
+                </div>
+            </div>
+            <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="top-navbar">
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Tìm kiếm trong Cake Crush HR...">
+            </div>
+
+            <div class="top-actions">
+                <div class="role-pill">
+                    {% if user.is_staff or user.is_superuser %}Quản lý{% else %}Nhân viên{% endif %}
+                </div>
+                <button class="icon-btn" title="Thông báo">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="badge-dot"></span>
+                </button>
+                <div class="user-top-profile">
+                    <div class="avatar-circle" style="width: 32px; height: 32px; font-size: 11px;">
+                        {% if user.is_staff or user.is_superuser %}HV{% else %}MA{% endif %}
+                    </div>
+                    <div class="user-details" style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 13px; font-weight: 700; color: var(--text-heading);">
+                            {{ request.user.get_full_name|default:request.user.username }}
+                        </span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: var(--text-muted);"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>
