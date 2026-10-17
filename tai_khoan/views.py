@@ -16,6 +16,7 @@ class CakeCrushLoginView(LoginView):
 
 class CakeCrushLogoutView(LogoutView):
     next_page = reverse_lazy('login')
+    http_method_names = ['get', 'post', 'options']
 
 
 @login_required
