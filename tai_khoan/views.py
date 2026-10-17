@@ -9,10 +9,9 @@ class CakeCrushLoginView(LoginView):
 
     def get_success_url(self):
         user = self.request.user
-        # Quản lý -> Vào đúng giao diện Dashboard Quản lý
-        if user.is_staff or user.is_superuser:
+        # Cả Admin (superuser) và Quản lý (staff) đều vào Dashboard Quản lý
+        if user.is_superuser or user.is_staff:
             return reverse_lazy('trang_quan_ly')
-        # Nhân viên -> Vào Dashboard Nhân viên
         return reverse_lazy('trang_nhan_vien')
 
 
@@ -27,7 +26,8 @@ def trang_nhan_vien(request):
 
 @login_required
 def trang_quan_ly(request):
-    if not (request.user.is_staff or request.user.is_superuser):
+    # Chặn nhân viên thường truy cập URL quản lý
+    if not (request.user.is_superuser or request.user.is_staff):
         return redirect('trang_nhan_vien')
     return render(request, 'quan_ly_home.html')
 
@@ -35,6 +35,6 @@ def trang_quan_ly(request):
 def trang_chu(request):
     if not request.user.is_authenticated:
         return redirect('login')
-    if request.user.is_staff or request.user.is_superuser:
+    if request.user.is_superuser or request.user.is_staff:
         return redirect('trang_quan_ly')
     return redirect('trang_nhan_vien')
