@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Cake Crush HR - Không gian quản lý{% endblock %}</title>
-    
+    <title>{% block title %}Cake Crush HR{% if user.is_staff or user.is_superuser %} - Không gian quản lý{% else %} - Không gian nhân viên{% endif %}{% endblock %}</title>
+
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
-    
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -172,6 +172,7 @@
         /* Sidebar Bottom */
         .sidebar-bottom {
             padding-top: 16px;
+            border-top: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -267,7 +268,8 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 36px;
-            background: transparent;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 40;
@@ -318,7 +320,7 @@
             gap: 18px;
         }
 
-        /* Pill Badge: Nhan vien */
+        /* Pill Badge: Role */
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -435,7 +437,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 10px 36px 36px 36px;
+            padding: 24px 36px 36px 36px;
         }
 
         @media (max-width: 900px) {
@@ -459,7 +461,7 @@
                 padding: 0 18px;
             }
             .content-container {
-                padding: 10px 18px 24px 18px;
+                padding: 16px 18px 24px 18px;
             }
         }
     </style>
@@ -471,27 +473,36 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-top">
             <!-- Brand Logo -->
-            <a href="{% url 'trang_nhan_vien' %}" class="brand-header">
+            <a href="{% url 'trang_chu' %}" class="brand-header">
                 <div class="brand-icon-box">
                     <i class="fa-solid fa-cake-candles"></i>
                 </div>
                 <div class="brand-info">
                     <span class="brand-name">Cake Crush</span>
-                    <span class="brand-tag">Staff</span>
+                    <span class="brand-tag">{% if user.is_staff or user.is_superuser %}HUMAN RESOURCES{% else %}Staff{% endif %}</span>
                 </div>
             </a>
 
             <!-- Menu Category -->
-            <div class="menu-section-label">KHÔNG GIAN QUẢN LÝ</div>
+            <div class="menu-section-label">{% if user.is_staff or user.is_superuser %}KHÔNG GIAN QUẢN LÝ{% else %}KHÔNG GIAN LÀM VIỆC{% endif %}</div>
 
             <!-- Menu Items -->
             <ul class="nav-list">
+                {% if user.is_staff or user.is_superuser %}
                 <li class="nav-item">
-                    <a href="{% url 'trang_nhan_vien' %}" class="nav-link {% if request.resolver_match.url_name == 'trang_nhan_vien' or request.resolver_match.url_name == 'home' %}active{% endif %}">
+                    <a href="{% url 'trang_quan_ly' %}" class="nav-link {% if request.resolver_match.url_name == 'trang_quan_ly' or request.resolver_match.url_name == 'trang_chu' %}active{% endif %}">
                         <i class="fa-solid fa-house"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'trang_nhan_vien' %}" class="nav-link {% if request.resolver_match.url_name == 'trang_nhan_vien' or request.resolver_match.url_name == 'trang_chu' or request.resolver_match.url_name == 'home' %}active{% endif %}">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="fa-solid fa-user-group"></i>
@@ -537,6 +548,8 @@
                 <div class="avatar-circle">
                     {% if user.is_authenticated and user.first_name and user.last_name %}
                         {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+                    {% elif user.is_staff or user.is_superuser %}
+                        HV
                     {% else %}
                         MA
                     {% endif %}
@@ -545,11 +558,15 @@
                     <span class="user-fullname">
                         {% if user.is_authenticated and user.get_full_name %}
                             {{ user.get_full_name }}
+                        {% elif user.is_authenticated %}
+                            {{ user.username }}
                         {% else %}
                             Nguyễn Thị Nhi
                         {% endif %}
                     </span>
-                    <span class="user-role-label">Quản lý cửa hàng</span>
+                    <span class="user-role-label">
+                        {% if user.is_staff or user.is_superuser %}Quản lý cửa hàng{% else %}Nhân viên{% endif %}
+                    </span>
                 </div>
             </div>
 
@@ -582,7 +599,7 @@
                 <!-- Status Badge -->
                 <div class="status-badge">
                     <span class="status-dot"></span>
-                    <span>Nhân viên</span>
+                    <span>{% if user.is_staff or user.is_superuser %}Quản lý{% else %}Nhân viên{% endif %}</span>
                 </div>
 
                 <!-- Notifications -->
@@ -596,6 +613,8 @@
                     <div class="avatar-circle">
                         {% if user.is_authenticated and user.first_name and user.last_name %}
                             {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+                        {% elif user.is_staff or user.is_superuser %}
+                            HV
                         {% else %}
                             MA
                         {% endif %}
@@ -604,11 +623,15 @@
                         <span class="header-profile-name">
                             {% if user.is_authenticated and user.get_full_name %}
                                 {{ user.get_full_name }}
+                            {% elif user.is_authenticated %}
+                                {{ user.username }}
                             {% else %}
                                 Nguyễn Thị Nhi
                             {% endif %}
                         </span>
-                        <span class="header-profile-role">Nhân viên</span>
+                        <span class="header-profile-role">
+                            {% if user.is_staff or user.is_superuser %}Quản lý cửa hàng{% else %}Nhân viên{% endif %}
+                        </span>
                     </div>
                     <i class="fa-solid fa-chevron-down chevron"></i>
                 </div>
