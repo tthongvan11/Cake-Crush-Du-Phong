@@ -16,7 +16,7 @@ class CakeCrushLoginView(LoginView):
 
 
 class CakeCrushLogoutView(LogoutView):
-    next_page = reverse_lazy('login')
+    next_page = reverse_lazy('trang_chu')
     http_method_names = ['get', 'post', 'options']
 
 
@@ -33,9 +33,20 @@ def trang_quan_ly(request):
     return render(request, 'quan_ly_home.html')
 
 
+def trang_chao_mung(request):
+    """Trang chào mừng Cake Crush HR"""
+    return render(request, 'welcome.html')
+
+
 def trang_chu(request):
+    """Trang chủ hiển thị trang chào mừng"""
+    return render(request, 'welcome.html')
+
+
+def dieu_huong_dashboard(request):
+    """Điều hướng người dùng đã đăng nhập tới dashboard tương ứng"""
     if not request.user.is_authenticated:
         return redirect('login')
     if request.user.is_superuser or request.user.is_staff:
         return redirect('trang_quan_ly')
-    return redirect('trang_nhan_vien')
+    return redirect('trang_nhan_vien')

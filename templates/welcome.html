@@ -1,0 +1,324 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cake Crush HR - Hệ Thống Quản Lý Nhân Sự</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-pink: #c72c5e;
+            --primary-pink-hover: #b5204d;
+            --text-heading: #374151;
+            --text-muted: #64748b;
+            --bg-color: #fde8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: url("{% static 'images/welcome-bg.png' %}");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+            padding: 24px 16px 60px 16px;
+        }
+
+        /* Container căn giữa bố cục 2 phần: text & huy hiệu bánh */
+        .welcome-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(28px, 4.5vw, 68px);
+            width: 100%;
+            max-width: 1100px;
+            margin: auto 0;
+            z-index: 10;
+        }
+
+        /* Cột bên trái: Logo + Tiêu đề + Nút đăng nhập */
+        .welcome-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 440px;
+        }
+
+        /* Logo Cake Crush HR */
+        .brand-logo-img {
+            width: clamp(180px, 20vw, 240px);
+            height: auto;
+            display: block;
+            margin-bottom: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .brand-logo-img:hover {
+            transform: scale(1.02);
+        }
+
+        /* Tiêu đề chào mừng */
+        .welcome-heading {
+            margin-bottom: 14px;
+        }
+
+        .welcome-to {
+            display: block;
+            font-size: clamp(24px, 3.2vw, 34px);
+            font-weight: 700;
+            color: var(--text-heading);
+            letter-spacing: -0.4px;
+            line-height: 1.25;
+        }
+
+        .brand-title {
+            display: block;
+            font-size: clamp(32px, 4.2vw, 44px);
+            font-weight: 800;
+            color: var(--primary-pink);
+            letter-spacing: -0.8px;
+            line-height: 1.2;
+            margin-top: 2px;
+        }
+
+        /* Biểu tượng trái tim hồng phân cách */
+        .heart-icon {
+            color: var(--primary-pink);
+            font-size: 15px;
+            margin: 14px 0 16px 0;
+            opacity: 0.95;
+            display: inline-block;
+        }
+
+        /* Đoạn văn mô tả */
+        .welcome-slogan {
+            font-size: clamp(14px, 1.45vw, 16px);
+            line-height: 1.6;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 26px;
+            max-width: 360px;
+        }
+
+        /* Nút Đăng nhập */
+        .btn-login {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #d82b6b 0%, #b81c52 100%);
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 13px 38px;
+            border-radius: 9999px;
+            text-decoration: none;
+            box-shadow: 0 8px 24px rgba(199, 44, 94, 0.35);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(199, 44, 94, 0.45);
+            background: linear-gradient(135deg, #e33374 0%, #c51e57 100%);
+            color: #ffffff;
+        }
+
+        .btn-login i {
+            font-size: 14px;
+            transition: transform 0.25s ease;
+        }
+
+        .btn-login:hover i {
+            transform: translateX(3px);
+        }
+
+        /* Cột bên phải: Huy hiệu tròn hình bánh kem */
+        .welcome-right {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cake-badge-wrapper {
+            width: clamp(210px, 24vw, 290px);
+            height: clamp(210px, 24vw, 290px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: floatBadge 4.5s ease-in-out infinite;
+        }
+
+        .cake-badge-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            border-radius: 50%;
+            filter: drop-shadow(0 14px 35px rgba(220, 100, 140, 0.16));
+        }
+
+        /* Hiệu ứng nổi bồng bềnh nhẹ nhàng cho huy hiệu */
+        @keyframes floatBadge {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* Footer ở chân trang */
+        .welcome-footer {
+            position: absolute;
+            bottom: 22px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12.5px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #64748b;
+            pointer-events: none;
+        }
+
+        /* Responsive cho màn hình tablet và điện thoại */
+        @media (max-width: 820px) {
+            body {
+                background-position: center top;
+                padding-bottom: 70px;
+            }
+
+            .welcome-container {
+                flex-direction: column-reverse;
+                gap: 24px;
+                margin: auto 0;
+            }
+
+            .cake-badge-wrapper {
+                width: 180px;
+                height: 180px;
+            }
+
+            .brand-logo-img {
+                margin-bottom: 16px;
+                width: 190px;
+            }
+
+            .welcome-slogan {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-height: 700px) and (min-width: 821px) {
+            .brand-logo-img {
+                margin-bottom: 14px;
+                width: 170px;
+            }
+            .cake-badge-wrapper {
+                width: 210px;
+                height: 210px;
+            }
+            .welcome-slogan {
+                margin-bottom: 18px;
+            }
+            .heart-icon {
+                margin: 8px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="welcome-container">
+        <!-- Cột trái: Thông điệp chào mừng & Nút Đăng nhập -->
+        <section class="welcome-left">
+            <!-- Logo Cake Crush HR -->
+            <img src="{% static 'images/cake-crush-logo.png' %}" alt="Cake Crush HR" class="brand-logo-img">
+
+            <!-- Tiêu đề chính -->
+            <h1 class="welcome-heading">
+                <span class="welcome-to">Welcome to</span>
+                <span class="brand-title">Cake Crush HR</span>
+            </h1>
+
+            <!-- Biểu tượng trái tim -->
+            <div class="heart-icon" aria-hidden="true">
+                <i class="fa-solid fa-heart"></i>
+            </div>
+
+            <!-- Khẩu hiệu -->
+            <p class="welcome-slogan">
+                Cùng Cake Crush xây dựng<br>
+                một môi trường làm việc tốt hơn.
+            </p>
+
+            <!-- Nút hành động -->
+            {% if user.is_authenticated %}
+                {% if user.is_staff or user.is_superuser %}
+                    <a href="{% url 'trang_quan_ly' %}" class="btn-login" title="Vào không gian quản lý">
+                        <i class="fa-solid fa-arrow-right"></i>
+                        <span>Vào trang quản lý</span>
+                    </a>
+                {% else %}
+                    <a href="{% url 'trang_nhan_vien' %}" class="btn-login" title="Vào không gian làm việc">
+                        <i class="fa-solid fa-arrow-right"></i>
+                        <span>Vào không gian làm việc</span>
+                    </a>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-login" title="Đăng nhập vào hệ thống Cake Crush HR">
+                    <i class="fa-solid fa-arrow-right"></i>
+                    <span>Đăng nhập</span>
+                </a>
+            {% endif %}
+        </section>
+
+        <!-- Cột phải: Huy hiệu bánh kem tròn -->
+        <aside class="welcome-right" aria-label="Hình ảnh huy hiệu bánh kem Cake Crush">
+            <div class="cake-badge-wrapper">
+                <img src="{% static 'images/cake-badge.png' %}" alt="Cake Crush Badge" class="cake-badge-img">
+            </div>
+        </aside>
+    </main>
+
+    <!-- Chân trang -->
+    <footer class="welcome-footer">
+        HỆ THỐNG QUẢN LÝ NHÂN SỰ CAKE CRUSH
+    </footer>
+
+</body>
+</html>
