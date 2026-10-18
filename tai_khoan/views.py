@@ -1,3 +1,4 @@
+from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
@@ -16,8 +17,13 @@ class CakeCrushLoginView(LoginView):
 
 
 class CakeCrushLogoutView(LogoutView):
-    next_page = reverse_lazy('trang_chu')
+    next_page = reverse_lazy('login')
     http_method_names = ['get', 'post', 'options']
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('login')
+
 
 
 @login_required

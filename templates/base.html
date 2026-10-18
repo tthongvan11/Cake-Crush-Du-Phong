@@ -495,13 +495,6 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-                {% else %}
-                <li class="nav-item">
-                    <a href="{% url 'trang_nhan_vien' %}" class="nav-link {% if request.resolver_match.url_name == 'trang_nhan_vien' %}active{% endif %}">
-                        <i class="fa-solid fa-house"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
                 {% endif %}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
