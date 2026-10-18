@@ -473,7 +473,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-top">
             <!-- Brand Logo -->
-            <a href="{% url 'trang_chu' %}" class="brand-header">
+            <a href="{% if user.is_staff or user.is_superuser %}{% url 'trang_quan_ly' %}{% else %}{% url 'trang_nhan_vien' %}{% endif %}" class="brand-header">
                 <div class="brand-icon-box">
                     <i class="fa-solid fa-cake-candles"></i>
                 </div>
@@ -490,14 +490,14 @@
             <ul class="nav-list">
                 {% if user.is_staff or user.is_superuser %}
                 <li class="nav-item">
-                    <a href="{% url 'trang_quan_ly' %}" class="nav-link {% if request.resolver_match.url_name == 'trang_quan_ly' or request.resolver_match.url_name == 'trang_chu' %}active{% endif %}">
+                    <a href="{% url 'trang_quan_ly' %}" class="nav-link {% if request.resolver_match.url_name == 'trang_quan_ly' %}active{% endif %}">
                         <i class="fa-solid fa-house"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a href="{% url 'trang_nhan_vien' %}" class="nav-link {% if request.resolver_match.url_name == 'trang_nhan_vien' or request.resolver_match.url_name == 'trang_chu' or request.resolver_match.url_name == 'home' %}active{% endif %}">
+                    <a href="{% url 'trang_nhan_vien' %}" class="nav-link {% if request.resolver_match.url_name == 'trang_nhan_vien' %}active{% endif %}">
                         <i class="fa-solid fa-house"></i>
                         <span>Dashboard</span>
                     </a>
