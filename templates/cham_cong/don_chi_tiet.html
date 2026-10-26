@@ -23,13 +23,27 @@
                 <dd>{{ don.manv.tennv }} · {{ don.manv.manv }}</dd>
             </div> {# Người gửi. #}
             <div>
-                <dt>Thời gian gửi</dt>
+                <dt>Thời gian gửi đơn</dt>
                 <dd>{{ don.thoigianguidon|date:"d/m/Y · H:i" }}</dd>
             </div> {# Thời gian gửi. #}
+        </dl> {# Đóng hàng. #}
+
+        <dl class="cc-kv cc-3 cc-mt"> {# Hàng ngày nghỉ. #}
             <div>
-                <dt>Ngày nghỉ / Số ngày</dt>
-                <dd>{{ don.ngaybatdau|date:"d/m/Y" }}{% if don.ngayketthuc != don.ngaybatdau %} – {{ don.ngayketthuc|date:"d/m/Y" }}{% endif %} / {{ don.songaynghi }} ngày</dd>
-            </div> {# Ngày nghỉ và số ngày. #}
+                <dt>Ngày bắt đầu</dt>
+                <dd>{{ don.ngaybatdau|date:"d/m/Y" }}</dd>
+            </div> {# Ngày bắt đầu. #}
+            <div>
+                <dt>Ngày kết thúc</dt>
+                <dd>{{ don.ngayketthuc|date:"d/m/Y" }}</dd>
+            </div> {# Ngày kết thúc. #}
+            <div>
+                <dt>Số ngày xin nghỉ</dt>
+                <dd>{{ don.songaynghi }} ngày</dd>
+            </div> {# Số ngày. #}
+        </dl> {# Đóng hàng. #}
+
+        <dl class="cc-kv cc-mt"> {# Loại phép và lý do. #}
             <div>
                 <dt>Loại phép</dt>
                 <dd>{{ don.maloaiphep.tenloaiphep }}</dd>
