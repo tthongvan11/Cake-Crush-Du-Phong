@@ -1,0 +1,58 @@
+from django.contrib.auth import logout
+from django.contrib.auth.views import LoginView, LogoutView
+from django.urls import reverse_lazy
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+
+class CakeCrushLoginView(LoginView):
+    template_name = 'login.html'
+    redirect_authenticated_user = False
+
+    def get_success_url(self):
+        user = self.request.user
+        # Cả Admin (superuser) và Quản lý (staff) đều vào Dashboard Quản lý
+        if user.is_superuser or user.is_staff:
+            return reverse_lazy('trang_quan_ly')
+        return reverse_lazy('trang_nhan_vien')
+
+
+class CakeCrushLogoutView(LogoutView):
+    next_page = reverse_lazy('login')
+    http_method_names = ['get', 'post', 'options']
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('login')
+
+
+
+@login_required
+def trang_nhan_vien(request):
+    return render(request, 'nhan_vien_home.html')
+
+
+@login_required
+def trang_quan_ly(request):
+    # Chặn nhân viên thường truy cập URL quản lý
+    if not (request.user.is_superuser or request.user.is_staff):
+        return redirect('trang_nhan_vien')
+    return render(request, 'quan_ly_home.html')
+
+
+def trang_chao_mung(request):
+    """Trang chào mừng Cake Crush HR"""
+    return render(request, 'welcome.html')
+
+
+def trang_chu(request):
+    """Trang chủ hiển thị trang chào mừng"""
+    return render(request, 'welcome.html')
+
+
+def dieu_huong_dashboard(request):
+    """Điều hướng người dùng đã đăng nhập tới dashboard tương ứng"""
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if request.user.is_superuser or request.user.is_staff:
+        return redirect('trang_quan_ly')
+    return redirect('trang_nhan_vien')
