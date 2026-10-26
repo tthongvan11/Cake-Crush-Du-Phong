@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-zw7dp!9^2#jtfzfl1+9^9b39m09qvkk&ie_uv1-46z7#0(g%ix
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tai_khoan',
+    'nhan_su',
+    'cham_cong',  # Phân hệ Chấm công và Quản lý phép.
 ]
 
 MIDDLEWARE = [
@@ -54,7 +57,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'], # Định vị thư mục chứa HTML
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,6 +79,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        "OPTIONS": {  # Các tùy chọn bổ sung cho SQLite.
+            "transaction_mode": "IMMEDIATE",  # Giành quyền ghi từ đầu giao dịch.
+            "timeout": 20,
+        }
     }
 }
 
@@ -102,9 +109,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'vi'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
 USE_I18N = True
 
@@ -115,6 +122,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 
 # Email
@@ -125,3 +135,24 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+LOGIN_REDIRECT_URL = '/'      # Sau khi đăng nhập thành công sẽ chuyển về đây
+LOGIN_URL = 'login'  # Các trang cá nhân và đổi mật khẩu dùng trang đăng nhập hiện có.
+LOGOUT_REDIRECT_URL = '/login/'  # Sau khi đăng xuất chuyển về trang login
+
+# Chính sách hiển thị cố định theo mockup Chi tiết hợp đồng.
+NHAN_SU_CHINH_SACH = {  # Dùng chung cho trang quản lý và Hợp đồng của tôi.
+    "nguoi_su_dung": "Công ty TNHH Cake Crush",  # Người sử dụng lao động trong mockup.
+    "dia_diem": "Cake Crush",  # Địa điểm làm việc cố định.
+    "thoi_gian": "48 giờ/tuần · Theo lịch phân công",  # Thời giờ làm việc theo nội dung mẫu.
+    "ngay_phep": "12 ngày phép/năm theo chính sách công ty",  # Nội dung ngày nghỉ và phép năm.
+    "bao_hiem": "BHXH, BHYT, BHTN theo quy định",  # Nội dung bảo hiểm trong mockup.
+}  # Kết thúc chính sách dùng chung.
+
+# Ca làm việc và quỹ phép dùng cho phân hệ Chấm công (đổi tại đây, không sửa code).
+CHAM_CONG = {  # Đọc qua cham_cong.services.cau_hinh().
+    "GIO_BAT_DAU": "08:00",  # Giờ bắt đầu ca hành chính; Check-in sau giờ này là đi trễ.
+    "GIO_KET_THUC": "17:00",  # Giờ kết thúc ca; Check-out trước là về sớm, sau là làm thêm.
+    "NGHI_TRUA_BAT_DAU": "12:00",  # Bắt đầu nghỉ trưa, không tính công.
+    "NGHI_TRUA_KET_THUC": "13:00",  # Kết thúc nghỉ trưa.
+    "PHEP_NAM": 12,  # Số ngày phép năm của mỗi nhân viên.
+}  # Kết thúc cấu hình chấm công.
