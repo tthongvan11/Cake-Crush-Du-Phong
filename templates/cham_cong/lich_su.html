@@ -1,0 +1,26 @@
+{% extends "base.html" %} {# Dùng khung giao diện chung. #}
+{% load static cham_cong_tags %} {# Nạp đường dẫn static và bộ lọc hiển thị phút/giờ. #}
+{% block title %}Lịch sử chấm công | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/cham_cong.css' %}">{% endblock %} {# Giao diện riêng. #}
+
+{% block content %} {# Bắt đầu nội dung. #}
+<div class="hr-head"><h1>Lịch sử chấm công</h1></div> {# Tiêu đề trang. #}
+<p class="hr-muted cc-sub">Tra cứu dữ liệu chấm công của {{ nv.tennv }} · {{ nv.manv }}.</p> {# Mô tả. #}
+{% include "cham_cong/includes/tabs_cham_cong.html" %} {# Hai tab. #}
+
+<form method="get" class="hr-filter"> {# GET chỉ lọc, không sửa dữ liệu. #}
+    <label>Tháng<select name="thang">{% for t in ds_thang %}<option value="{{ t }}" {% if t == thang %}selected{% endif %}>Tháng {{ t|stringformat:"02d" }}</option>{% endfor %}</select></label> {# Chọn tháng. #}
+    <label>Năm<select name="nam">{% for n in ds_nam %}<option value="{{ n }}" {% if n == nam %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label> {# Chọn năm. #}
+    <button type="submit" class="hr-btn">Xem kết quả</button> {# Gửi bộ lọc. #}
+    <span class="hr-badge cc-filter-end">Chỉ đọc</span> {# Dữ liệu lịch sử không được sửa. #}
+</form> {# Đóng bộ lọc. #}
+
+<div class="cc-stats"> {# Bốn thẻ tổng hợp. #}
+    <div class="cc-stat"><span>Ngày đi làm</span><strong>{{ thong_ke.di_lam }} ngày</strong><small>Trong tháng đang xem</small></div> {# Số ngày đi làm. #}
+    <div class="cc-stat"><span>Giờ làm việc thực tế</span><strong>{{ thong_ke.tong_gio|gio_phut }}</strong><small>Đã trừ nghỉ trưa không tính công</small></div> {# Tổng giờ. #}
+    <div class="cc-stat"><span>Đi trễ / Về sớm</span><strong>{{ thong_ke.di_tre|phut_gio }} / {{ thong_ke.ve_som|phut_gio }}</strong><small>Tổng thời gian trong kỳ</small></div> {# Tổng phút vi phạm. #}
+    <div class="cc-stat"><span>Nghỉ có phép</span><strong>{{ thong_ke.nghi_phep }} ngày</strong><small>Đơn đã được phê duyệt</small></div> {# Số ngày nghỉ phép. #}
+</div> {# Đóng thẻ. #}
+
+{% include "cham_cong/includes/bang_cong.html" with hien_nv=False thong_bao_rong="Không có dữ liệu chấm công cho tháng này" %} {# Bảng dùng chung. #}
+{% endblock %} {# Kết thúc nội dung. #}

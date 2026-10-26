@@ -1,0 +1,12 @@
+{% extends "base.html" %} {# Khung quản lý chung. #}
+{% block title %}Thông tin nhân viên | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+{% block content %} {# Nội dung trang quản lý hồ sơ. #}
+<a class="hr-back" href="{% url 'nhan_su:danh_sach_nhan_vien' %}">‹ Quay lại</a> {# Trở về danh sách. #}
+<div class="hr-head"><h1>Thông tin nhân viên</h1><div class="hr-actions"> {# Chỉ giữ tiêu đề và các nút. #}
+    <a class="hr-btn hr-secondary" href="{% url 'nhan_su:sua_nhan_vien' nhan_vien.pk %}?next={{ request.get_full_path|urlencode }}"><i class="fa-regular fa-pen-to-square" aria-hidden="true"></i>Chỉnh sửa</a> {# Mở từ chi tiết thì quay lại đúng chi tiết này. #}
+    {% if nhan_vien.trangthai %}<a class="hr-btn hr-danger" href="{% url 'nhan_su:vo_hieu_hoa_nhan_vien' nhan_vien.pk %}"><i class="fa-solid fa-trash-can" aria-hidden="true"></i>Vô hiệu hóa</a>{% endif %} {# GET chỉ mở xác nhận. #}
+</div></div> {# Đóng đầu trang. #}
+{% include "nhan_su/includes/ho_so_header.html" %} {# Thẻ nhận diện nhân viên. #}
+{% include "nhan_su/includes/ho_so_thong_tin.html" %} {# Thông tin cá nhân và công việc. #}
+{% include "nhan_su/includes/lich_su_hop_dong.html" %} {# Giữ lịch sử sau nghỉ việc. #}
+{% endblock %} {# Kết thúc nội dung. #}

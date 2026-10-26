@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cake Crush HR - Đăng nhập</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #fafbfc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .login-wrapper {
+            background: #ffffff;
+            border-radius: 36px;
+            box-shadow: 0 12px 50px rgba(0, 0, 0, 0.03);
+            display: flex;
+            max-width: 980px;
+            width: 100%;
+            padding: 20px;
+            gap: 30px;
+            border: 1px solid #f6f0f3;
+        }
+
+        .left-panel {
+            flex: 1.15;
+            background: radial-gradient(circle at 75% 20%, #ffe9f2 0%, #fff2f7 45%, #fff8fa 100%);
+            border-radius: 28px;
+            padding: 40px 36px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .bubble-1 {
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: #ffdbe8;
+            opacity: 0.55;
+            top: 25px;
+            right: 15px;
+            z-index: 0;
+        }
+
+        .bubble-2 {
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: #ffdbe8;
+            opacity: 0.5;
+            bottom: 40px;
+            left: -10px;
+            z-index: 0;
+        }
+
+        .heart-icon {
+            position: absolute;
+            color: #f49ab9;
+            font-size: 13px;
+            z-index: 0;
+            opacity: 0.85;
+        }
+        .heart-1 { top: 90px; left: 40px; font-size: 14px; }
+        .heart-2 { bottom: 180px; left: 30px; font-size: 11px; }
+        .heart-3 { bottom: 90px; left: 80px; font-size: 15px; }
+        .heart-4 { top: 180px; right: 80px; font-size: 13px; }
+        .heart-5 { bottom: 70px; right: 85px; font-size: 13px; }
+
+        .brand-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1;
+        }
+
+        .brand-badge-icon {
+            width: 42px;
+            height: 42px;
+            background: #fdeaf1;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #be2552;
+            font-size: 20px;
+        }
+
+        .brand-badge-info h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1e26;
+            line-height: 1.2;
+        }
+
+        .brand-badge-info span {
+            font-size: 9px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .hero-section {
+            text-align: center;
+            z-index: 1;
+            margin: 35px 0;
+        }
+
+        .cake-illustration {
+            width: 76px;
+            height: 64px;
+            margin: 0 auto 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .candles { display: flex; gap: 7px; margin-bottom: 2px; }
+        .candle {
+            width: 4px;
+            height: 12px;
+            background: #be2552;
+            border-radius: 2px;
+            position: relative;
+        }
+        .candle::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 5px;
+            background: #fbb040;
+            border-radius: 50%;
+        }
+
+        .cake-top-wave {
+            width: 70px;
+            height: 15px;
+            background: #be2552;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .cake-body {
+            width: 74px;
+            height: 32px;
+            background: #f7a2ba;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .logo-wordmark {
+            font-size: 54px;
+            font-weight: 800;
+            color: #172a53;
+            letter-spacing: -1.5px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: baseline;
+            justify-content: center;
+        }
+
+        .logo-wordmark span.crush-text {
+            font-size: 22px;
+            color: #be2552;
+            font-weight: 700;
+            font-style: italic;
+            margin-left: 2px;
+        }
+
+        .sub-tagline {
+            display: block;
+            font-size: 10.5px;
+            letter-spacing: 2.8px;
+            color: #be2552;
+            font-weight: 700;
+            margin-top: 14px;
+            text-transform: uppercase;
+        }
+
+        .divider-heart { color: #be2552; font-size: 11px; margin: 18px 0 16px; }
+
+        .welcome-lead h3 { font-size: 19px; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
+        .welcome-lead h2 { font-size: 27px; font-weight: 800; color: #be2552; }
+        .welcome-lead p { font-size: 13px; color: #64748b; margin-top: 14px; line-height: 1.6; max-width: 320px; margin-left: auto; margin-right: auto; }
+
+        .panel-footer-text { text-align: center; font-size: 11px; color: #94a3b8; z-index: 1; }
+
+        .right-panel {
+            flex: 1;
+            padding: 40px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .heading-group { margin-bottom: 28px; }
+        .heading-group h2 { font-size: 32px; font-weight: 800; color: #1e293b; margin-bottom: 6px; }
+        .heading-group p { font-size: 14px; color: #64748b; }
+
+        .alert-error {
+            color: #e53e3e;
+            font-size: 13px;
+            font-weight: 700;
+            font-style: italic;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .input-wrapper { position: relative; margin-bottom: 18px; }
+        .input-wrapper i.leading-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 15px 46px 15px 48px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            outline: none;
+            font-size: 13.5px;
+            color: #334155;
+            background-color: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #be2552;
+            box-shadow: 0 0 0 3px rgba(190, 37, 82, 0.08);
+        }
+
+        .toggle-btn {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: #be2552;
+            color: #ffffff;
+            border: none;
+            padding: 15px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover { background-color: #a01a40; }
+        .bottom-note { text-align: center; margin-top: 45px; font-size: 11.5px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+<div class="login-wrapper">
+    <div class="left-panel">
+        <div class="bubble-1"></div>
+        <div class="bubble-2"></div>
+        <i class="fa-solid fa-heart heart-icon heart-1"></i>
+        <i class="fa-solid fa-heart heart-icon heart-2"></i>
+        <i class="fa-solid fa-heart heart-icon heart-3"></i>
+        <i class="fa-solid fa-heart heart-icon heart-4"></i>
+        <i class="fa-solid fa-heart heart-icon heart-5"></i>
+
+        <div class="brand-badge">
+            <div class="brand-badge-icon">
+                <i class="fa-solid fa-cake-candles"></i>
+            </div>
+            <div class="brand-badge-info">
+                <h4>Cake Crush</h4>
+                <span>HUMAN RESOURCES</span>
+            </div>
+        </div>
+
+        <div class="hero-section">
+            <div class="cake-illustration">
+                <div class="candles">
+                    <div class="candle"></div>
+                    <div class="candle"></div>
+                    <div class="candle"></div>
+                </div>
+                <div class="cake-top-wave"></div>
+                <div class="cake-body"></div>
+            </div>
+
+            <div class="logo-wordmark">
+                cake<span class="crush-text">crush</span>
+            </div>
+            <span class="sub-tagline">— HUMAN RESOURCES —</span>
+
+            <div class="divider-heart"><i class="fa-solid fa-heart"></i></div>
+
+            <div class="welcome-lead">
+                <h3>Chào mừng đến với</h3>
+                <h2>Cake Crush HR</h2>
+                <p>Cùng Cake Crush xây dựng một môi trường làm việc tốt hơn.</p>
+            </div>
+        </div>
+
+        <div class="panel-footer-text">Cake Crush HR · Đồng hành cùng đội ngũ</div>
+    </div>
+
+    <div class="right-panel">
+        <div class="heading-group">
+            <h2>Đăng nhập</h2>
+            <p>Chào mừng trở lại. Bắt đầu ngày làm việc của bạn.</p>
+        </div>
+
+        {% if form.errors or thong_bao_loi %}
+            <div class="alert-error">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>{{ thong_bao_loi|default:"Đăng nhập sai. Vui lòng thử lại!" }}</span>
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="input-wrapper">
+                <i class="fa-regular fa-user leading-icon"></i>
+                <input type="text" name="username" value="{{ form.username.value|default:'' }}" placeholder="Tên đăng nhập hoặc email" required autofocus>
+            </div>
+
+            <div class="input-wrapper">
+                <i class="fa-solid fa-lock leading-icon"></i>
+                <input type="password" id="passwordField" name="password" placeholder="Mật khẩu" required>
+                <button type="button" class="toggle-btn" onclick="togglePasswordVisibility()">
+                    <i class="fa-regular fa-eye" id="toggleIcon"></i>
+                </button>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Đăng nhập <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <div class="bottom-note">Hệ thống quản lý nhân sự nội bộ Cake Crush</div>
+    </div>
+</div>
+
+<script>
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('passwordField');
+        const toggleIcon = document.getElementById('toggleIcon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+</script>
+
+</body>
+</html>

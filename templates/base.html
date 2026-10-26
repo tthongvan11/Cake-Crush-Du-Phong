@@ -1,0 +1,668 @@
+{% load static %} {# Cho phép sử dụng đường dẫn static. #}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cake Crush HR{% if user.is_staff or user.is_superuser %} - Không gian quản lý{% else %} - Không gian nhân viên{% endif %}{% endblock %}</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-pink: #c72c5e;
+            --primary-pink-hover: #a01a40;
+            --primary-pink-light: #fdeaf1;
+            --primary-pink-subtle: #fff5f8;
+            --sidebar-width: 250px;
+            --header-height: 64px;
+            --bg-canvas: #faf7f8;
+            --border-color: #f1e6eb;
+            --text-heading: #1e293b;
+            --text-body: #475569;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-body);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* ================= SIDEBAR ================= */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #ffffff;
+            border-right: 1px solid var(--border-color);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 16px 20px 18px;
+            z-index: 50;
+            transition: transform 0.25s ease;
+        }
+
+        .sidebar-top {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Logo Brand */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            padding: 4px 6px 14px 6px;
+        }
+
+        .brand-icon-box {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-pink-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-pink);
+            font-size: 17px;
+            flex-shrink: 0;
+        }
+
+        .brand-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-heading);
+            letter-spacing: -0.2px;
+            line-height: 1.2;
+        }
+
+        .brand-tag {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.2;
+        }
+
+        /* Sidebar Section Header */
+        .menu-section-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #9ca3af;
+            padding: 16px 8px 10px 8px;
+        }
+
+        /* Navigation List */
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 9px 12px;
+            border-radius: 10px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.18s ease;
+        }
+
+        .nav-link i {
+            font-size: 15px;
+            width: 18px;
+            text-align: center;
+            color: #64748b;
+            transition: color 0.18s ease;
+        }
+
+        .nav-link:hover {
+            background-color: var(--primary-pink-subtle);
+            color: var(--primary-pink);
+        }
+
+        .nav-link:hover i {
+            color: var(--primary-pink);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-pink-light);
+            color: var(--primary-pink);
+            font-weight: 600;
+        }
+
+        .nav-link.active i {
+            color: var(--primary-pink);
+        }
+
+        /* Sidebar Bottom */
+        .sidebar-bottom {
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 6px;
+            border-radius: 10px;
+        }
+
+        .avatar-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #fdeaf1;
+            color: var(--primary-pink);
+            font-weight: 700;
+            font-size: 12.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .user-fullname {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-heading);
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .user-role-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .logout-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            background: transparent;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.18s ease;
+        }
+
+        .logout-link i {
+            font-size: 14.5px;
+        }
+
+        .logout-link:hover {
+            background-color: #fff1f2;
+            color: #e11d48;
+        }
+
+        /* ================= MAIN WRAPPER ================= */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-canvas);
+        }
+
+        /* ================= TOP NAVBAR ================= */
+        .top-navbar {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 36px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        /* Search Bar */
+        .search-box-wrapper {
+            position: relative;
+            width: 320px;
+        }
+
+        .search-box-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 13px;
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8.5px 16px 8.5px 36px;
+            border-radius: 20px;
+            border: 1px solid #ebdbe2;
+            background-color: #ffffff;
+            font-size: 12.5px;
+            color: var(--text-heading);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input::placeholder {
+            color: #9ca3af;
+            font-size: 12.5px;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-pink);
+            box-shadow: 0 0 0 3px rgba(199, 44, 94, 0.08);
+        }
+
+        /* Header Right Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        /* Pill Badge: Role */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fdeef3;
+            color: var(--primary-pink);
+            padding: 5px 13px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Notification Icon */
+        .notification-btn {
+            position: relative;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: background 0.18s ease;
+        }
+
+        .notification-btn:hover {
+            background: #ffffff;
+            color: var(--primary-pink);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 5px;
+            right: 7px;
+            width: 6.5px;
+            height: 6.5px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            border: 1.5px solid #ffffff;
+        }
+
+        /* Header User Profile Preview */
+        .header-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 4px 6px;
+            border-radius: 10px;
+            transition: background 0.18s ease;
+        }
+
+        .header-profile:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .header-profile .avatar-circle {
+            width: 34px;
+            height: 34px;
+            font-size: 12px;
+        }
+
+        .header-profile-text {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .header-profile-name {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-heading);
+            line-height: 1.2;
+        }
+
+        .header-profile-role {
+            font-size: 10.5px;
+            color: var(--text-muted);
+            line-height: 1.2;
+        }
+
+        .header-profile i.chevron {
+            font-size: 10px;
+            color: #94a3b8;
+            margin-left: 2px;
+        }
+
+        /* Mobile Hamburger */
+        .mobile-toggle {
+            display: none;
+            font-size: 18px;
+            background: none;
+            border: none;
+            color: var(--text-heading);
+            cursor: pointer;
+            margin-right: 12px;
+        }
+
+        /* ================= CONTENT CONTAINER ================= */
+        .content-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 36px 36px 36px;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            }
+            .main-wrapper {
+                margin-left: 0;
+            }
+            .mobile-toggle {
+                display: block;
+            }
+            .search-box-wrapper {
+                width: 200px;
+            }
+            .top-navbar {
+                padding: 0 18px;
+            }
+            .content-container {
+                padding: 16px 18px 24px 18px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/nhan_su.css' %}?v=20261018-4"> {# Nạp giao diện đã bỏ bộ lọc ngày. #}
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-top">
+            <!-- Brand Logo -->
+            <a href="{% if user.is_staff or user.is_superuser %}{% url 'trang_quan_ly' %}{% else %}{% url 'trang_nhan_vien' %}{% endif %}" class="brand-header">
+                <div class="brand-icon-box">
+                    <i class="fa-solid fa-cake-candles"></i>
+                </div>
+                <div class="brand-info">
+                    <span class="brand-name">Cake Crush</span>
+                    <span class="brand-tag">HUMAN RESOURCES</span> {# Thống nhất thương hiệu theo mockup. #}
+                </div>
+            </a>
+
+            <!-- Menu Category -->
+            <div class="menu-section-label">{% if user.is_staff or user.is_superuser %}KHÔNG GIAN QUẢN LÝ{% else %}KHÔNG GIAN NHÂN VIÊN{% endif %}</div>
+
+            <!-- Menu Items -->
+            <ul class="nav-list">
+                {% if user.is_staff or user.is_superuser %}
+                <li class="nav-item">
+                    <a href="{% url 'trang_quan_ly' %}" class="nav-link {% if request.resolver_match.url_name == 'trang_quan_ly' %}active{% endif %}">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% if user.is_staff or user.is_superuser %} {# URL cho quản lý. #}
+                    {% url 'nhan_su:danh_sach_nhan_vien' as url_ho_so %} {# Danh sách hồ sơ. #}
+                    {% url 'nhan_su:danh_sach_hop_dong' as url_hop_dong %} {# Danh sách hợp đồng. #}
+                {% else %} {# URL cho nhân viên. #}
+                    {% url 'nhan_su:ho_so_cua_toi' as url_ho_so %} {# Hồ sơ sở hữu. #}
+                    {% url 'nhan_su:hop_dong_cua_toi' as url_hop_dong %} {# Hợp đồng sở hữu. #}
+                {% endif %} {# Kết thúc chọn URL. #}
+
+                <li class="nav-item"> {# Mục hồ sơ. #}
+                    <a href="{{ url_ho_so }}" class="nav-link {% if '/quan-ly/nhan-vien/' in request.path or not user.is_staff and not user.is_superuser and request.resolver_match.url_name == 'ho_so_cua_toi' %}active{% endif %}"> {# Quản lý xem trang cá nhân không đánh dấu nhầm menu quản lý. #}
+                        <i class="fa-solid fa-user-group" aria-hidden="true"></i> {# Biểu tượng trang trí. #}
+                        <span>{% if user.is_staff or user.is_superuser %}Hồ sơ nhân viên{% else %}Hồ sơ của tôi{% endif %}</span> {# Tên theo vai trò. #}
+                    </a> {# Đóng liên kết. #}
+                </li> {# Đóng mục hồ sơ. #}
+
+                <li class="nav-item"> {# Mục hợp đồng. #}
+                    <a href="{{ url_hop_dong }}" class="nav-link {% if '/quan-ly/hop-dong/' in request.path or not user.is_staff and not user.is_superuser and '/hop-dong-cua-toi/' in request.path %}active{% endif %}"> {# Đánh dấu đúng menu theo vai trò và phạm vi trang. #}
+                        <i class="fa-regular fa-file-lines" aria-hidden="true"></i> {# Biểu tượng hợp đồng. #}
+                        <span>{% if user.is_staff or user.is_superuser %}Hợp đồng{% else %}Hợp đồng của tôi{% endif %}</span> {# Tên theo vai trò. #}
+                    </a> {# Đóng liên kết. #}
+                </li> {# Đóng mục hợp đồng. #}
+                <li class="nav-item"> {# Mục chấm công: quản lý mở bảng tổng hợp, nhân viên mở trang chấm công. #}
+                    <a href="{% if user.is_staff or user.is_superuser %}{% url 'cham_cong:bang_cham_cong' %}{% else %}{% url 'cham_cong:hom_nay' %}{% endif %}" class="nav-link {% if '/cham-cong/' in request.path %}active{% endif %}"> {# Đánh dấu cả trang con. #}
+                        <i class="fa-regular fa-clock" aria-hidden="true"></i> {# Biểu tượng đồng hồ. #}
+                        <span>Chấm công</span> {# Tên mục. #}
+                    </a> {# Đóng liên kết. #}
+                </li> {# Đóng mục chấm công. #}
+                <li class="nav-item"> {# Mục nghỉ phép: quản lý mở trang duyệt đơn, nhân viên mở đơn của tôi. #}
+                    <a href="{% if user.is_staff or user.is_superuser %}{% url 'cham_cong:duyet_don_list' %}{% else %}{% url 'cham_cong:don_cua_toi' %}{% endif %}" class="nav-link {% if '/nghi-phep/' in request.path or '/quy-phep/' in request.path %}active{% endif %}"> {# Gồm cả quỹ phép. #}
+                        <i class="fa-regular fa-calendar-days" aria-hidden="true"></i> {# Biểu tượng lịch. #}
+                        <span>Nghỉ phép</span> {# Tên mục. #}
+                    </a> {# Đóng liên kết. #}
+                </li> {# Đóng mục nghỉ phép. #}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                        <span>Đào tạo</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fa-regular fa-star"></i>
+                        <span>Đánh giá</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar Bottom: User & Logout -->
+        <div class="sidebar-bottom">
+            <div class="user-card">
+                <div class="avatar-circle">
+                    {% if user.is_authenticated and user.first_name and user.last_name %}
+                        {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+                    {% elif user.is_staff or user.is_superuser %}
+                        HV
+                    {% else %}
+                        MA
+                    {% endif %}
+                </div>
+                <div class="user-details">
+                    <span class="user-fullname">
+                        {% if user.is_authenticated and user.get_full_name %}
+                            {{ user.get_full_name }}
+                        {% elif user.is_authenticated %}
+                            {{ user.username }}
+                        {% else %}
+                            Nguyễn Thị Nhi
+                        {% endif %}
+                    </span>
+                    <span class="user-role-label">
+                        {% if user.is_staff or user.is_superuser %}Quản lý cửa hàng{% else %}Nhân viên{% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Logout Form/Button -->
+            <form action="{% url 'logout' %}" method="post" id="logout-form" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="logout-link">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Đăng xuất</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- ================= MAIN CONTENT WRAPPER ================= -->
+    <div class="main-wrapper">
+        <!-- Top Navbar -->
+        <header class="top-navbar">
+            <div style="display: flex; align-items: center;">
+                <button class="mobile-toggle" id="sidebar-toggle" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="search-box-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" class="search-input" placeholder="Tìm kiếm trong Cake Crush HR">
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <!-- Status Badge -->
+                <div class="status-badge">
+                    <span class="status-dot"></span>
+                    <span>{% if user.is_staff or user.is_superuser %}Quản lý{% else %}Nhân viên{% endif %}</span>
+                </div>
+
+                <!-- Notifications -->
+                <button class="notification-btn" title="Thông báo">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notification-dot"></span>
+                </button>
+
+                <!-- Profile Dropdown -->
+                <details class="hr-account"> {# Menu mở được bằng chuột và bàn phím. #}
+                    <summary class="header-profile" aria-label="Tùy chọn tài khoản"> {# Bấm để mở hoặc đóng menu. #}
+                        <span class="avatar-circle">{{ user.username|slice:":1"|upper }}</span> {# Chữ đầu tên đăng nhập. #}
+                        <span class="header-profile-text"><span class="header-profile-name">{% firstof user.get_full_name user.username %}</span></span> {# Ưu tiên họ tên nếu đã có. #}
+                        <i class="fa-solid fa-chevron-down chevron" aria-hidden="true"></i> {# Biểu tượng mở menu. #}
+                    </summary> {# Đóng phần điều khiển. #}
+                    <nav class="hr-account-menu" aria-label="Tài khoản cá nhân"> {# Menu cá nhân cho cả hai vai trò. #}
+                        <div class="hr-menu-identity"><span class="avatar-circle">{{ user.username|slice:":1"|upper }}</span><div><strong>{% firstof user.get_full_name user.username %}</strong><p class="hr-muted">{% if user.is_staff or user.is_superuser %}Quản lý cửa hàng{% else %}Nhân viên{% endif %}</p></div></div> {# Danh tính người đang đăng nhập. #}
+                        <a class="{% if request.resolver_match.url_name == 'ho_so_cua_toi' %}active{% endif %}" href="{% url 'nhan_su:ho_so_cua_toi' %}"><i class="fa-regular fa-user" aria-hidden="true"></i>Hồ sơ của tôi</a> {# Cả quản lý và nhân viên đều có lối vào cá nhân. #}
+                        <a class="{% if '/hop-dong-cua-toi/' in request.path %}active{% endif %}" href="{% url 'nhan_su:hop_dong_cua_toi' %}"><i class="fa-regular fa-file-lines" aria-hidden="true"></i>Hợp đồng của tôi</a> {# Bao gồm chi tiết sở hữu. #}
+                        <a href="{% url 'cham_cong:hom_nay' %}"><i class="fa-regular fa-clock" aria-hidden="true"></i>Chấm công của tôi</a> {# Quản lý cũng tự chấm công. #}
+                        <a href="{% url 'cham_cong:don_cua_toi' %}"><i class="fa-regular fa-calendar-days" aria-hidden="true"></i>Đơn nghỉ phép của tôi</a> {# Quản lý cũng gửi đơn nghỉ. #}
+                        <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit" class="hr-menu-logout"><i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>Đăng xuất</button></form> {# Đăng xuất bằng POST. #}
+                    </nav> {# Đóng các lựa chọn. #}
+                </details> {# Đóng menu tài khoản. #}
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="content-container"> {# Vùng nội dung trang. #}
+            {% for message in messages %} {# Đọc thông báo từ view. #}
+                <div class="hr-message {{ message.tags }}" role="{% if message.level_tag == 'error' %}alert{% else %}status{% endif %}">{{ message }}</div> {# Hiển thị theo mức độ. #}
+            {% endfor %} {# Kết thúc thông báo. #}
+            {% block content %}{% endblock %} {# Giữ vị trí chèn nội dung trang con. #}
+        </main> {# Đóng vùng nội dung. #}
+    </div>
+
+    <!-- Mobile Drawer Toggle Script -->
+    <script>
+        const accountMenu = document.querySelector('.hr-account'); // Menu tài khoản ở góc phải.
+        document.addEventListener('click', (event) => { // Bấm ngoài dropdown sẽ đóng menu.
+            if (accountMenu && !accountMenu.contains(event.target)) accountMenu.open = false; // Giữ nguyên thao tác bên trong menu.
+        }); // Kết thúc xử lý bấm chuột.
+        document.addEventListener('keydown', (event) => { // Hỗ trợ đóng dropdown bằng bàn phím.
+            if (event.key === 'Escape' && accountMenu) accountMenu.open = false; // Escape đóng menu.
+        }); // Kết thúc xử lý bàn phím.
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
+        if (toggleBtn && sidebar) {
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 900 && !sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                    sidebar.classList.remove('open');
+                }
+            });
+        }
+    </script>
+    <script src="{% static 'js/nhan_su.js' %}?v=20261018-1"></script> {# Đặt menu thao tác nổi sau khi bảng đã được tạo. #}
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,12 @@
+{% extends "base.html" %} {# Khung trang dùng chung. #}
+{% block title %}Hợp đồng {{ hop_dong.mahd }} | Cake Crush{% endblock %} {# Tiêu đề có mã hợp đồng. #}
+{% block content %} {# Nội dung chi tiết. #}
+<a class="hr-back" href="{% if co_quyen_sua %}{% url 'nhan_su:danh_sach_hop_dong' %}{% else %}{% url 'nhan_su:hop_dong_cua_toi' %}{% endif %}">‹ Quay lại</a> {# Quay về đúng phạm vi dữ liệu. #}
+<div class="hr-head hr-personal-heading"><h1>{% if co_quyen_sua %}Chi tiết hợp đồng{% else %}Hợp đồng của tôi{% endif %}</h1><div class="hr-actions"> {# Tiêu đề và nút quản lý. #}
+    {% if co_quyen_sua and hop_dong.manv.trangthai and hop_dong.ma_trang_thai != 'CHAMDUT' %} {# Hợp đồng chấm dứt không còn nút sửa. #}
+    <a class="hr-btn" href="{% url 'nhan_su:sua_hop_dong' hop_dong.pk %}?next={{ request.get_full_path|urlencode }}">Chỉnh sửa</a> {# Giữ nguồn mở form từ trang chi tiết. #}
+    {% if hop_dong.loaihd != 'KHONG_XAC_DINH' %}<a class="hr-btn hr-secondary" href="{% url 'nhan_su:gia_han_hop_dong' hop_dong.pk %}?next={{ request.get_full_path|urlencode }}">Gia hạn</a>{% endif %} {# Gia hạn xong quay lại chi tiết nếu được mở tại đây. #}
+    {% endif %} {# Đóng quyền thao tác. #}
+</div></div> {# Đóng đầu trang. #}
+{% include "nhan_su/includes/hop_dong_noi_dung.html" %} {# Tóm tắt, chi tiết và chính sách. #}
+{% endblock %} {# Kết thúc nội dung. #}

@@ -1,0 +1,11 @@
+<section class="hr-card"> {# Giữ lịch sử thay vì chỉ hiển thị hợp đồng hiện tại. #}
+    <div class="hr-head hr-compact"><h2>Hợp đồng lao động</h2>{% if co_quyen_sua and nhan_vien.trangthai %}<a class="hr-btn" href="{% url 'nhan_su:them_hop_dong' %}">+ Tạo hợp đồng</a>{% endif %}</div> {# Thao tác dành riêng quản lý. #}
+    <div class="hr-table-wrap"><table class="hr-table"> {# Cuộn ngang trên màn hình nhỏ. #}
+        <thead><tr><th>Mã HĐ</th><th>Loại hợp đồng</th><th>Ngày bắt đầu</th><th>Ngày hết hạn</th><th>Trạng thái</th></tr></thead> {# Các cột lịch sử. #}
+        <tbody>{% for hd in hop_dong %}<tr> {# Mỗi dòng là một bản ghi hợp đồng. #}
+            <td><a class="hr-code" href="{% if co_quyen_sua %}{% url 'nhan_su:chi_tiet_hop_dong' hd.pk %}{% else %}{% url 'nhan_su:chi_tiet_hop_dong_cua_toi' hd.pk %}{% endif %}">{{ hd.mahd }}</a></td> {# URL theo quyền sở hữu. #}
+            <td>{{ hd.get_loaihd_display }}</td><td>{{ hd.ngaybatdau|date:"d/m/Y" }}</td><td>{{ hd.ngayhethan|date:"d/m/Y"|default:"Không thời hạn" }}</td> {# Các mốc đã ký giữ nguyên khi nghỉ việc. #}
+            <td><span class="hr-badge" data-state="{{ hd.ma_trang_thai }}">{{ hd.nhan_trang_thai }}</span></td> {# Trạng thái do service tính. #}
+        </tr>{% empty %}<tr><td colspan="5" class="hr-empty">Chưa có thông tin hợp đồng.</td></tr>{% endfor %}</tbody> {# Thông báo khi chưa ký hợp đồng. #}
+    </table></div> {# Đóng bảng. #}
+</section> {# Đóng lịch sử. #}

@@ -1,0 +1,37 @@
+<div class="hr-profile-grid"> {# Cột cá nhân rộng, cột công việc hẹp như mockup. #}
+    <div class="hr-stack"> {# Cột trái. #}
+        <section class="hr-card"> {# Khung thông tin cá nhân. #}
+            <h2 class="hr-section-title"><i class="fa-regular fa-user" aria-hidden="true"></i>Thông tin cá nhân</h2> {# Tiêu đề có biểu tượng. #}
+            <dl class="hr-info"> {# Thông tin hai cột. #}
+                <div><dt>Họ và tên</dt><dd>{{ nhan_vien.tennv }}</dd></div> {# Họ tên. #}
+                <div><dt>Ngày sinh</dt><dd>{{ nhan_vien.ngaysinh|date:"d/m/Y"|default:"Chưa cập nhật" }}</dd></div> {# Cho phép thiếu ngày sinh. #}
+                <div><dt>Giới tính</dt><dd>{{ nhan_vien.get_gioitinh_display }}</dd></div> {# Nhãn giới tính. #}
+                <div><dt>CCCD</dt><dd>{{ nhan_vien.cccd }}</dd></div> {# CCCD của hồ sơ được phép xem. #}
+                <div><dt>Số điện thoại</dt><dd>{{ nhan_vien.sdt }}</dd></div> {# Giữ số 0 đầu chuỗi. #}
+                <div><dt>Email</dt><dd>{{ nhan_vien.email }}</dd></div> {# Nội dung được Django escape. #}
+            </dl> {# Đóng danh sách thông tin. #}
+        </section> {# Đóng thẻ cá nhân. #}
+        <section class="hr-card"> {# Địa chỉ được tách riêng theo mockup. #}
+            <h2 class="hr-section-title"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>Địa chỉ liên hệ</h2> {# Tiêu đề địa chỉ. #}
+            <dl class="hr-info hr-one-column"><div><dt>Địa chỉ hiện tại</dt><dd>{{ nhan_vien.diachi|default:"Chưa cập nhật"|linebreaksbr }}</dd></div></dl> {# Giữ xuống dòng an toàn. #}
+        </section> {# Đóng thẻ địa chỉ. #}
+    </div> {# Đóng cột trái. #}
+    <div class="hr-stack"> {# Cột phải. #}
+        <section class="hr-card"> {# Thông tin công việc. #}
+            <h2 class="hr-section-title"><i class="fa-solid fa-briefcase" aria-hidden="true"></i>Thông tin công việc</h2> {# Tiêu đề công việc. #}
+            <dl class="hr-info hr-one-column"> {# Một cột cho khung hẹp. #}
+                <div><dt>Mã nhân viên</dt><dd>{{ nhan_vien.manv }}</dd></div> {# Mã cấp khi tạo. #}
+                <div><dt>Bộ phận</dt><dd>{{ nhan_vien.maphong.tenphongban }}</dd></div> {# Phòng ban hiện tại. #}
+                <div><dt>Chức vụ</dt><dd>{{ nhan_vien.chucvu }}</dd></div> {# Chức vụ hiện tại. #}
+                {% if not nhan_vien.trangthai %} {# Bổ sung thông tin nghỉ việc khi cần. #}
+                <div><dt>Ngày nghỉ việc</dt><dd>{{ nhan_vien.ngaynghiviec|date:"d/m/Y"|default:"Chưa cập nhật" }}</dd></div> {# Ngày nghỉ thực tế. #}
+                <div><dt>Lý do nghỉ việc</dt><dd>{{ nhan_vien.lydonghiviec|default:"Chưa cập nhật"|linebreaksbr }}</dd></div> {# Lý do nghỉ. #}
+                {% endif %} {# Đóng thông tin nghỉ việc. #}
+            </dl> {# Đóng thông tin công việc. #}
+            {% if co_quyen_sua %}<p class="hr-footnote">Tài khoản liên kết: <strong>{{ nhan_vien.id_taikhoan.username|default:"Chưa liên kết" }}</strong></p>{% endif %} {# Giúp quản lý phát hiện hồ sơ chưa gắn tài khoản. #}
+        </section> {# Đóng thẻ công việc. #}
+        {% if not co_quyen_sua %} {# Công cụ bảo mật của chính người dùng. #}
+        <section class="hr-card hr-security"><i class="fa-solid fa-lock" aria-hidden="true"></i><div><h2>Bảo mật tài khoản</h2><a href="{% url 'nhan_su:doi_mat_khau' %}">Đổi mật khẩu <span aria-hidden="true">→</span></a></div></section> {# Giữ tiêu đề và thao tác bảo mật, bỏ mô tả lặp lại. #}
+        {% endif %} {# Đóng công cụ cá nhân. #}
+    </div> {# Đóng cột phải. #}
+</div> {# Đóng bố cục hồ sơ. #}

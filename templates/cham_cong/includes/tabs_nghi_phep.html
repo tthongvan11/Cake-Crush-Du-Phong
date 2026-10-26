@@ -1,0 +1,4 @@
+<nav class="cc-tabs" aria-label="Nghỉ phép"> {# Hai trang con của mục Nghỉ phép cá nhân. #}
+    <a href="{% url 'cham_cong:don_cua_toi' %}" class="{% if request.resolver_match.url_name != 'tao_don' %}active{% endif %}">Danh sách đơn nghỉ phép</a> {# Theo dõi đơn đã gửi. #}
+    <a href="{% url 'cham_cong:tao_don' %}" class="{% if request.resolver_match.url_name == 'tao_don' %}active{% endif %}">Tạo đơn xin nghỉ phép</a> {# Biểu mẫu tạo đơn. #}
+</nav> {# Đóng thanh chuyển trang. #}

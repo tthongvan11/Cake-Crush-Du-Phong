@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Cake Crush HR - Không gian nhân viên{% endblock %}
+
+{% block extra_css %}
+<style>
+    .welcome-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        min-height: calc(100vh - 160px);
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .welcome-title {
+        font-size: 21px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        color: #3f3f46;
+        margin-bottom: 14px;
+        text-transform: uppercase;
+    }
+
+    .welcome-title .username-highlight {
+        color: var(--primary-pink);
+    }
+
+    .welcome-quote {
+        font-size: 14.5px;
+        font-style: italic;
+        color: #71717a;
+        max-width: 680px;
+        line-height: 1.6;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="welcome-container">
+    <h1 class="welcome-title">
+        CHÀO MỪNG TRỞ LẠI, <span class="username-highlight">{% if user.username == 'nhanvien' %}NVIEN!{% elif user.is_authenticated %}{{ user.first_name|default:user.username|upper }}!{% else %}NVIEN!{% endif %}</span>
+    </h1>
+    <p class="welcome-quote">
+        “Chất lượng bánh và nụ cười của khách hàng bắt đầu từ sự tận tâm của từng nhân sự.”
+    </p>
+</div>
+{% endblock %}

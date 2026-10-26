@@ -1,0 +1,11 @@
+{% extends "base.html" %} {# Trang cá nhân có bố cục riêng theo mockup. #}
+{% block title %}Hợp đồng của tôi | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+{% block content %} {# Bắt đầu nội dung cá nhân. #}
+<div class="hr-head hr-personal-heading"><h1>Hợp đồng của tôi</h1></div> {# Tiêu đề giống mockup. #}
+{% if hop_dong %} {# Hiển thị hợp đồng đang hiệu lực hoặc bản gần nhất. #}
+    {% include "nhan_su/includes/hop_dong_noi_dung.html" %} {# Dùng chung chi tiết, không có nút sửa. #}
+    {% if lich_su %}{% include "nhan_su/includes/lich_su_hop_dong.html" with hop_dong=lich_su %}{% endif %} {# Vẫn xem được hợp đồng cũ. #}
+{% else %} {# Chưa ký hợp đồng hoặc chưa có hồ sơ liên kết. #}
+    <section class="hr-card hr-empty-state"><span class="hr-empty-icon"><i class="fa-regular fa-file-lines" aria-hidden="true"></i></span><h2>Chưa có hợp đồng</h2><p>Hợp đồng sẽ xuất hiện khi quản lý tạo hợp đồng và liên kết hồ sơ với tài khoản của bạn.</p><a class="hr-btn hr-secondary" href="{% url 'nhan_su:ho_so_cua_toi' %}">Xem hồ sơ của tôi</a></section> {# Hướng dẫn thay cho trang trống. #}
+{% endif %} {# Kết thúc kiểm tra hợp đồng. #}
+{% endblock %} {# Kết thúc trang cá nhân. #}

@@ -1,0 +1,35 @@
+{% extends "base.html" %} {# Dùng khung giao diện chung. #}
+{% load static %} {# Nạp đường dẫn static. #}
+{% block title %}Quỹ phép {{ nv.manv }} | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/cham_cong.css' %}">{% endblock %} {# Giao diện riêng. #}
+
+{% block content %} {# Bắt đầu nội dung. #}
+<div class="hr-head"><h1>Chi tiết quỹ phép nhân viên</h1></div> {# Tiêu đề trang. #}
+<p class="hr-muted cc-sub">{{ nv.manv }} · {{ nv.tennv }} · Năm {{ nam }}</p> {# Nhân viên và năm. #}
+{% include "cham_cong/includes/tabs_quan_ly_phep.html" %} {# Hai tab. #}
+
+<div class="cc-stats"> {# Bốn thẻ số liệu. #}
+    <div class="cc-stat cc-pink"><span>Tổng phép năm</span><strong>{{ quy.tong }} ngày</strong><small>Quỹ phép năm {{ nam }}</small></div> {# Hạn ngạch. #}
+    <div class="cc-stat cc-pink"><span>Đã sử dụng</span><strong>{{ quy.da_dung }} ngày</strong><small>{{ page_obj.paginator.count }} đơn phép năm đã duyệt</small></div> {# Đã dùng. #}
+    <div class="cc-stat cc-pink"><span>Còn lại</span><strong>{{ quy.con_lai }} ngày</strong><small>Có thể sử dụng trong năm</small></div> {# Còn lại. #}
+    <div class="cc-stat cc-pink"><span>Đang chờ duyệt</span><strong>{{ quy.cho_duyet }} ngày</strong><small>Chưa trừ phép</small></div> {# Chờ duyệt. #}
+</div> {# Đóng thẻ. #}
+
+<div class="cc-toolbar"><h2 style="font-size:17px;color:var(--text-heading)">Các đơn đã trừ vào quỹ phép</h2><a class="hr-btn hr-secondary" href="{% url 'cham_cong:quy_phep' %}?nam={{ nam }}">Quay lại quỹ phép</a></div> {# Tiêu đề bảng và nút quay lại. #}
+<section class="hr-card hr-table-card"> {# Khung bảng. #}
+    <div class="hr-table-wrap"><table class="hr-table"> {# Bảng đơn đã duyệt. #}
+        <thead><tr><th scope="col">Mã đơn</th><th scope="col">Thời gian nghỉ</th><th scope="col">Số ngày tính vào {{ nam }}</th><th scope="col">Loại phép</th><th scope="col">Lý do</th><th scope="col">Trạng thái</th></tr></thead> {# Tiêu đề cột. #}
+        <tbody> {# Dữ liệu. #}
+            {% for don in page_obj %} {# Duyệt từng đơn. #}
+                <tr><td><a class="hr-code" href="{% url 'cham_cong:chi_tiet_duyet' don.pk %}">{{ don.ma_hien_thi }}</a></td><td>{{ don.ngaybatdau|date:"d/m/Y" }}{% if don.ngayketthuc != don.ngaybatdau %} – {{ don.ngayketthuc|date:"d/m/Y" }}{% endif %}</td><td>{{ don.so_ngay_nam }}{% if don.so_ngay_nam != don.songaynghi %} / {{ don.songaynghi }}{% endif %}</td><td>{{ don.maloaiphep.tenloaiphep }}</td><td>{{ don.lydo|truncatechars:50 }}</td><td><span class="hr-badge" data-state="{{ don.trangthai }}">{{ don.get_trangthai_display }}</span></td></tr> {# Một đơn. #}
+            {% empty %} {# Chưa có đơn. #}
+                <tr><td colspan="6" class="hr-empty">Nhân viên chưa sử dụng ngày phép năm nào trong năm {{ nam }}.</td></tr> {# Thông báo rỗng. #}
+            {% endfor %} {# Kết thúc danh sách. #}
+        </tbody> {# Đóng dữ liệu. #}
+    </table></div> {# Đóng bảng. #}
+    {% if page_obj.paginator.count %}{% include "nhan_su/includes/phan_trang.html" %}{% endif %} {# Phân trang dùng chung. #}
+</section> {# Đóng khung. #}
+
+{% for don in don_cho_duyet %}<div class="cc-box cc-yellow"><strong>Đơn {{ don.ma_hien_thi }} đang chờ duyệt</strong>Nghỉ {{ don.ngaybatdau|date:"d/m" }} – {{ don.ngayketthuc|date:"d/m/Y" }} ({{ don.songaynghi }} ngày{% if don.so_ngay_nam != don.songaynghi %}, trong đó {{ don.so_ngay_nam }} ngày thuộc năm {{ nam }}{% endif %}).</div>{% endfor %} {# Đơn chờ duyệt. #}
+{% if don_cho_duyet %}<div class="cc-toolbar cc-mt"><span class="{% if con_lai_neu_duyet < 0 %}hr-text-danger{% else %}hr-muted{% endif %}">Nếu duyệt hết các đơn chờ, số phép còn lại sẽ là {{ con_lai_neu_duyet }} ngày.</span><a class="hr-btn" href="{% url 'cham_cong:duyet_don_list' %}?q={{ nv.manv }}">Xem đơn chờ duyệt</a></div>{% endif %} {# Dự báo và lối tắt. #}
+{% endblock %} {# Kết thúc nội dung. #}

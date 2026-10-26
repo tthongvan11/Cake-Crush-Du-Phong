@@ -1,0 +1,10 @@
+{% if nhan_vien %} {# Chỉ hiện thẻ khi đã có hồ sơ. #}
+<section class="hr-hero hr-person-hero" aria-label="Tóm tắt hồ sơ"> {# Thẻ đầu trang theo mockup. #}
+    <div class="hr-identity"> {# Avatar, tên và trạng thái. #}
+        <span class="hr-avatar" aria-hidden="true">{{ nhan_vien.tennv|slice:':1'|upper }}</span> {# Lấy chữ đầu từ tên thật. #}
+        <div><h2>{{ nhan_vien.tennv }}</h2><p class="hr-muted">{{ nhan_vien.chucvu }} · {{ nhan_vien.manv }}</p><span class="hr-badge" data-state="{{ nhan_vien.trangthai|yesno:'1,0' }}">{{ nhan_vien.trangthai|yesno:"Đang làm việc,Đã nghỉ việc" }}</span></div> {# Trạng thái làm việc. #}
+    </div> {# Kết thúc danh tính. #}
+    <div class="hr-hero-meta"><small><i class="fa-solid fa-store" aria-hidden="true"></i> CỬA HÀNG</small><strong>Cake Crush</strong><span class="hr-muted">{{ nhan_vien.maphong.tenphongban }}</span></div> {# Phòng ban lấy từ dữ liệu thật. #}
+    <div class="hr-hero-meta"><small><i class="fa-regular fa-calendar-days" aria-hidden="true"></i> NGÀY GIA NHẬP</small><strong>{{ nhan_vien.ngayvaolam|date:"d/m/Y" }}</strong></div> {# Chỉ giữ ngày vào làm, bỏ lời mô tả trang trí. #}
+</section> {# Kết thúc thẻ tóm tắt. #}
+{% endif %} {# Kết thúc điều kiện hồ sơ. #}

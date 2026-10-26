@@ -1,0 +1,12 @@
+<div class="hr-pager"> {# Thanh thông tin và điều hướng. #}
+    <span class="hr-muted">Hiển thị {{ page_obj.start_index }}–{{ page_obj.end_index }} / {{ page_obj.paginator.count }} bản ghi</span> {# Số dòng đang xem. #}
+    <nav class="hr-actions" aria-label="Phân trang"> {# Nhóm nút chuyển trang. #}
+        {% if page_obj.has_previous %} {# Chỉ tạo nút khi có trang trước. #}
+            <a class="hr-page" aria-label="Trang trước" href="{% querystring page=page_obj.previous_page_number %}">‹</a> {# Giữ bộ lọc và đổi số trang. #}
+        {% endif %} {# Kết thúc trang trước. #}
+        {% for so in so_trang %}{% if so == page_obj.paginator.ELLIPSIS %}<span>{{ so }}</span>{% elif so == page_obj.number %}<span class="hr-page" aria-current="page">{{ so }}</span>{% else %}<a class="hr-page" href="{% querystring page=so %}">{{ so }}</a>{% endif %}{% endfor %} {# Số trang màu hồng theo mockup, không render hàng nghìn nút. #}
+        {% if page_obj.has_next %} {# Chỉ tạo nút khi có trang sau. #}
+            <a class="hr-page" aria-label="Trang sau" href="{% querystring page=page_obj.next_page_number %}">›</a> {# Giữ bộ lọc khi chuyển trang. #}
+        {% endif %} {# Kết thúc trang sau. #}
+    </nav> {# Đóng điều hướng. #}
+</div> {# Đóng phân trang. #}

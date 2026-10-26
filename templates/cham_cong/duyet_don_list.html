@@ -1,0 +1,43 @@
+{% extends "base.html" %} {# Dùng khung giao diện chung. #}
+{% load static %} {# Nạp đường dẫn static. #}
+{% block title %}Duyệt đơn nghỉ phép | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/cham_cong.css' %}">{% endblock %} {# Giao diện riêng. #}
+
+{% block content %} {# Bắt đầu nội dung. #}
+<div class="hr-head"><h1>Duyệt đơn nghỉ phép</h1></div> {# Tiêu đề trang. #}
+{% include "cham_cong/includes/tabs_quan_ly_phep.html" %} {# Hai tab. #}
+
+<form method="get" class="hr-filter"> {# Bộ lọc đơn. #}
+    <label class="hr-search">Nhân viên<input type="search" name="q" value="{{ q }}" placeholder="Tìm tên hoặc mã nhân viên"></label> {# Từ khóa. #}
+    <label>Trạng thái<select name="trang_thai"><option value="" {% if not trang_thai %}selected{% endif %}>Tất cả trạng thái</option>{% for ma, nhan in ds_trang_thai %}<option value="{{ ma }}" {% if ma == trang_thai %}selected{% endif %}>{{ nhan }}</option>{% endfor %}</select></label> {# Mặc định Chờ duyệt. #}
+    <label>Tháng gửi<input type="month" name="thang_gui" value="{{ thang_gui }}"></label> {# Lọc theo tháng gửi đơn. #}
+    <button type="submit" class="hr-btn">Lọc kết quả</button> {# Gửi bộ lọc. #}
+    <span class="hr-badge cc-filter-end" data-state="CHODUYET">{{ so_cho_duyet }} đơn chờ duyệt</span> {# Tổng số đơn đang chờ. #}
+</form> {# Đóng bộ lọc. #}
+
+<section class="hr-card hr-table-card"> {# Khung bảng. #}
+    <div class="hr-table-wrap"><table class="hr-table"> {# Bảng đơn. #}
+        <thead><tr><th scope="col">Nhân viên / Mã đơn</th><th scope="col">Ngày gửi</th><th scope="col">Thời gian nghỉ</th><th scope="col">Số ngày</th><th scope="col">Loại phép</th><th scope="col">Lý do</th><th scope="col">Trạng thái</th><th scope="col">Thao tác</th></tr></thead> {# Tiêu đề cột. #}
+        <tbody> {# Dữ liệu. #}
+            {% for don in page_obj %} {# Duyệt từng đơn. #}
+                <tr> {# Một đơn. #}
+                    <td>{{ don.manv.tennv }}<small class="hr-muted">{{ don.manv.manv }} · {{ don.ma_hien_thi }}</small></td> {# Người gửi và mã đơn. #}
+                    <td>{{ don.thoigianguidon|date:"d/m/Y" }}</td> {# Ngày gửi. #}
+                    <td>{{ don.ngaybatdau|date:"d/m" }}{% if don.ngayketthuc != don.ngaybatdau %} – {{ don.ngayketthuc|date:"d/m/Y" }}{% else %}/{{ don.ngaybatdau.year }}{% endif %}</td> {# Khoảng ngày. #}
+                    <td>{{ don.songaynghi }}</td> {# Số ngày. #}
+                    <td>{{ don.maloaiphep.tenloaiphep }}</td> {# Loại phép. #}
+                    <td>{{ don.lydo|truncatechars:40 }}</td> {# Lý do. #}
+                    <td><span class="hr-badge" data-state="{{ don.trangthai }}">{{ don.get_trangthai_display }}</span></td> {# Trạng thái. #}
+                    <td><a class="cc-link" href="{% url 'cham_cong:chi_tiet_duyet' don.pk %}">Xem đơn</a>{% if don.thieu_phep %}<br><a class="cc-link" href="{% url 'cham_cong:chi_tiet_quy_phep' don.manv.manv %}?nam={{ don.ngaybatdau.year }}">Xem quỹ phép</a>{% endif %}</td> {# Thao tác. #}
+                </tr> {# Đóng dòng. #}
+            {% empty %} {# Không có đơn. #}
+                <tr><td colspan="8" class="hr-empty">Không có đơn nghỉ phép phù hợp.</td></tr> {# Thông báo rỗng. #}
+            {% endfor %} {# Kết thúc danh sách. #}
+        </tbody> {# Đóng dữ liệu. #}
+    </table></div> {# Đóng bảng. #}
+    {% if page_obj.paginator.count %}{% include "nhan_su/includes/phan_trang.html" %}{% endif %} {# Phân trang dùng chung. #}
+</section> {# Đóng khung. #}
+
+{% for don in canh_bao %}<div class="cc-box cc-red"><strong>{{ don.ma_hien_thi }} · Quỹ phép không đủ</strong>{% for n in don.thieu_phep %}Năm {{ n.nam }}: nhân viên {{ don.manv.manv }} xin nghỉ {{ n.so_ngay }} ngày, hiện còn {{ n.quy.con_lai }} ngày phép. {% endfor %}Cần xem xét loại nghỉ không hưởng lương hoặc từ chối đơn.</div>{% endfor %} {# Cảnh báo vượt quỹ theo từng năm. #}
+<p class="cc-footnote">Các đơn đã duyệt hoặc bị từ chối được giữ ở chế độ chỉ đọc.</p> {# Quy tắc. #}
+{% endblock %} {# Kết thúc nội dung. #}
