@@ -1,0 +1,72 @@
+{% extends "danh_gia/base_danh_gia.html" %}
+{% block page_title %}Đánh giá và chấm điểm hiệu suất{% endblock %}
+{% block page_sub %}Chọn kỳ và nhân viên, chấm điểm từng tiêu chí rồi kiểm tra kết quả trước khi lưu.{% endblock %}
+{% block content %}
+<div class="card-x mb-3">
+  <div class="card-head"><span class="ico"></span><h6>Thông tin đánh giá</h6><span class="chip chip-gray">Chưa lưu</span></div>
+  <form method="get" class="row g-3">
+    <div class="col-md-6"><label class="form-label">Kỳ đánh giá *</label>
+      <select name="ky" class="form-select" onchange="this.form.submit()">
+        <option value="">— Chọn kỳ đánh giá —</option>
+        {% for k in ds_ky %}<option value="{{ k.maky }}" {% if ky and k.maky == ky.maky %}selected{% endif %}>{{ k.tenky }}</option>{% endfor %}
+      </select></div>
+    <div class="col-md-6"><label class="form-label">Nhân viên *</label>
+      <select name="nv" class="form-select" onchange="this.form.submit()">
+        <option value="">— Chọn nhân viên —</option>
+        {% for n in nhan_vien %}<option value="{{ n.pk }}" {% if nv and n.pk == nv.pk %}selected{% endif %} {% if n.pk in da_danh_gia %}disabled{% endif %}>{{ n.pk }} • {{ n }}{% if n.pk in da_danh_gia %} (đã đánh giá){% endif %}</option>{% endfor %}
+      </select></div>
+    <div class="col-12 nho">Mỗi nhân viên chỉ được đánh giá một lần trong mỗi kỳ.</div>
+  </form>
+</div>
+
+{% if form %}
+<form method="post" novalidate>
+  {% csrf_token %}
+  <div class="card-x">
+    <div class="card-head"><span class="ico"></span><h6>Chấm điểm theo tiêu chí</h6><span class="chip">{{ form.tieu_chi_list|length }} tiêu chí bắt buộc</span></div>
+    <table class="table align-middle">
+      <thead><tr><th>Tiêu chí</th><th>Nội dung</th><th style="width:170px">Điểm * (0–10)</th></tr></thead>
+      <tbody>
+      {% for tc, diem in form.cac_dong %}
+        <tr>
+          <td>{{ tc.tentieuchi }}</td><td>{{ tc.mota|default:"" }}</td>
+          <td>{{ diem }}{% for e in diem.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <div class="row g-3">
+      <div class="col-md-7">{% include "danh_gia/_truong.html" with f=form.nhanxet %}</div>
+      <div class="col-md-5"><label class="form-label">Tổng điểm / Xếp loại</label>
+        <input id="tong" class="form-control" readonly value="— / Chưa xác định">
+        <div class="nho mt-1">Tất cả tiêu chí bắt buộc phải có điểm hợp lệ trước khi hoàn thành.</div></div>
+    </div>
+  </div>
+  <div class="footbar">
+    <span>Chưa lưu dữ liệu. Hoàn thành sẽ mở bước xem và xác nhận kết quả.</span>
+    <div><a class="btn btn-light border" href="{% url 'danh_gia:trang_chu' %}">Thoát</a>
+         <button id="btn-xong" class="btn btn-primary" type="submit" disabled>Hoàn thành đánh giá</button></div>
+  </div>
+</form>
+{{ nguong|json_script:"nguong-data" }}
+<script>
+  var cfg = JSON.parse(document.getElementById('nguong-data').textContent);
+  function capNhat() {
+    var o = document.querySelectorAll('.o-diem'), ok = o.length > 0, tong = 0;
+    o.forEach(function (i) {
+      var v = i.value.trim(), n = Number(v);
+      if (v === '' || !Number.isInteger(n) || n < 0 || n > 10) { ok = false; } else { tong += n; }
+    });
+    var ket = document.getElementById('tong');
+    if (ok) {
+      var tb = Math.round(tong / o.length * 100) / 100, loai = cfg.cuoi;
+      for (var k = 0; k < cfg.nguong.length; k++) { if (tb >= cfg.nguong[k][0]) { loai = cfg.nguong[k][1]; break; } }
+      ket.value = tb + ' / ' + loai;
+    } else { ket.value = '— / Chưa xác định'; }
+    document.getElementById('btn-xong').disabled = !ok;
+  }
+  document.querySelectorAll('.o-diem').forEach(function (i) { i.addEventListener('input', capNhat); });
+  capNhat();
+</script>
+{% endif %}
+{% endblock %}

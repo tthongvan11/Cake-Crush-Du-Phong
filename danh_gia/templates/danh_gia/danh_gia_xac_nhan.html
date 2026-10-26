@@ -1,0 +1,39 @@
+{% extends "danh_gia/base_danh_gia.html" %}
+{% block page_title %}Xem và xác nhận kết quả đánh giá{% endblock %}
+{% block page_sub %}Kiểm tra thông tin đánh giá trước khi lưu kết quả cho nhân viên.{% endblock %}
+{% block back_url %}{{ quay_lai }}{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card-x">
+      <div class="card-head"><span class="ico"></span><h6>Thông tin và điểm từng tiêu chí</h6><span class="chip chip-warn">Chưa lưu</span></div>
+      <div class="mb-3"><strong>{{ nv }}</strong> <span class="nho">{{ nv.pk }}</span></div>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6"><label class="form-label">Kỳ đánh giá</label><input class="form-control" readonly value="{{ ky.tenky }}"></div>
+        <div class="col-md-6"><label class="form-label">Người đánh giá</label><input class="form-control" readonly value="{{ nguoi_danh_gia }}"></div>
+      </div>
+      <table class="table">
+        <thead><tr><th>Tiêu chí</th><th style="width:100px">Điểm</th></tr></thead>
+        <tbody>{% for c in chi_tiet %}<tr><td>{{ c.tieuchi.tentieuchi }}</td><td>{{ c.diem }}</td></tr>{% endfor %}</tbody>
+      </table>
+      <div class="fw-semibold small mb-1">Nhận xét hiệu suất và năng lực</div>
+      <div>{{ nhanxet|default:"(không có nhận xét)" }}</div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card-x">
+      <div class="card-head"><span class="ico"></span><h6>Tổng hợp kết quả</h6></div>
+      <div class="nho">Tổng điểm</div><div class="stat v mb-3" style="font-size:28px;font-weight:700">{{ diem_tb }}</div>
+      <div class="nho">Xếp loại</div><div class="fw-bold fs-5">{{ xep_loai }}</div>
+    </div>
+  </div>
+</div>
+<form method="post">
+  {% csrf_token %}
+  <div class="footbar">
+    <span>Kết quả chưa được lưu cho đến khi bạn xác nhận.</span>
+    <div><a class="btn btn-light border" href="{{ quay_lai }}">Quay lại chỉnh sửa</a>
+         <button class="btn btn-primary" type="submit">Xác nhận và lưu kết quả</button></div>
+  </div>
+</form>
+{% endblock %}

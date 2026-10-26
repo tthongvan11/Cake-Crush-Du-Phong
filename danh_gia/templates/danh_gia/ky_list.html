@@ -1,0 +1,52 @@
+{% extends "danh_gia/base_danh_gia.html" %}
+{% block page_title %}Danh sách kỳ đánh giá{% endblock %}
+{% block page_sub %}Quản lý kỳ đánh giá, thiết lập tiêu chí và theo dõi kết quả nhân viên.{% endblock %}
+{% block page_action %}<a class="btn btn-primary" href="{% url 'danh_gia:ky_tao' %}">+ Tạo kỳ đánh giá</a>{% endblock %}
+{% block content %}
+<div class="card-x">
+  <div class="card-head"><span class="ico"></span><h6>Các kỳ đánh giá</h6><span class="chip chip-gray">{{ paginator.count }} kỳ</span></div>
+  <form method="get" class="row g-3 mb-3">
+    <div class="col-md-5"><label class="form-label">Tìm kiếm</label>
+      <input class="form-control" name="q" value="{{ q }}" placeholder="Tìm theo tên kỳ đánh giá"></div>
+    <div class="col-md-4"><label class="form-label">Trạng thái thiết lập</label>
+      <select class="form-select" name="trang_thai" onchange="this.form.submit()">
+        <option value="">Tất cả trạng thái</option>
+        <option value="chua" {% if trang_thai == "chua" %}selected{% endif %}>Chưa thiết lập</option>
+        <option value="du" {% if trang_thai == "du" %}selected{% endif %}>Đủ tiêu chí</option>
+        <option value="co_ket_qua" {% if trang_thai == "co_ket_qua" %}selected{% endif %}>Có kết quả đã lưu</option>
+      </select></div>
+    <div class="col-md-3"><label class="form-label">Năm</label>
+      <select class="form-select" name="nam" onchange="this.form.submit()">
+        <option value="">Tất cả</option>
+        {% for d in ds_nam %}<option value="{{ d.year }}" {% if nam == d.year|stringformat:"s" %}selected{% endif %}>{{ d.year }}</option>{% endfor %}
+      </select></div>
+  </form>
+  <table class="table align-middle">
+    <thead><tr><th>Tên kỳ đánh giá</th><th>Thời gian</th><th>Tiêu chí</th><th>Thông tin hiện có</th><th>Thao tác</th></tr></thead>
+    <tbody>
+    {% for ky in trang %}
+      <tr>
+        <td>{{ ky.tenky }}</td>
+        <td>{{ ky.thoigianbatdau|date:"d/m/Y" }} – {{ ky.thoigianketthuc|date:"d/m/Y" }}</td>
+        <td>{% if ky.so_tieu_chi %}{{ ky.so_tieu_chi|stringformat:"02d" }} tiêu chí{% else %}Chưa thiết lập{% endif %}</td>
+        <td>{% if ky.so_tieu_chi == 0 %}<span class="chip chip-warn">Chưa thiết lập</span>
+            {% elif ky.so_danh_gia %}<span class="chip chip-blue">Có kết quả đã lưu</span>
+            {% else %}<span class="chip chip-green">Đủ tiêu chí</span>{% endif %}</td>
+        <td>{% if ky.so_danh_gia %}<a href="{% url 'danh_gia:ky_ket_qua' ky.maky %}">Xem kết quả</a>
+            {% else %}<a href="{% url 'danh_gia:tieu_chi' ky.maky %}">Thiết lập tiêu chí</a>{% endif %}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5" class="text-center nho">Không có kỳ đánh giá nào.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-between align-items-center">
+    <span class="nho">{% if paginator.count %}Hiển thị {{ trang.start_index }}–{{ trang.end_index }} trong {{ paginator.count }} kỳ đánh giá{% endif %}</span>
+    <div class="btn-group btn-group-sm">
+      {% if trang.has_previous %}<a class="btn btn-outline-secondary" href="?{{ giu_loc }}&trang={{ trang.previous_page_number }}">Trước</a>{% endif %}
+      <span class="btn btn-primary disabled">{{ trang.number }}</span>
+      {% if trang.has_next %}<a class="btn btn-outline-secondary" href="?{{ giu_loc }}&trang={{ trang.next_page_number }}">Sau</a>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

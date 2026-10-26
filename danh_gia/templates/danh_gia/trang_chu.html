@@ -1,0 +1,34 @@
+{% extends "danh_gia/base_danh_gia.html" %}
+{% block page_title %}Đánh giá &amp; Khen thưởng{% endblock %}
+{% block page_sub %}Chọn chức năng bạn cần thực hiện.{% endblock %}
+{% block page_action %}{% endblock %}
+{% block content %}
+<div class="row g-3">
+  {% if co_quyen_danh_gia %}
+  <div class="col-md-4"><div class="card-x h-100">
+    <h6>Kỳ đánh giá</h6><p class="nho">Tạo kỳ, thiết lập tiêu chí, xem kết quả theo kỳ.</p>
+    <a class="btn btn-primary btn-sm" href="{% url 'danh_gia:ky_ds' %}">Quản lý kỳ đánh giá</a>
+  </div></div>
+  <div class="col-md-4"><div class="card-x h-100">
+    <h6>Chấm điểm hiệu suất</h6><p class="nho">Chọn kỳ, nhân viên và chấm điểm theo tiêu chí.</p>
+    <a class="btn btn-primary btn-sm" href="{% url 'danh_gia:danh_gia_tao' %}">Đánh giá nhân viên</a>
+  </div></div>
+  {% endif %}
+  {% if co_quyen_khen_thuong %}
+  <div class="col-md-4"><div class="card-x h-100">
+    <h6>Khen thưởng</h6><p class="nho">Ghi nhận khen thưởng dựa trên kết quả đánh giá.</p>
+    <a class="btn btn-primary btn-sm" href="{% url 'danh_gia:khen_thuong' %}">Ghi nhận khen thưởng</a>
+  </div></div>
+  {% endif %}
+  {% if co_quyen_ky_luat %}
+  <div class="col-md-4"><div class="card-x h-100">
+    <h6>Kỷ luật</h6><p class="nho">Ghi nhận kỷ luật đối với nhân viên vi phạm.</p>
+    <a class="btn btn-primary btn-sm" href="{% url 'danh_gia:ky_luat' %}">Quản lý kỷ luật</a>
+  </div></div>
+  {% endif %}
+  <div class="col-md-4"><div class="card-x h-100">
+    <h6>Kết quả đánh giá của tôi</h6><p class="nho">Xem điểm, xếp loại, nhận xét và gửi phản hồi.</p>
+    <a class="btn btn-outline-secondary btn-sm" href="{% url 'danh_gia:ket_qua' %}">Xem kết quả</a>
+  </div></div>
+</div>
+{% endblock %}

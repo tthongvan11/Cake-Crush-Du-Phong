@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cake Crush HR - Chương trình đào tạo của tôi{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="hr-head" style="margin-bottom: 24px;">
+    <div>
+        <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">Chương trình đào tạo của tôi</h1>
+        <p style="color: #64748b; font-size: 13.5px; font-weight: 500;">Xem nội dung và kết quả chương trình được phân công.</p>
+    </div>
+</div>
+
+<!-- Card Danh sách chương trình -->
+<div class="dt-card" style="padding: 0; overflow: visible;">
+    <div class="dt-card-header" style="margin: 0; padding: 20px 24px; border-bottom: 1px solid #f1e8ee;">
+        <span class="dt-card-badge"><i class="fa-solid fa-book-open"></i></span>
+        <span>Chương trình được phân công</span>
+    </div>
+
+    <div class="hr-table-wrap">
+        <table class="hr-table">
+            <thead>
+                <tr>
+                    <th style="width: 130px;">Mã đào tạo</th>
+                    <th>Tên chương trình</th>
+                    <th style="width: 220px;">Thời gian</th>
+                    <th style="width: 160px;">Tiến độ</th>
+                    <th style="width: 140px;">Kết quả</th>
+                    <th style="width: 140px; text-align: center;">Thao tác</th>
+                </tr>
+            </thead>
+            {% if ds_phan_cong %}
+            <tbody>
+                {% for pc in ds_phan_cong %}
+                <tr>
+                    <td style="font-weight: 700; color: #df3477;">{{ pc.khoadaotao.makhoa }}</td>
+                    <td style="font-weight: 600; color: #1e293b;">{{ pc.khoadaotao.tenkhoa }}</td>
+                    <td style="color: #64748b; font-size: 12.5px;">
+                        {{ pc.khoadaotao.ngaybatdau|date:"d/m" }} - {{ pc.khoadaotao.ngayketthuc|date:"d/m/Y" }}
+                    </td>
+                    <td>
+                        {% if pc.tiendo == "Đã hoàn thành" %}
+                            <span class="badge-status-dot green">Đã hoàn thành</span>
+                        {% else %}
+                            <span class="badge-status-dot orange">Chưa hoàn thành</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if pc.ketqua == "Đạt" %}
+                            <span class="badge-result pass">Đạt</span>
+                        {% elif pc.ketqua == "Chưa đạt" %}
+                            <span class="badge-result fail">Chưa đạt</span>
+                        {% else %}
+                            <span class="badge-result pending">Chờ đánh giá</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        <a href="{% url 'dao_tao:xem_noi_dung_dao_tao' %}?khoa={{ pc.khoadaotao_id }}" class="btn-secondary-white" style="padding: 6px 14px; font-size: 12px; border-radius: 6px;">
+                            <i class="fa-solid fa-eye"></i> Xem
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table>
+    </div>
+
+    {% if not ds_phan_cong %}
+    <!-- Empty State -->
+    <div style="padding: 40px 24px;">
+        <div class="dt-empty-state">
+            <div class="dt-empty-icon">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <div class="dt-empty-title">Chưa có chương trình đào tạo được phân công</div>
+            <div class="dt-empty-sub">Chương trình được phân công sẽ hiển thị tại đây.</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Footer Actions -->
+    <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 18px 24px; border-top: 1px solid #f1e8ee; background: #fffcfd; border-radius: 0 0 16px 16px;">
+        <a href="{% url 'dao_tao:xem_noi_dung_dao_tao' %}" class="btn-secondary-white">
+            <i class="fa-solid fa-table-cells-large"></i> Xem nội dung
+        </a>
+        <a href="{% url 'dao_tao:ket_qua_dao_tao_cua_toi' %}" class="btn-secondary-white">
+            <i class="fa-regular fa-star"></i> Xem kết quả
+        </a>
+    </div>
+</div>
+{% endblock %}

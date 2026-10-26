@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'tai_khoan',
     'nhan_su',
     'cham_cong',  # Phân hệ Chấm công và Quản lý phép.
+    'dao_tao',    # Phân hệ Đào tạo.
+    'danh_gia',   # Phân hệ Đánh giá.
 ]
 
 MIDDLEWARE = [

@@ -467,6 +467,8 @@
         }
     </style>
     <link rel="stylesheet" href="{% static 'css/nhan_su.css' %}?v=20261018-4"> {# Nạp giao diện đã bỏ bộ lọc ngày. #}
+    <link rel="stylesheet" href="{% static 'css/cham_cong.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dao_tao.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -532,13 +534,13 @@
                     </a> {# Đóng liên kết. #}
                 </li> {# Đóng mục nghỉ phép. #}
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{% if user.is_staff or user.is_superuser %}{% url 'dao_tao:danh_sach_khoa' %}{% else %}{% url 'dao_tao:chuong_trinh_cua_toi' %}{% endif %}" class="nav-link {% if '/dao-tao' in request.path %}active{% endif %}">
                         <i class="fa-solid fa-chalkboard-user"></i>
                         <span>Đào tạo</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{% url 'danh_gia:trang_chu' %}" class="nav-link {% if '/danh-gia/' in request.path %}active{% endif %}">
                         <i class="fa-regular fa-star"></i>
                         <span>Đánh giá</span>
                     </a>

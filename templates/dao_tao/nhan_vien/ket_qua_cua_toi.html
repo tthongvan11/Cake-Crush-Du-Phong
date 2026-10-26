@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cake Crush HR - Kết quả đào tạo của tôi{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb & Header -->
+<div style="font-size: 12px; color: #94a3b8; margin-bottom: 6px;">
+    <span>Cake Crush HR</span> / <span style="color: #df3477;">Đào tạo</span>
+</div>
+<div class="hr-head" style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
+    <div>
+        <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">Kết quả đào tạo của tôi</h1>
+        <p style="color: #64748b; font-size: 13.5px; font-weight: 500;">Xem tiến độ và kết quả chương trình được phân công.</p>
+    </div>
+    <div>
+        <a href="{% url 'dao_tao:chuong_trinh_cua_toi' %}" class="btn-top-back">
+            <i class="fa-solid fa-arrow-right"></i> Quay lại
+        </a>
+    </div>
+</div>
+
+<!-- Card Kết quả đào tạo -->
+<div class="dt-card">
+    <div class="dt-card-header">
+        <span class="dt-card-badge"><i class="fa-regular fa-star"></i></span>
+        <span>Kết quả đào tạo</span>
+    </div>
+
+    <!-- Chọn chương trình đào tạo được phân công -->
+    <div style="margin-bottom: 24px;">
+        <label class="dt-label" for="selectChuongTrinhKQ">Chương trình đào tạo được phân công</label>
+        <select id="selectChuongTrinhKQ" class="dt-select" data-placeholder="Tìm kiếm chương trình..." onchange="window.location.href='?khoa=' + this.value">
+            {% if not ds_phan_cong %}
+                <option value="">Chưa có chương trình nào được phân công</option>
+            {% else %}
+                {% for pc in ds_phan_cong %}
+                    <option value="{{ pc.khoadaotao_id }}" {% if phan_cong.khoadaotao_id == pc.khoadaotao_id %}selected{% endif %}>
+                        {{ pc.khoadaotao.makhoa }} - {{ pc.khoadaotao.tenkhoa }}
+                    </option>
+                {% endfor %}
+            {% endif %}
+        </select>
+    </div>
+
+    {% if phan_cong %}
+        {% if phan_cong.ketqua == "Chờ đánh giá" %}
+            <!-- Empty state khi chưa có kết quả đánh giá -->
+            <div class="dt-empty-state" style="margin: 20px 0 28px 0;">
+                <div class="dt-empty-icon">
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <div class="dt-empty-title">Chưa có kết quả đào tạo</div>
+                <div class="dt-empty-sub">Kết quả sẽ hiển thị khi quản lý cập nhật.</div>
+            </div>
+        {% endif %}
+
+        <!-- 3 Cột: Tiến độ, Ngày hoàn thành, Kết quả -->
+        <div class="dt-form-row dt-cols-3">
+            <!-- Tiến độ -->
+            <div>
+                <label class="dt-label">Tiến độ</label>
+                <div class="dt-display-box">
+                    <span>{{ phan_cong.tiendo }}</span>
+                </div>
+            </div>
+
+            <!-- Ngày hoàn thành -->
+            <div>
+                <label class="dt-label">Ngày hoàn thành</label>
+                <div class="dt-display-box">
+                    <span>{% if phan_cong.ngayhoanthanh %}{{ phan_cong.ngayhoanthanh|date:'d/m/Y' }}{% else %}—{% endif %}</span>
+                    <i class="fa-regular fa-calendar" style="color: #9ca3af;"></i>
+                </div>
+            </div>
+
+            <!-- Kết quả -->
+            <div>
+                <label class="dt-label">Kết quả</label>
+                <div class="dt-display-box">
+                    <span>{% if phan_cong.ketqua == 'Chờ đánh giá' %}—{% else %}{{ phan_cong.ketqua }}{% endif %}</span>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- Empty state khi chưa có phân công nào -->
+        <div class="dt-empty-state">
+            <div class="dt-empty-icon">
+                <i class="fa-regular fa-star"></i>
+            </div>
+            <div class="dt-empty-title">Chưa có kết quả đào tạo</div>
+            <div class="dt-empty-sub">Kết quả hiển thị khi quản lý cập nhật.</div>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const selectChuongTrinh = document.getElementById("selectChuongTrinhKQ");
+    initSearchableSelect(selectChuongTrinh, "Tìm kiếm chương trình đào tạo...");
+});
+</script>
+{% endblock %}

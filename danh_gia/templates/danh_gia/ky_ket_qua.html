@@ -1,0 +1,22 @@
+{% extends "danh_gia/base_danh_gia.html" %}
+{% block page_title %}Kết quả {{ ky.tenky }}{% endblock %}
+{% block page_sub %}{{ ky.thoigianbatdau|date:"d/m/Y" }} – {{ ky.thoigianketthuc|date:"d/m/Y" }}{% endblock %}
+{% block back_url %}{% url 'danh_gia:ky_ds' %}{% endblock %}
+{% block content %}
+<div class="card-x">
+  <div class="card-head"><span class="ico"></span><h6>Kết quả đã lưu</h6><span class="chip chip-blue">{{ ds|length }} nhân viên</span></div>
+  <table class="table align-middle">
+    <thead><tr><th>Mã NV</th><th>Nhân viên</th><th>Ngày đánh giá</th><th>Điểm TB</th><th>Xếp loại</th></tr></thead>
+    <tbody>
+    {% for dg in ds %}
+      <tr><td>{{ dg.manv_id }}</td><td>{{ dg.manv }}</td><td>{{ dg.ngaydanhgia|date:"d/m/Y" }}</td>
+          <td>{{ dg.tb|floatformat:2 }}</td><td>{{ dg.get_xeploai_display }}</td></tr>
+    {% empty %}
+      <tr><td colspan="5" class="text-center nho">Chưa có kết quả nào.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <a class="btn btn-primary btn-sm" href="{% url 'danh_gia:ky_ds' %}">Về danh sách kỳ</a>
+  <a class="btn btn-outline-secondary btn-sm" href="{% url 'danh_gia:danh_gia_tao' %}?ky={{ ky.maky }}">Đánh giá thêm nhân viên</a>
+</div>
+{% endblock %}

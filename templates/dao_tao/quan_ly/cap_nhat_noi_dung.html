@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cake Crush HR - Cập nhật nội dung đào tạo {{ khoa.makhoa }}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="hr-head" style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
+    <div>
+        <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">Cập nhật nội dung đào tạo</h1>
+        <p style="color: #64748b; font-size: 13.5px; font-weight: 500;">Cập nhật nội dung của khóa đào tạo.</p>
+    </div>
+    <div>
+        <a href="{% url 'dao_tao:chi_tiet_khoa' makhoa=khoa.makhoa %}" class="btn-top-back">
+            <i class="fa-solid fa-arrow-right"></i> Quay lại
+        </a>
+    </div>
+</div>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+
+    <!-- Details Card -->
+    <div class="dt-card">
+        <div class="dt-card-header">
+            <span class="dt-card-badge"><i class="fa-solid fa-book-open"></i></span>
+            <span>Thông tin khóa đào tạo</span>
+        </div>
+
+        <!-- Row 1: Mã khóa (30%) & Tên khóa (70%) (Read-only) -->
+        <div class="dt-form-row dt-cols-2-unequal">
+            <div>
+                <label class="dt-label">Mã khóa đào tạo</label>
+                <div class="dt-display-box">
+                    <span>{{ khoa.makhoa }}</span>
+                </div>
+            </div>
+
+            <div>
+                <label class="dt-label">Tên khóa đào tạo</label>
+                <div class="dt-display-box">
+                    <span>{{ khoa.tenkhoa }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2: Nội dung đào tạo (Editable) -->
+        <div class="dt-form-row dt-cols-1" style="margin-top: 18px;">
+            <div>
+                <label class="dt-label" for="id_noidung">Nội dung đào tạo *</label>
+                {{ form.noidung }}
+                {% if form.noidung.errors %}
+                    <span class="dt-error-text">{{ form.noidung.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Row 3: Ngày bắt đầu, Ngày kết thúc, Trạng thái (Read-only) -->
+        <div class="dt-form-row dt-cols-3" style="margin-top: 18px;">
+            <div>
+                <label class="dt-label">Ngày bắt đầu</label>
+                <div class="dt-display-box">
+                    <span>{{ khoa.ngaybatdau|date:'d/m/Y' }}</span>
+                    <i class="fa-regular fa-calendar" style="color: #9ca3af;"></i>
+                </div>
+            </div>
+
+            <div>
+                <label class="dt-label">Ngày kết thúc</label>
+                <div class="dt-display-box">
+                    <span>{{ khoa.ngayketthuc|date:'d/m/Y' }}</span>
+                    <i class="fa-regular fa-calendar" style="color: #9ca3af;"></i>
+                </div>
+            </div>
+
+            <div>
+                <label class="dt-label">Trạng thái</label>
+                <div class="dt-display-box">
+                    <span>{{ khoa.trangthai }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="dt-bottom-bar">
+        <a href="{% url 'dao_tao:chi_tiet_khoa' makhoa=khoa.makhoa %}" class="btn-secondary-white">
+            <i class="fa-solid fa-arrow-right"></i> Hủy
+        </a>
+        <button type="submit" class="btn-primary-pink">
+            <i class="fa-solid fa-check"></i> Lưu nội dung
+        </button>
+    </div>
+</form>
+{% endblock %}

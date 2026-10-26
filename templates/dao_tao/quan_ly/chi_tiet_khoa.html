@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cake Crush HR - Chi tiết khóa đào tạo {{ khoa.makhoa }}{% endblock %}
+
+{% block content %}
+<!-- Header & Action Buttons -->
+<div class="hr-head" style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+    <div>
+        <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">Chi tiết khóa đào tạo</h1>
+        <p style="color: #64748b; font-size: 13.5px; font-weight: 500;">Thông tin khóa đào tạo.</p>
+    </div>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="{% url 'dao_tao:cap_nhat_noi_dung_khoa' makhoa=khoa.makhoa %}" class="btn-secondary-white">
+            <i class="fa-solid fa-pen"></i> Cập nhật nội dung
+        </a>
+        <a href="{% url 'dao_tao:phan_cong_dao_tao' %}?khoa={{ khoa.makhoa }}" class="btn-primary-pink">
+            <i class="fa-solid fa-users"></i> Phân công
+        </a>
+        <a href="{% url 'dao_tao:theo_doi_dao_tao' %}?khoa={{ khoa.makhoa }}" class="btn-secondary-white">
+            <i class="fa-solid fa-table-cells-large"></i> Theo dõi đào tạo
+        </a>
+    </div>
+</div>
+
+<!-- Details Card -->
+<div class="dt-card">
+    <div class="dt-card-header">
+        <span class="dt-card-badge"><i class="fa-solid fa-book-open"></i></span>
+        <span>Thông tin khóa đào tạo</span>
+    </div>
+
+    <!-- Row 1: Mã khóa (30%) & Tên khóa (70%) -->
+    <div class="dt-form-row dt-cols-2-unequal">
+        <div>
+            <label class="dt-label">Mã khóa đào tạo</label>
+            <div class="dt-display-box">
+                <span>{{ khoa.makhoa }}</span>
+            </div>
+        </div>
+
+        <div>
+            <label class="dt-label">Tên khóa đào tạo</label>
+            <div class="dt-display-box">
+                <span>{{ khoa.tenkhoa }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 2: Nội dung đào tạo (Full width) -->
+    <div class="dt-form-row dt-cols-1" style="margin-top: 18px;">
+        <div>
+            <label class="dt-label">Nội dung đào tạo</label>
+            <div class="dt-display-box textarea-like">
+                <span>{{ khoa.noidung|default:"—" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 3: Ngày bắt đầu, Ngày kết thúc, Trạng thái (3 columns) -->
+    <div class="dt-form-row dt-cols-3" style="margin-top: 18px;">
+        <div>
+            <label class="dt-label">Ngày bắt đầu</label>
+            <div class="dt-display-box">
+                <span>{{ khoa.ngaybatdau|date:'d/m/Y' }}</span>
+                <i class="fa-regular fa-calendar" style="color: #9ca3af;"></i>
+            </div>
+        </div>
+
+        <div>
+            <label class="dt-label">Ngày kết thúc</label>
+            <div class="dt-display-box">
+                <span>{{ khoa.ngayketthuc|date:'d/m/Y' }}</span>
+                <i class="fa-regular fa-calendar" style="color: #9ca3af;"></i>
+            </div>
+        </div>
+
+        <div>
+            <label class="dt-label">Trạng thái</label>
+            <div class="dt-display-box">
+                <span>{{ khoa.trangthai }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Danh sách nhân viên tham gia khóa học -->
+<div class="dt-card" style="padding: 0; overflow: visible;">
+    <div style="padding: 18px 24px; border-bottom: 1px solid #f1e8ee; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-weight: 700; color: #1e293b; font-size: 15px;">
+            Danh sách nhân viên tham gia ({{ khoa.so_nhan_vien }})
+        </div>
+        <a href="{% url 'dao_tao:phan_cong_dao_tao' %}?khoa={{ khoa.makhoa }}" style="font-size: 13px; color: #df3477; font-weight: 600; text-decoration: none;">
+            + Thêm nhân viên
+        </a>
+    </div>
+    <div class="hr-table-wrap">
+        <table class="hr-table">
+            <thead>
+                <tr>
+                    <th>Mã NV</th>
+                    <th>Họ và tên</th>
+                    <th>Chức vụ</th>
+                    <th>Tiến độ</th>
+                    <th>Ngày hoàn thành</th>
+                    <th>Kết quả</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pc in khoa.danh_sach_phan_cong.all %}
+                <tr>
+                    <td style="font-weight: 700; color: #df3477;">{{ pc.nhanvien.manv }}</td>
+                    <td style="font-weight: 600; color: #1e293b;">{{ pc.nhanvien.tennv }}</td>
+                    <td style="color: #64748b;">{{ pc.nhanvien.chucvu|default:"—" }}</td>
+                    <td>
+                        {% if pc.tiendo == "Đã hoàn thành" %}
+                            <span class="badge-status-dot green">Đã hoàn thành</span>
+                        {% else %}
+                            <span class="badge-status-dot orange">Chưa hoàn thành</span>
+                        {% endif %}
+                    </td>
+                    <td style="color: #64748b;">{{ pc.ngayhoanthanh|date:"d/m/Y"|default:"—" }}</td>
+                    <td>
+                        {% if pc.ketqua == "Đạt" %}
+                            <span class="badge-result pass">Đạt</span>
+                        {% elif pc.ketqua == "Chưa đạt" %}
+                            <span class="badge-result fail">Chưa đạt</span>
+                        {% else %}
+                            <span class="badge-result pending">Chờ đánh giá</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 30px; color: #94a3b8;">
+                        Chưa có nhân viên nào được phân công vào khóa học này.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

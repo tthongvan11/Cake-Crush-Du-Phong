@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cake Crush HR - Phân công đào tạo{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="hr-head" style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
+    <div>
+        <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">Phân công đào tạo</h1>
+        <p style="color: #64748b; font-size: 13.5px; font-weight: 500;">Chọn nhân viên, sau đó chọn khóa đào tạo.</p>
+    </div>
+    <div>
+        <a href="{% url 'dao_tao:danh_sach_khoa' %}" class="btn-top-back">
+            <i class="fa-solid fa-arrow-right"></i> Quay lại
+        </a>
+    </div>
+</div>
+
+<!-- Form Card -->
+<form method="post" id="formPhanCong" novalidate>
+    {% csrf_token %}
+
+    <div class="dt-card">
+        <div class="dt-card-header">
+            <span class="dt-card-badge"><i class="fa-solid fa-users"></i></span>
+            <span>Phân công nhân viên</span>
+        </div>
+
+        <div class="dt-form-row dt-cols-1">
+            <!-- Chọn nhân viên -->
+            <div>
+                <label class="dt-label" for="selectNhanVien">Nhân viên *</label>
+                <select name="nhanvien" id="selectNhanVien" class="dt-select" data-placeholder="Tìm kiếm nhân viên..." required>
+                    <option value="">Chọn nhân viên</option>
+                    {% for nv in ds_nhan_vien %}
+                        <option value="{{ nv.manv }}" {% if form.nhanvien.value == nv.manv %}selected{% endif %}>
+                            {{ nv.manv }} - {{ nv.tennv }} ({{ nv.chucvu|default:"Nhân viên" }})
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if form.nhanvien.errors %}
+                    <span class="dt-error-text">{{ form.nhanvien.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Chọn khóa đào tạo -->
+            <div style="margin-top: 16px;">
+                <label class="dt-label" for="selectKhoa">Khóa đào tạo *</label>
+                <select name="khoadaotao" id="selectKhoa" class="dt-select" data-placeholder="Tìm kiếm khóa đào tạo..." required>
+                    <option value="">Chọn nhân viên trước</option>
+                    {% for k in ds_khoa %}
+                        <option value="{{ k.makhoa }}" data-khoa="{{ k.makhoa }}" {% if form.khoadaotao.value == k.makhoa or khoa_id_param == k.makhoa %}selected{% endif %}>
+                            {{ k.makhoa }} - {{ k.tenkhoa }} ({{ k.trangthai }})
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if form.khoadaotao.errors %}
+                    <span class="dt-error-text">{{ form.khoadaotao.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Khung thông báo hướng dẫn khi chưa chọn nhân viên -->
+        <div id="boxChuaChonNV" class="dt-empty-state" style="margin-top: 24px;">
+            <div class="dt-empty-icon">
+                <i class="fa-solid fa-user-group"></i>
+            </div>
+            <div class="dt-empty-title">Chưa chọn nhân viên</div>
+            <div class="dt-empty-sub">Khóa đào tạo sẽ hiển thị sau khi chọn nhân viên.</div>
+        </div>
+    </div>
+
+    <!-- Bottom Action Bar -->
+    <div class="dt-bottom-bar">
+        <a href="{% url 'dao_tao:danh_sach_khoa' %}" class="btn-secondary-white">
+            <i class="fa-solid fa-arrow-right"></i> Hủy
+        </a>
+        <button type="submit" id="btnSubmitPhanCong" class="btn-primary-pink" disabled>
+            <i class="fa-solid fa-check"></i> Phân công
+        </button>
+    </div>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const selectNV = document.getElementById("selectNhanVien");
+    const selectKhoa = document.getElementById("selectKhoa");
+    const boxChuaChon = document.getElementById("boxChuaChonNV");
+    const btnSubmit = document.getElementById("btnSubmitPhanCong");
+    const preselectedKhoa = "{{ khoa_id_param|default:'' }}";
+
+    // Khởi tạo dạng search cho cả hai ô
+    initSearchableSelect(selectNV, "Tìm kiếm nhân viên theo tên hoặc mã...");
+    initSearchableSelect(selectKhoa, "Tìm kiếm khóa đào tạo...");
+
+    function checkFormValid() {
+        if (selectNV.value && selectKhoa.value) {
+            btnSubmit.disabled = false;
+        } else {
+            btnSubmit.disabled = true;
+        }
+    }
+
+    function updateKhoaList() {
+        const manv = selectNV.value;
+        if (!manv) {
+            selectKhoa.innerHTML = '<option value="">Chọn nhân viên trước</option>';
+            selectKhoa.disabled = true;
+            if (boxChuaChon) boxChuaChon.style.display = "block";
+            if (selectKhoa.refreshSearchable) selectKhoa.refreshSearchable();
+            checkFormValid();
+            return;
+        }
+
+        if (boxChuaChon) boxChuaChon.style.display = "none";
+        selectKhoa.disabled = false;
+        selectKhoa.innerHTML = '<option value="">Đang tải khóa học...</option>';
+        if (selectKhoa.refreshSearchable) selectKhoa.refreshSearchable();
+
+        fetch(`{% url 'dao_tao:api_khoa_theo_nhan_vien' %}?manv=${encodeURIComponent(manv)}&loai=chua_tham_gia`)
+            .then(res => res.json())
+            .then(data => {
+                selectKhoa.innerHTML = '<option value="">Chọn khóa đào tạo</option>';
+                if (data.khoa && data.khoa.length > 0) {
+                    data.khoa.forEach(k => {
+                        const opt = document.createElement("option");
+                        opt.value = k.makhoa;
+                        opt.textContent = `${k.makhoa} - ${k.tenkhoa}`;
+                        if (preselectedKhoa && k.makhoa === preselectedKhoa) {
+                            opt.selected = true;
+                        }
+                        selectKhoa.appendChild(opt);
+                    });
+                } else {
+                    selectKhoa.innerHTML = '<option value="">Nhân viên này đã tham gia tất cả các khóa học khả dụng</option>';
+                }
+                if (selectKhoa.refreshSearchable) selectKhoa.refreshSearchable();
+                checkFormValid();
+            })
+            .catch(err => {
+                selectKhoa.innerHTML = '<option value="">Lỗi khi tải danh sách khóa học</option>';
+                if (selectKhoa.refreshSearchable) selectKhoa.refreshSearchable();
+                checkFormValid();
+            });
+    }
+
+    selectNV.addEventListener("change", updateKhoaList);
+    selectKhoa.addEventListener("change", checkFormValid);
+
+    // Initial state
+    if (selectNV.value) {
+        updateKhoaList();
+    } else {
+        selectKhoa.disabled = true;
+        if (selectKhoa.refreshSearchable) selectKhoa.refreshSearchable();
+    }
+});
+</script>
+{% endblock %}
