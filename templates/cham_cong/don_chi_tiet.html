@@ -17,7 +17,7 @@
             <span class="hr-badge" data-state="{{ don.trangthai }}">{{ don.get_trangthai_display }}</span>
         </div> {# Mã và trạng thái. #}
 
-        <dl class="cc-kv"> {# Thông tin đơn. #}
+        <dl class="cc-kv"> {# Thông tin đơn dạng lưới 2 cột đều như hình 2. #}
             <div>
                 <dt>Nhân viên</dt>
                 <dd>{{ don.manv.tennv }} · {{ don.manv.manv }}</dd>
@@ -26,9 +26,6 @@
                 <dt>Thời gian gửi đơn</dt>
                 <dd>{{ don.thoigianguidon|date:"d/m/Y · H:i" }}</dd>
             </div> {# Thời gian gửi. #}
-        </dl> {# Đóng hàng. #}
-
-        <dl class="cc-kv cc-3 cc-mt"> {# Hàng ngày nghỉ. #}
             <div>
                 <dt>Ngày bắt đầu</dt>
                 <dd>{{ don.ngaybatdau|date:"d/m/Y" }}</dd>
@@ -41,9 +38,6 @@
                 <dt>Số ngày xin nghỉ</dt>
                 <dd>{{ don.songaynghi }} ngày</dd>
             </div> {# Số ngày. #}
-        </dl> {# Đóng hàng. #}
-
-        <dl class="cc-kv cc-mt"> {# Loại phép và lý do. #}
             <div>
                 <dt>Loại phép</dt>
                 <dd>{{ don.maloaiphep.tenloaiphep }}</dd>
