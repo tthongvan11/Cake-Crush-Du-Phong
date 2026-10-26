@@ -1,0 +1,74 @@
+/* Giao diện riêng của phân hệ Chấm công & Nghỉ phép; dùng lại biến màu và lớp hr-* của nhan_su.css. */
+.cc-sub { margin-top: -12px; margin-bottom: 18px; } /* Dòng mô tả ngay dưới tiêu đề trang. */
+.cc-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; } /* Hai nút chuyển trang con. */
+.cc-tabs a { padding: 9px 16px; border: 1px solid #e9dfe5; border-radius: 7px; background: #fff; color: var(--text-heading); font-size: 12px; font-weight: 600; text-decoration: none; } /* Nút chưa chọn. */
+.cc-tabs a.active { background: var(--primary-pink); border-color: var(--primary-pink); color: #fff; } /* Nút đang chọn màu hồng. */
+.cc-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; } /* Bốn thẻ số liệu. */
+.cc-stat { padding: 18px 20px; background: #fff; border: 1px solid var(--border-color); border-radius: 14px; min-width: 0; } /* Một thẻ số liệu. */
+.cc-stat span { display: block; color: var(--text-muted); font-size: 12px; } /* Nhãn thẻ. */
+.cc-stat strong { display: block; margin: 6px 0 4px; color: var(--text-heading); font-size: 26px; font-weight: 800; letter-spacing: -.5px; } /* Con số lớn. */
+.cc-stat.cc-pink strong { color: var(--primary-pink); } /* Con số màu hồng ở trang quỹ phép. */
+.cc-stat small { color: var(--text-muted); font-size: 11px; } /* Chú thích dưới số. */
+.cc-filter-end { margin-left: auto; } /* Đẩy nhãn phụ sang phải hàng bộ lọc. */
+.cc-today { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(260px, 1fr); gap: 20px; align-items: start; } /* Khung chấm công và khung thông tin. */
+.cc-today-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; } /* Ngày và giờ hệ thống. */
+.cc-today-head strong { color: var(--text-heading); font-size: 15px; } /* Ngày hôm nay. */
+.cc-today-head i { color: var(--text-muted); margin-right: 6px; } /* Biểu tượng lịch, đồng hồ. */
+.cc-punch { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } /* Hai thẻ Check-in, Check-out. */
+.cc-punch-card { display: flex; flex-direction: column; gap: 10px; padding: 20px; border: 1px solid var(--border-color); border-radius: 12px; text-align: center; } /* Một thẻ chấm công. */
+.cc-punch-card.cc-ready { border-color: var(--primary-pink); box-shadow: 0 0 0 3px #fbd7e6; } /* Thẻ đang chờ thao tác. */
+.cc-punch-card h2 { display: flex; align-items: center; gap: 10px; text-align: left; } /* Tiêu đề thẻ kèm biểu tượng. */
+.cc-punch-card h2 i { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: #fce5ee; color: var(--primary-pink); font-size: 14px; } /* Biểu tượng tròn. */
+.cc-time { color: var(--text-heading); font-size: 38px; font-weight: 800; letter-spacing: -1px; } /* Giờ lớn như mockup. */
+.cc-punch-card form, .cc-punch-card .hr-btn { margin-top: auto; } /* Nút luôn nằm cuối thẻ. */
+.cc-punch-card .hr-btn { width: 100%; min-height: 44px; font-size: 14px; } /* Nút rộng. */
+.cc-punch-card .hr-btn:disabled { background: #e9e5ea; color: #9a929c; cursor: not-allowed; } /* Nút bị khóa. */
+.cc-pill { display: inline-flex; align-self: center; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; } /* Nhãn đi trễ, về sớm. */
+.cc-pill.cc-warn { background: #fff1d6; color: #b45f06; } /* Màu cam cảnh báo. */
+.cc-pill.cc-ok { background: #e4f7ef; color: #20845f; } /* Màu xanh đúng giờ. */
+.cc-today-foot { display: flex; flex-wrap: wrap; gap: 24px; padding-top: 16px; margin-top: 18px; border-top: 1px solid var(--border-color); font-size: 12px; } /* Ca và số giờ làm. */
+.cc-info dl > div { display: flex; gap: 12px; padding: 14px 0; border-top: 1px solid var(--border-color); } /* Từng dòng thông tin làm việc. */
+.cc-info dt { color: var(--text-muted); font-size: 12px; } /* Nhãn. */
+.cc-info dd { color: var(--text-heading); font-weight: 600; font-size: 13px; margin-top: 3px; } /* Giá trị. */
+.cc-info i { color: var(--text-muted); margin-top: 3px; } /* Biểu tượng. */
+.cc-person { display: flex; align-items: center; gap: 12px; margin: 16px 0; } /* Avatar và tên. */
+.cc-person .hr-avatar { width: 46px; height: 46px; font-size: 16px; } /* Avatar nhỏ hơn trang hồ sơ. */
+.cc-num-warn { color: #d9730d; font-weight: 600; } /* Số phút trễ/sớm khác 0 tô cam. */
+.cc-empty-dash { color: #c3bbc4; } /* Dấu gạch khi không có dữ liệu. */
+.hr-badge[data-state="DILAM"], .hr-badge[data-state="DADUYET"] { background: #e4f7ef; color: #20936b; } /* Đi làm, đã duyệt: xanh lá. */
+.hr-badge[data-state="NGHIPHEP"] { background: #eaf3fd; color: #4a88bd; } /* Nghỉ có phép: xanh dương. */
+.hr-badge[data-state="VANGKHONGPHEP"], .hr-badge[data-state="TUCHOI"], .hr-badge[data-state="VUOT"] { background: #fce9ee; color: #bc193e; } /* Vắng, từ chối, vượt quỹ: đỏ. */
+.hr-badge[data-state="CHODUYET"] { background: #fff4d5; color: #b77608; } /* Chờ duyệt: vàng. */
+.hr-table tr.cc-row-danger { background: #fff7f9; } /* Dòng vắng không phép tô nền đỏ nhạt. */
+.cc-link { color: var(--primary-pink) !important; font-weight: 600; } /* Liên kết thao tác trong bảng. */
+.cc-form-grid { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(250px, 1fr); gap: 20px; align-items: start; } /* Form và khung phép năm. */
+.cc-fields-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 20px; margin-top: 18px; } /* Hàng 3 ô ngày. */
+.cc-fields-3 input[readonly] { background: #fdf1f6; color: var(--text-muted); } /* Ô số ngày tự tính. */
+.cc-big { color: var(--primary-pink); font-size: 32px; font-weight: 800; margin: 8px 0 2px; } /* Số ngày phép còn lại. */
+.cc-box { padding: 13px 16px; border-radius: 10px; font-size: 12px; line-height: 1.7; margin-top: 16px; } /* Hộp ghi chú. */
+.cc-box strong { display: block; } /* Tiêu đề hộp. */
+.cc-box.cc-grey { background: #faf6f8; color: var(--text-muted); } /* Hộp xám nhạt. */
+.cc-box.cc-red { background: #fde8ee; color: #bc193e; } /* Hộp cảnh báo đỏ. */
+.cc-box.cc-yellow { background: #fff6dc; color: #82641f; } /* Hộp lưu ý vàng. */
+.cc-detail { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(250px, 1fr); gap: 20px; align-items: start; } /* Chi tiết đơn và quỹ phép. */
+.cc-detail-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; } /* Mã đơn và trạng thái. */
+.cc-detail-head h2 { font-size: 18px !important; } /* Tiêu đề mã đơn. */
+.cc-kv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; } /* Thông tin dạng nhãn - giá trị. */
+.cc-kv.cc-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } /* Hàng 3 cột cho ngày. */
+.cc-kv dt { color: var(--text-muted); font-size: 12px; margin-bottom: 4px; } /* Nhãn. */
+.cc-kv dd { color: var(--text-heading); font-size: 13px; overflow-wrap: anywhere; } /* Giá trị. */
+.cc-kv .cc-wide { grid-column: 1 / -1; } /* Ô chiếm trọn hàng. */
+.cc-mt { margin-top: 16px; } /* Khoảng cách phía trên. */
+.cc-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; } /* Thanh nút quay lại và xử lý. */
+.cc-footnote { color: var(--text-muted); font-size: 11px; margin-top: 10px; } /* Chú thích cuối trang. */
+@media (max-width: 1100px) { /* Màn hình vừa. */
+    .cc-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } /* Thẻ số liệu 2 cột. */
+    .cc-today, .cc-form-grid, .cc-detail { grid-template-columns: minmax(0, 1fr); } /* Khung phụ xuống dưới. */
+} /* Kết thúc màn hình vừa. */
+@media (max-width: 700px) { /* Điện thoại. */
+    .cc-punch, .cc-fields-3, .cc-kv, .cc-kv.cc-3 { grid-template-columns: minmax(0, 1fr); } /* Mỗi ô một hàng. */
+    .cc-stats { grid-template-columns: minmax(0, 1fr); } /* Thẻ số liệu 1 cột. */
+} /* Kết thúc điện thoại. */
+.cc-form input:not([type="hidden"]), .cc-form select, .cc-form textarea { width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid #e8dee4; border-radius: 7px; background: #fff; color: var(--text-heading); font-size: 12px; font-family: inherit; } /* Cùng kiểu ô nhập với .hr-fields của phân hệ nhân sự. */
+.cc-form input:focus, .cc-form select:focus, .cc-form textarea:focus { outline: 2px solid #fbd7e6; border-color: var(--primary-pink); } /* Đánh dấu ô đang nhập. */
+.cc-form input:disabled, .cc-form input[readonly] { background: #fdf1f6; color: var(--text-muted); } /* Ô không sửa được. */
