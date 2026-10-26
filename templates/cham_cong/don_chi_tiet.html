@@ -7,38 +7,57 @@
 <div class="hr-head"><h1>Chi tiết đơn nghỉ phép</h1></div> {# Tiêu đề trang. #}
 {% if che_do_ca_nhan %}{% include "cham_cong/includes/tabs_nghi_phep.html" %}{% else %}<p class="hr-muted cc-sub">Xem thông tin và xử lý yêu cầu nghỉ phép của nhân viên.</p>{% include "cham_cong/includes/tabs_quan_ly_phep.html" %}{% endif %} {# Tab theo vai trò. #}
 
-<div class="cc-toolbar"> {# Nút quay lại và nút xử lý. #}
-    <a class="hr-btn hr-secondary" href="{% if che_do_ca_nhan %}{% url 'cham_cong:don_cua_toi' %}{% else %}{% url 'cham_cong:duyet_don_list' %}{% endif %}">Quay lại danh sách</a> {# Về danh sách. #}
-    {% if not che_do_ca_nhan and don.trangthai == 'CHODUYET' and not la_don_cua_minh %} {# Chỉ đơn chờ duyệt của người khác mới có nút. #}
-        <div class="hr-actions"> {# Nhóm nút xử lý. #}
-            <a class="hr-btn hr-secondary" href="?tu_choi=1">Từ chối</a> {# Mở hộp thoại nhập lý do. #}
-            <form method="post" action="{% url 'cham_cong:phe_duyet' don.pk %}">{% csrf_token %}<button type="submit" class="hr-btn">Phê duyệt</button></form> {# Gửi phê duyệt. #}
-        </div> {# Đóng nhóm nút. #}
-    {% endif %} {# Kết thúc nút xử lý. #}
-</div> {# Đóng thanh công cụ. #}
-
 {% if la_don_cua_minh and don.trangthai == 'CHODUYET' %}<div class="hr-note">Đây là đơn của chính bạn. Đơn cần được một quản lý khác xét duyệt.</div>{% endif %} {# Không tự duyệt. #}
 {% if thieu_phep and not che_do_ca_nhan %}<div class="cc-box cc-red" style="margin:0 0 16px"><strong>{{ don.ma_hien_thi }} · Quỹ phép không đủ</strong>{% for n in thieu_phep %}Năm {{ n.nam }}: nhân viên {{ don.manv.manv }} xin nghỉ {{ n.so_ngay }} ngày, hiện còn {{ n.quy.con_lai }} ngày phép. {% endfor %}Cân nhắc chuyển sang loại nghỉ không hưởng lương hoặc từ chối đơn.</div>{% endif %} {# Cảnh báo theo luồng ngoại lệ, tách theo năm. #}
 
 <div class="{% if che_do_ca_nhan %}{% else %}cc-detail{% endif %}"> {# Quản lý có thêm khung quỹ phép bên phải. #}
     <section class="hr-card"> {# Thẻ thông tin đơn. #}
-        <div class="cc-detail-head"><h2>Đơn nghỉ phép {{ don.ma_hien_thi }}</h2><span class="hr-badge" data-state="{{ don.trangthai }}">{{ don.get_trangthai_display }}</span></div> {# Mã và trạng thái. #}
+        <div class="cc-detail-head">
+            <h2>Đơn nghỉ phép {{ don.ma_hien_thi }}</h2>
+            <span class="hr-badge" data-state="{{ don.trangthai }}">{{ don.get_trangthai_display }}</span>
+        </div> {# Mã và trạng thái. #}
+
         <dl class="cc-kv"> {# Thông tin đơn. #}
-            <div><dt>Nhân viên</dt><dd>{{ don.manv.tennv }} · {{ don.manv.manv }}</dd></div> {# Người gửi. #}
-            <div><dt>Thời gian gửi đơn</dt><dd>{{ don.thoigianguidon|date:"d/m/Y · H:i" }}</dd></div> {# Thời gian gửi. #}
+            <div>
+                <dt>Nhân viên</dt>
+                <dd>{{ don.manv.tennv }} · {{ don.manv.manv }}</dd>
+            </div> {# Người gửi. #}
+            <div>
+                <dt>Thời gian gửi</dt>
+                <dd>{{ don.thoigianguidon|date:"d/m/Y · H:i" }}</dd>
+            </div> {# Thời gian gửi. #}
+            <div>
+                <dt>Ngày nghỉ / Số ngày</dt>
+                <dd>{{ don.ngaybatdau|date:"d/m/Y" }}{% if don.ngayketthuc != don.ngaybatdau %} – {{ don.ngayketthuc|date:"d/m/Y" }}{% endif %} / {{ don.songaynghi }} ngày</dd>
+            </div> {# Ngày nghỉ và số ngày. #}
+            <div>
+                <dt>Loại phép</dt>
+                <dd>{{ don.maloaiphep.tenloaiphep }}</dd>
+            </div> {# Loại phép. #}
+            <div class="cc-wide">
+                <dt>Lý do xin nghỉ</dt>
+                <dd>{{ don.lydo|linebreaksbr }}</dd>
+            </div> {# Lý do. #}
         </dl> {# Đóng hàng. #}
-        <dl class="cc-kv cc-3 cc-mt"> {# Hàng ngày nghỉ. #}
-            <div><dt>Ngày bắt đầu</dt><dd>{{ don.ngaybatdau|date:"d/m/Y" }}</dd></div> {# Ngày bắt đầu. #}
-            <div><dt>Ngày kết thúc</dt><dd>{{ don.ngayketthuc|date:"d/m/Y" }}</dd></div> {# Ngày kết thúc. #}
-            <div><dt>Số ngày xin nghỉ</dt><dd>{{ don.songaynghi }} ngày</dd></div> {# Số ngày. #}
-        </dl> {# Đóng hàng. #}
-        <dl class="cc-kv cc-mt"> {# Loại phép và lý do. #}
-            <div class="cc-wide"><dt>Loại phép</dt><dd>{{ don.maloaiphep.tenloaiphep }}</dd></div> {# Loại phép. #}
-            <div class="cc-wide"><dt>Lý do xin nghỉ</dt><dd>{{ don.lydo|linebreaksbr }}</dd></div> {# Lý do. #}
-        </dl> {# Đóng hàng. #}
-        {% if don.trangthai == 'TUCHOI' %}<div class="cc-box cc-red"><strong>Lý do từ chối</strong>{{ don.phanhoi|linebreaksbr }}</div>{% endif %} {# Phản hồi của quản lý. #}
+
+        {% if don.trangthai == 'TUCHOI' and don.phanhoi %}
+        <div class="cc-box cc-red cc-mt">
+            <strong>Lý do từ chối</strong>
+            {{ don.phanhoi|linebreaksbr }}
+        </div>
+        {% endif %} {# Phản hồi của quản lý khi từ chối. #}
+
         {% if don.trangthai != 'CHODUYET' %} {# Thông tin xử lý. #}
-            <dl class="cc-kv cc-mt"><div><dt>Người xử lý</dt><dd>{{ don.nguoiduyet.tennv|default:"—" }}</dd></div><div><dt>Thời gian xử lý</dt><dd>{{ don.ngayduyet|date:"d/m/Y · H:i" }}</dd></div></dl> {# Người và thời gian xử lý. #}
+        <dl class="cc-kv cc-mt">
+            <div>
+                <dt>Người xử lý</dt>
+                <dd>{{ don.nguoiduyet.tennv|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt>Thời gian xử lý</dt>
+                <dd>{{ don.ngayduyet|date:"d/m/Y · H:i"|default:"—" }}</dd>
+            </div>
+        </dl> {# Người và thời gian xử lý. #}
         {% endif %} {# Kết thúc thông tin xử lý. #}
     </section> {# Đóng thẻ đơn. #}
 
@@ -60,7 +79,17 @@
     {% endif %} {# Kết thúc khung quỹ phép. #}
 </div> {# Đóng bố cục. #}
 
-{% if mo_tu_choi and not che_do_ca_nhan and don.trangthai == 'CHODUYET' %} {# Hộp thoại từ chối (dùng lại kiểu hộp thoại của phân hệ nhân sự). #}
+<div class="cc-toolbar cc-mt"> {# Nút quay lại và nút xử lý đặt phía dưới thẻ. #}
+    <a class="hr-btn hr-secondary" href="{% if che_do_ca_nhan %}{% url 'cham_cong:don_cua_toi' %}{% else %}{% url 'cham_cong:duyet_don_list' %}{% endif %}">Quay lại danh sách</a> {# Về danh sách. #}
+    {% if not che_do_ca_nhan and don.trangthai == 'CHODUYET' and not la_don_cua_minh %} {# Chỉ đơn chờ duyệt của người khác mới có nút. #}
+        <div class="hr-actions"> {# Nhóm nút xử lý. #}
+            <a class="hr-btn hr-secondary" href="?tu_choi=1">Từ chối</a> {# Mở hộp thoại nhập lý do. #}
+            <form method="post" action="{% url 'cham_cong:phe_duyet' don.pk %}">{% csrf_token %}<button type="submit" class="hr-btn">Phê duyệt</button></form> {# Gửi phê duyệt. #}
+        </div> {# Đóng nhóm nút. #}
+    {% endif %} {# Kết thúc nút xử lý. #}
+</div> {# Đóng thanh công cụ. #}
+
+{% if mo_tu_choi and not che_do_ca_nhan and don.trangthai == 'CHODUYET' %} {# Hộp thoại từ chối. #}
 <div class="hr-modal-shell"><section class="hr-card hr-modal" role="dialog" aria-modal="true" aria-labelledby="tieu-de-tu-choi"> {# Nền mờ và hộp thoại. #}
     <div class="cc-detail-head"><h1 id="tieu-de-tu-choi">Từ chối đơn {{ don.ma_hien_thi }}</h1><a class="hr-btn hr-secondary" href="?" aria-label="Đóng">×</a></div> {# Tiêu đề và nút đóng. #}
     <p class="hr-muted">Phản hồi sẽ được gửi tới {{ don.manv.tennv }}.</p> {# Người nhận phản hồi. #}
