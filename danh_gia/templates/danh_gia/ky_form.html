@@ -2,7 +2,7 @@
 {% block page_title %}Tạo kỳ đánh giá{% endblock %}
 {% block page_sub %}Nhập tên và thời gian để bắt đầu một kỳ đánh giá mới.{% endblock %}
 {% block back_url %}{% url 'danh_gia:ky_ds' %}{% endblock %}
-{% block content %}
+{% block dg_content %}
 <form method="post" novalidate>
   {% csrf_token %}
   <div class="card-x">

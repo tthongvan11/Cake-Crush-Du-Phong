@@ -2,11 +2,11 @@
 from django.contrib import messages
 from django.db import DatabaseError, transaction
 from django.shortcuts import redirect, render
-from django.utils import timezone
 
 from ..forms import PhanHoiForm
 from ..models import DanhGia, KyDanhGia
 from ..permissions import yeu_cau_nhan_vien
+from ..utils import hom_nay
 
 
 # ======================= UC-2.3: TRA CỨU KẾT QUẢ =======================
@@ -51,7 +51,7 @@ def gui_phan_hoi(request, madanhgia):
         ph = form.save(commit=False)
         ph.manv = request.nhan_vien
         ph.madanhgia = dg
-        ph.ngayphanhoi = timezone.localdate()
+        ph.ngayphanhoi = hom_nay()
         try:
             with transaction.atomic():
                 ph.save()

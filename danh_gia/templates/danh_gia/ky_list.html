@@ -2,7 +2,7 @@
 {% block page_title %}Danh sách kỳ đánh giá{% endblock %}
 {% block page_sub %}Quản lý kỳ đánh giá, thiết lập tiêu chí và theo dõi kết quả nhân viên.{% endblock %}
 {% block page_action %}<a class="btn btn-primary" href="{% url 'danh_gia:ky_tao' %}">+ Tạo kỳ đánh giá</a>{% endblock %}
-{% block content %}
+{% block dg_content %}
 <div class="card-x">
   <div class="card-head"><span class="ico"></span><h6>Các kỳ đánh giá</h6><span class="chip chip-gray">{{ paginator.count }} kỳ</span></div>
   <form method="get" class="row g-3 mb-3">

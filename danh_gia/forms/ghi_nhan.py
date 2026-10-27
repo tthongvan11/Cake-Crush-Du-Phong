@@ -1,9 +1,9 @@
 """UC-2.1 / UC-2.2: form dùng chung cho khen thưởng và kỷ luật (khác nhau ở tham số loai)."""
 from django import forms
 from django.core.exceptions import ValidationError
-from django.utils import timezone
 
 from ..models import KhenThuongKyLuat
+from ..utils import hom_nay
 from ._chung import FormMixin
 
 
@@ -46,10 +46,10 @@ class GhiNhanForm(FormMixin, forms.ModelForm):
         self.fields["hinhthuc"].widget.attrs["class"] = "form-select"
         self.chuan_hoa_truong()
         if not self.is_bound:
-            self.initial.setdefault("ngay", timezone.localdate())
+            self.initial.setdefault("ngay", hom_nay())
 
     def clean_ngay(self):
         ngay = self.cleaned_data["ngay"]
-        if ngay > timezone.localdate():
+        if ngay > hom_nay():
             raise ValidationError("Thông tin không hợp lệ: ngày thực hiện không được ở tương lai")
         return ngay

@@ -2,7 +2,7 @@
 {% block page_title %}Gửi phản hồi{% endblock %}
 {% block page_sub %}Chia sẻ ý kiến về kết quả đánh giá của bạn trong kỳ đã công bố.{% endblock %}
 {% block back_url %}{% url 'danh_gia:ket_qua' %}{% endblock %}
-{% block content %}
+{% block dg_content %}
 <form method="post" novalidate>
   {% csrf_token %}
   <div class="row g-3">

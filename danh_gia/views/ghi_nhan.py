@@ -13,10 +13,11 @@ from nhan_su.models import NhanVien
 
 from ..forms import GhiNhanForm
 from ..models import DanhGia, KhenThuongKyLuat
+from ..permissions import co_quyen
 
 
 def xu_ly_ghi_nhan(request, loai, cfg):
-    if not request.user.has_perm(cfg["quyen"]):
+    if not co_quyen(request.user, cfg["quyen"]):
         messages.error(request, "Bạn không có quyền thực hiện chức năng này.")
         return redirect("danh_gia:trang_chu")
 

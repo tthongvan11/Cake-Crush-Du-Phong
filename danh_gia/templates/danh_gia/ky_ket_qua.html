@@ -2,7 +2,7 @@
 {% block page_title %}Kết quả {{ ky.tenky }}{% endblock %}
 {% block page_sub %}{{ ky.thoigianbatdau|date:"d/m/Y" }} – {{ ky.thoigianketthuc|date:"d/m/Y" }}{% endblock %}
 {% block back_url %}{% url 'danh_gia:ky_ds' %}{% endblock %}
-{% block content %}
+{% block dg_content %}
 <div class="card-x">
   <div class="card-head"><span class="ico"></span><h6>Kết quả đã lưu</h6><span class="chip chip-blue">{{ ds|length }} nhân viên</span></div>
   <table class="table align-middle">

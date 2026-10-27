@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.db import DatabaseError, IntegrityError
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.utils import timezone
 
 from nhan_su.models import NhanVien
 
@@ -13,6 +12,7 @@ from .. import services
 from ..forms import DanhGiaForm
 from ..models import DanhGia, KyDanhGia
 from ..permissions import QUYEN_DANH_GIA, yeu_cau_quyen
+from ..utils import hom_nay
 
 
 def _url_voi_query(ten_url, **tham_so):
@@ -90,7 +90,7 @@ def danh_gia_xac_nhan(request):
 
     if request.method == "POST":
         try:
-            services.luu_danh_gia(nv, ky, chi_tiet, nhap.get("nhanxet", ""), timezone.localdate())
+            services.luu_danh_gia(nv, ky, chi_tiet, nhap.get("nhanxet", ""), hom_nay())
         except (services.DanhGiaDaTonTai, IntegrityError):
             request.session.pop(khoa, None)
             messages.error(request, "Nhân viên đã có bản đánh giá trong kỳ này.")

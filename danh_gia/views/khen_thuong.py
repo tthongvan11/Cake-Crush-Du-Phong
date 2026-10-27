@@ -1,7 +1,5 @@
 """UC-2.1: ghi nhận khen thưởng (phần riêng của khen thưởng)."""
-from django.contrib.auth.decorators import login_required
-
-from ..permissions import QUYEN_KHEN_THUONG
+from ..permissions import QUYEN_KHEN_THUONG, dang_nhap_bat_buoc
 from .ghi_nhan import xu_ly_ghi_nhan
 
 LOAI = "KHENTHUONG"
@@ -20,6 +18,6 @@ CAU_HINH = {
 }
 
 
-@login_required
+@dang_nhap_bat_buoc
 def khen_thuong(request):
     return xu_ly_ghi_nhan(request, LOAI, CAU_HINH)
