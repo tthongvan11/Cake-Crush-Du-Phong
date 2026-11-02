@@ -3,9 +3,11 @@ from . import views
 
 urlpatterns = [
     path('', views.trang_chu, name='trang_chu'),
-    path('home/', views.trang_chu, name='home'),
+    path('welcome/', views.trang_chao_mung, name='welcome'),
     path('login/', views.CakeCrushLoginView.as_view(), name='login'),
     path('logout/', views.CakeCrushLogoutView.as_view(), name='logout'),
-    path('nhan-vien/', views.trang_nhan_vien, name='trang_nhan_vien'),
+    path('dashboard/', views.dieu_huong_dashboard, name='dashboard'),
+    path('home/', views.dieu_huong_dashboard, name='home'),
     path('quan-ly/', views.trang_quan_ly, name='trang_quan_ly'),
+    path('nhan-vien/', views.trang_nhan_vien, name='trang_nhan_vien'),
 ]
