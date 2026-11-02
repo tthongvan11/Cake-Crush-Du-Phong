@@ -53,8 +53,8 @@
 .hr-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 20px; font-size: 10px; line-height: 1.5; white-space: nowrap; background: #f0edf2; color: #77717c; } /* Nhãn trạng thái. */
 .hr-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; } /* Chấm màu như mockup. */
 .hr-badge[data-state="1"], .hr-badge[data-state="DANGHIEULUC"] { background: #e4f7ef; color: #20936b; } /* Đang làm và đang hiệu lực. */
-.hr-badge[data-state="0"], .hr-badge[data-state="CHUHIEULUC"] { background: #eaf3fd; color: #4a88bd; } /* Nghỉ việc hoặc chưa bắt đầu. */
-.hr-badge[data-state="CHAMDUT"], .hr-badge[data-state="HETHAN"] { background: #fce9ee; color: #bc193e; } /* Hết hiệu lực hoặc hết hạn. */
+.hr-badge[data-state="0"], .hr-badge[data-state="CHAMDUT"], .hr-badge[data-state="HETHAN"] { background: #fee2e2; color: #dc2626; } /* Đã nghỉ việc (màu đỏ), hết hiệu lực hoặc hết hạn. */
+.hr-badge[data-state="CHUHIEULUC"] { background: #eaf3fd; color: #4a88bd; } /* Chưa bắt đầu. */
 .hr-badge[data-state="SAP_HET_HAN"] { background: #fff4d5; color: #b77608; } /* Nhãn sắp hết hạn. */
 .hr-table small { display: block; margin-top: 4px; } /* Số ngày nằm dưới trạng thái. */
 .hr-text-danger { color: #bc193e; } /* Cảnh báo còn dưới 15 ngày. */
