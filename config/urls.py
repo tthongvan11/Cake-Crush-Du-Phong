@@ -7,7 +7,7 @@ urlpatterns = [
     path("", include("nhan_su.urls")),  # Bổ sung URL phân hệ nhân sự (Vân)
     path("", include("cham_cong.urls")),
     path("", include("dao_tao.urls")),  # Phân hệ Đào tạo
-    path("danh-gia/", include("danh_gia.urls")),  # Phân hệ Đánh giá  # Bổ sung URL phân hệ chấm công và quản lý phép
+    path("danh-gia/", include("danh_gia.urls")),  # Phân hệ Đánh giá
     path('', include('tai_khoan.urls')),
 ]
 

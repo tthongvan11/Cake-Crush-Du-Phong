@@ -24,7 +24,7 @@ class CakeCrushLoginView(LoginView):
 
     def get_success_url(self):
         user = self.request.user
-        # Admin hoặc Quản lý (staff) vào thẳng Dashboard Quản lý
+        # Cả Admin (superuser) và Quản lý (staff) đều vào Dashboard Quản lý
         if user.is_superuser or user.is_staff:
             return reverse_lazy('trang_quan_ly')
         return reverse_lazy('trang_nhan_vien')
@@ -39,9 +39,10 @@ class CakeCrushLogoutView(LogoutView):
         return redirect('login')
 
 
-@login_required
 def dieu_huong_dashboard(request):
-    """Trạm trung chuyển kiểm tra role người dùng"""
+    """Điều hướng người dùng đã đăng nhập tới dashboard tương ứng"""
+    if not request.user.is_authenticated:
+        return redirect('login')
     if request.user.is_superuser or request.user.is_staff:
         return redirect('trang_quan_ly')
     return redirect('trang_nhan_vien')
