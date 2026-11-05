@@ -1,0 +1,60 @@
+{% extends "base.html" %} {# Dùng khung giao diện chung. #}
+{% load static cham_cong_tags %} {# Nạp đường dẫn static và bộ lọc hiển thị phút/giờ. #}
+{% block title %}Bảng chấm công | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/cham_cong.css' %}">{% endblock %} {# Giao diện riêng. #}
+
+{% block content %} {# Bắt đầu nội dung. #}
+<div class="hr-head"><h1>Bảng chấm công</h1></div> {# Tiêu đề trang. #}
+<p class="hr-muted cc-sub">Tổng hợp, rà soát dữ liệu chấm công để phục vụ đối soát và tính lương.</p> {# Mô tả. #}
+
+<form method="get" class="hr-filter" id="bo-loc"> {# Bộ lọc; GET nên có thể chia sẻ đường dẫn. #}
+    <label>Tháng<select name="thang">{% for t in ds_thang %}<option value="{{ t }}" {% if t == bo_loc.thang %}selected{% endif %}>Tháng {{ t|stringformat:"02d" }}</option>{% endfor %}</select></label> {# Tháng. #}
+    <label>Năm<select name="nam">{% for n in ds_nam %}<option value="{{ n }}" {% if n == bo_loc.nam %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label> {# Năm. #}
+    <label>Nhân viên<select name="nhan_vien"><option value="">Tất cả nhân viên</option>{% for nv in ds_nhan_vien %}<option value="{{ nv.manv }}" {% if nv.manv == bo_loc.nhan_vien %}selected{% endif %}>{{ nv.tennv }} · {{ nv.manv }}</option>{% endfor %}</select></label> {# Nhân viên. #}
+    <label>Vị trí<select name="vi_tri"><option value="">Tất cả vị trí</option>{% for vt in ds_vi_tri %}<option value="{{ vt }}" {% if vt == bo_loc.vi_tri %}selected{% endif %}>{{ vt }}</option>{% endfor %}</select></label> {# Chức vụ. #}
+    <label>Trạng thái<select name="trang_thai"><option value="">Tất cả trạng thái</option>{% for ma, nhan in ds_trang_thai %}<option value="{{ ma }}" {% if ma == bo_loc.trang_thai %}selected{% endif %}>{{ nhan }}</option>{% endfor %}</select></label> {# Trạng thái. #}
+    <button type="submit" class="hr-btn">Lọc kết quả</button> {# Gửi bộ lọc. #}
+    <button type="submit" name="xuat" value="1" class="hr-btn hr-secondary" {% if not so_ban_ghi %}disabled title="Không có dữ liệu để xuất file"{% endif %}>Xuất file</button> {# Mở hộp thoại xuất; khóa khi bảng trống. #}
+</form> {# Đóng bộ lọc. #}
+
+<div class="cc-stats"> {# Bốn thẻ tổng hợp. #}
+    <div class="cc-stat"><span>Nhân viên đang xem</span><strong>{{ thong_ke.so_nhan_vien }} người</strong><small>Theo bộ lọc hiện tại</small></div> {# Số nhân viên. #}
+    <div class="cc-stat"><span>Đi làm</span><strong>{{ thong_ke.di_lam }} lượt</strong><small>Có dữ liệu Check-in / Check-out</small></div> {# Lượt đi làm. #}
+    <div class="cc-stat"><span>Nghỉ có phép</span><strong>{{ thong_ke.nghi_phep }} lượt</strong><small>Đơn nghỉ đã được duyệt</small></div> {# Lượt nghỉ phép. #}
+    <div class="cc-stat"><span>Vắng không phép</span><strong class="{% if thong_ke.vang %}hr-text-danger{% endif %}">{{ thong_ke.vang }} lượt</strong><small>Cần kiểm tra và đối soát</small></div> {# Lượt vắng, tô đỏ khi có. #}
+</div> {# Đóng thẻ. #}
+
+{% include "cham_cong/includes/bang_cong.html" with hien_nv=True thong_bao_rong="Không tìm thấy dữ liệu chấm công phù hợp" %} {# Bảng dùng chung. #}
+<p class="cc-footnote">Ngày nghỉ đã duyệt được đồng bộ vào bảng công. Giờ làm thêm phát sinh phục vụ đối soát, không tự động là giờ tăng ca tính lương.</p> {# Ghi chú nghiệp vụ. #}
+
+{% if mo_xuat_file %} {# Hộp thoại xuất bảng chấm công. #}
+<div class="hr-modal-shell"><section class="hr-card hr-modal" role="dialog" aria-modal="true" aria-labelledby="tieu-de-xuat"> {# Nền mờ và hộp thoại. #}
+    <div class="cc-detail-head"><h1 id="tieu-de-xuat">Xuất bảng chấm công</h1><a class="hr-btn hr-secondary" id="huy-xuat" href="?{{ tham_so_bo_loc }}" aria-label="Đóng">×</a></div> {# Tiêu đề và nút đóng. #}
+    <p class="hr-muted">Tệp xuất gồm đúng các bản ghi đang khớp bộ lọc trên màn hình.</p> {# Mô tả. #}
+    <form method="get" action="{% url 'cham_cong:xuat_bang_cham_cong' %}" id="form-xuat" class="cc-form"> {# Tải file bằng GET. #}
+        {% for khoa, gia_tri in bo_loc.items %}<input type="hidden" name="{{ khoa }}" value="{{ gia_tri }}">{% endfor %} {# Gửi kèm đúng bộ lọc hiện tại. #}
+        <dl class="cc-kv cc-mt" style="grid-template-columns:1fr"> {# Phạm vi và số bản ghi. #}
+            <div><dt>Phạm vi dữ liệu</dt><dd>{{ pham_vi }}</dd></div> {# Mô tả phạm vi. #}
+            <div><dt>Số bản ghi</dt><dd>{{ so_ban_ghi }} bản ghi</dd></div> {# Số dòng sẽ xuất. #}
+        </dl> {# Đóng thông tin. #}
+        <div class="hr-field cc-mt"><label for="dinh-dang">Định dạng tệp</label><select id="dinh-dang" name="dinh_dang"><option value="xlsx">Excel (.xlsx)</option></select></div> {# Chỉ hỗ trợ Excel. #}
+        <div class="cc-box cc-grey"><strong>Dữ liệu được giữ nguyên theo bộ lọc</strong>Nhân viên, thời gian và trạng thái trong tệp trùng khớp với bảng chấm công đang hiển thị.</div> {# Ghi chú. #}
+        <div class="hr-actions hr-form-actions"><a class="hr-btn hr-secondary" href="?{{ tham_so_bo_loc }}">Hủy</a><button type="submit" class="hr-btn">Xác nhận xuất</button></div> {# Nút. #}
+    </form> {# Đóng form. #}
+</section></div> {# Đóng hộp thoại. #}
+{% endif %} {# Kết thúc hộp thoại. #}
+{% endblock %} {# Kết thúc nội dung. #}
+
+{% block extra_js %} {# Sau khi trình duyệt bắt đầu tải file, quay lại bảng công và báo thành công. #}
+<script>
+    const formXuat = document.getElementById('form-xuat'); // Form trong hộp thoại xuất.
+    if (formXuat) { // Chỉ khi hộp thoại đang mở.
+        formXuat.addEventListener('submit', () => { // Khi bấm Xác nhận xuất.
+            const thamSo = new URLSearchParams(new FormData(formXuat)); // Lấy lại bộ lọc.
+            thamSo.delete('dinh_dang'); // Bỏ tham số định dạng.
+            thamSo.set('da_xuat', '1'); // Đánh dấu đã xuất để hiện thông báo.
+            setTimeout(() => { window.location.search = thamSo.toString(); }, 1200); // Chờ file bắt đầu tải rồi đóng hộp thoại.
+        }); // Kết thúc sự kiện.
+    } // Kết thúc kiểm tra.
+</script>
+{% endblock %} {# Kết thúc JavaScript. #}

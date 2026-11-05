@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cake Crush HR - Đào tạo nội bộ{% endblock %}
+
+{% block content %}
+    <!-- Header -->
+    <div class="hr-head" style="margin-bottom: 24px;">
+        <div>
+            <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">Đào tạo nội bộ</h1>
+            <p style="color: #64748b; font-size: 13.5px; font-weight: 500;">Quản lý khóa đào tạo và theo dõi kết quả học tập của nhân viên</p>
+        </div>
+    </div>
+
+    <!-- 4 Thẻ Thống Kê -->
+    <div class="dt-stats-grid">
+        <!-- Tổng khóa -->
+        <div class="dt-stat-card">
+            <div class="dt-stat-icon pink">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <div class="dt-stat-info">
+                <div class="dt-stat-label">Tổng khóa đào tạo</div>
+                <div class="dt-stat-number">{{ thong_ke.tong_khoa }}</div>
+            </div>
+            <span class="dt-stat-badge pink">Tất cả</span>
+        </div>
+
+        <!-- Đang diễn ra -->
+        <div class="dt-stat-card">
+            <div class="dt-stat-icon green">
+                <i class="fa-regular fa-circle-play"></i>
+            </div>
+            <div class="dt-stat-info">
+                <div class="dt-stat-label">Đang diễn ra</div>
+                <div class="dt-stat-number">{{ thong_ke.dang_dien_ra }}</div>
+            </div>
+            <span class="dt-stat-badge green">{{ thong_ke.pt_dang_dien_ra }}% tổng số</span>
+        </div>
+
+        <!-- Chưa bắt đầu -->
+        <div class="dt-stat-card">
+            <div class="dt-stat-icon orange">
+                <i class="fa-regular fa-calendar-check"></i>
+            </div>
+            <div class="dt-stat-info">
+                <div class="dt-stat-label">Chưa bắt đầu</div>
+                <div class="dt-stat-number">{{ thong_ke.chua_bat_dau }}</div>
+            </div>
+            <span class="dt-stat-badge orange">Trong tháng</span>
+        </div>
+
+        <!-- Đã kết thúc -->
+        <div class="dt-stat-card">
+            <div class="dt-stat-icon blue">
+                <i class="fa-regular fa-circle-check"></i>
+            </div>
+            <div class="dt-stat-info">
+                <div class="dt-stat-label">Đã kết thúc</div>
+                <div class="dt-stat-number">{{ thong_ke.da_ket_thuc }}</div>
+            </div>
+            <span class="dt-stat-badge blue">{{ thong_ke.pt_da_ket_thuc }}% tổng số</span>
+        </div>
+    </div>
+
+    <!-- Toolbar: Tìm kiếm, Bộ lọc & Nút tạo khóa -->
+    <form method="get" class="dt-toolbar">
+        <div class="dt-search-group">
+            <div class="dt-search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" name="q" value="{{ q }}" class="dt-search-input" placeholder="Tìm theo tên khóa đào tạo...">
+            </div>
+
+            <!-- Lọc Trạng thái -->
+            <select name="trang_thai" class="dt-filter-select" onchange="this.form.submit()">
+                <option value="">Trạng thái</option>
+                <option value="Đang diễn ra" {% if trang_thai == "Đang diễn ra" %}selected{% endif %}>Đang diễn ra</option>
+                <option value="Chưa bắt đầu" {% if trang_thai == "Chưa bắt đầu" %}selected{% endif %}>Chưa bắt đầu</option>
+                <option value="Đã kết thúc" {% if trang_thai == "Đã kết thúc" %}selected{% endif %}>Đã kết thúc</option>
+            </select>
+
+            <!-- Lọc Thời gian -->
+            <select name="thoi_gian" class="dt-filter-select" onchange="this.form.submit()">
+                <option value="">Thời gian</option>
+                <option value="thang_nay" {% if thoi_gian == "thang_nay" %}selected{% endif %}>Tháng này</option>
+                <option value="nam_nay" {% if thoi_gian == "nam_nay" %}selected{% endif %}>Năm này</option>
+            </select>
+        </div>
+
+        <a href="{% url 'dao_tao:tao_khoa' %}" class="btn-pink-pill">
+            <i class="fa-solid fa-plus"></i>
+            <span>Tạo khóa đào tạo</span>
+        </a>
+    </form>
+
+    <!-- Bảng danh sách khóa đào tạo -->
+    <div class="dt-card" style="padding: 0; overflow: visible;">
+        <div class="hr-table-wrap">
+            <table class="hr-table">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">Mã khóa</th>
+                        <th>Tên khóa đào tạo</th>
+                        <th style="width: 220px;">Thời gian</th>
+                        <th style="width: 140px; text-align: center;">Số nhân viên</th>
+                        <th style="width: 160px;">Trạng thái</th>
+                        <th style="width: 80px; text-align: center;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for khoa in page_obj %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'dao_tao:chi_tiet_khoa' makhoa=khoa.makhoa %}" style="color: #df3477; font-weight: 700; text-decoration: none;">
+                                {{ khoa.makhoa }}
+                            </a>
+                        </td>
+                        <td style="font-weight: 600; color: #1e293b;">
+                            <a href="{% url 'dao_tao:chi_tiet_khoa' makhoa=khoa.makhoa %}" style="text-decoration: none; color: inherit;">
+                                {{ khoa.tenkhoa }}
+                            </a>
+                        </td>
+                        <td style="color: #64748b; font-size: 12.5px;">
+                            {{ khoa.ngaybatdau|date:"d/m" }} - {{ khoa.ngayketthuc|date:"d/m/Y" }}
+                        </td>
+                        <td style="text-align: center; font-weight: 600; color: #475569;">
+                            {% if khoa.so_nhan_vien < 10 %}0{{ khoa.so_nhan_vien }}{% else %}{{ khoa.so_nhan_vien }}{% endif %}
+                        </td>
+                        <td>
+                            {% if khoa.trangthai == "Đang diễn ra" %}
+                                <span class="badge-status-dot green">Đang diễn ra</span>
+                            {% elif khoa.trangthai == "Đã kết thúc" %}
+                                <span class="badge-status-dot blue">Đã kết thúc</span>
+                            {% else %}
+                                <span class="badge-status-dot orange">Chưa bắt đầu</span>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: center; position: relative;">
+                            <div class="action-dropdown">
+                                <button type="button" class="btn-dots" aria-label="Tùy chọn">
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </button>
+                                <div class="action-menu">
+                                    <a href="{% url 'dao_tao:chi_tiet_khoa' makhoa=khoa.makhoa %}" class="action-menu-item">
+                                        <i class="fa-regular fa-eye"></i> Chi tiết
+                                    </a>
+                                    <a href="{% url 'dao_tao:cap_nhat_noi_dung_khoa' makhoa=khoa.makhoa %}" class="action-menu-item">
+                                        <i class="fa-solid fa-pen"></i> Sửa nội dung
+                                    </a>
+                                    <a href="{% url 'dao_tao:phan_cong_dao_tao' %}?khoa={{ khoa.makhoa }}" class="action-menu-item">
+                                        <i class="fa-solid fa-user-plus"></i> Phân công
+                                    </a>
+                                    <a href="{% url 'dao_tao:theo_doi_dao_tao' %}?khoa={{ khoa.makhoa }}" class="action-menu-item">
+                                        <i class="fa-solid fa-chart-line"></i> Theo dõi
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #94a3b8;">
+                            Không tìm thấy khóa đào tạo nào phù hợp.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Phân trang -->
+        {% if page_obj.paginator.count > 0 %}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-top: 1px solid #f1e8ee; font-size: 13px; color: #64748b;">
+            <div>
+                Hiển thị {{ page_obj.start_index }} - {{ page_obj.end_index }} trong {{ page_obj.paginator.count }} khóa đào tạo
+            </div>
+            {% if page_obj.paginator.num_pages > 1 %}
+            <div style="display: flex; gap: 6px;">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if trang_thai %}&trang_thai={{ trang_thai }}{% endif %}" class="btn-cancel" style="padding: 6px 12px; border: 1px solid #ebdbe4;">&lt;</a>
+                {% endif %}
+                {% for p in page_obj.paginator.page_range %}
+                    {% if p == page_obj.number %}
+                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #df3477; color: #fff; border-radius: 8px; font-weight: 700;">{{ p }}</span>
+                    {% else %}
+                        <a href="?page={{ p }}{% if q %}&q={{ q }}{% endif %}{% if trang_thai %}&trang_thai={{ trang_thai }}{% endif %}" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 1px solid #ebdbe4; border-radius: 8px; color: #64748b; text-decoration: none;">{{ p }}</a>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if trang_thai %}&trang_thai={{ trang_thai }}{% endif %}" class="btn-cancel" style="padding: 6px 12px; border: 1px solid #ebdbe4;">&gt;</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %} {# Dùng khung giao diện chung. #}
+{% load static cham_cong_tags %} {# Nạp đường dẫn static và bộ lọc hiển thị phút/giờ. #}
+{% block title %}Chấm công | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/cham_cong.css' %}">{% endblock %} {# Giao diện riêng của phân hệ. #}
+
+{% block content %} {# Bắt đầu nội dung. #}
+<div class="hr-head"><h1>Chấm công</h1></div> {# Tiêu đề trang. #}
+{% include "cham_cong/includes/tabs_cham_cong.html" %} {# Hai tab Chấm công hôm nay / Lịch sử. #}
+
+<div class="cc-today"> {# Khung chấm công bên trái, thông tin bên phải. #}
+    <section class="hr-card"> {# Thẻ chấm công. #}
+        <div class="cc-today-head"> {# Ngày và giờ máy chủ. #}
+            <div><i class="fa-regular fa-calendar" aria-hidden="true"></i><strong>{{ thu }}, {{ bay_gio|date:"d/m/Y" }}</strong> {# Thứ, ngày hôm nay. #}
+                {% if not ban_ghi %}<span class="hr-badge">Chưa Check-in</span>{% elif nghi_phep %}<span class="hr-badge" data-state="NGHIPHEP">Nghỉ có phép</span>{% elif ban_ghi.gio_checkout %}<span class="hr-badge" data-state="DILAM">Đã Check-out</span>{% else %}<span class="hr-badge" data-state="CHODUYET">Đã Check-in</span>{% endif %} {# Nhãn tiến độ trong ngày. #}
+            </div> {# Đóng cột trái. #}
+            <span class="hr-muted"><i class="fa-regular fa-clock" aria-hidden="true"></i>Giờ hệ thống <strong id="gio-he-thong" data-gio="{{ bay_gio|date:'c' }}">{{ bay_gio|time:"H:i:s" }}</strong></span> {# Giờ máy chủ, chạy tiếp bằng JavaScript. #}
+        </div> {# Đóng đầu thẻ. #}
+
+        <div class="cc-punch"> {# Hai thẻ Check-in / Check-out. #}
+            <article class="cc-punch-card {% if not ban_ghi %}cc-ready{% endif %}"> {# Thẻ Check-in, viền hồng khi đang chờ. #}
+                <h2><i class="fa-solid fa-arrow-right-to-bracket" aria-hidden="true"></i>Check-in</h2> {# Tiêu đề thẻ. #}
+                <div class="cc-time">{% if ban_ghi.gio_checkin %}{{ ban_ghi.gio_checkin|time:"H:i" }}{% else %}—{% endif %}</div> {# Giờ đã ghi nhận. #}
+                <p class="hr-muted">Bắt đầu ca: {{ gio_bat_dau|time:"H:i" }}</p> {# Giờ quy định. #}
+                {% if ban_ghi.gio_checkin %}{% if ban_ghi.thoigianditre %}<span class="cc-pill cc-warn"><i class="fa-regular fa-clock" aria-hidden="true"></i>Đi trễ {{ ban_ghi.thoigianditre|phut_gio }}</span>{% elif vao_som %}<span class="cc-pill cc-ok">Vào sớm {{ vao_som|phut_gio }}</span>{% else %}<span class="cc-pill cc-ok">Đúng giờ</span>{% endif %}{% elif not nghi_phep %}<strong>Chưa Check-in</strong>{% endif %} {# Kết quả đi trễ. #}
+                {% if ban_ghi %}<button type="button" class="hr-btn" disabled><i class="fa-regular fa-circle-check" aria-hidden="true"></i>{% if nghi_phep %}Nghỉ có phép{% else %}Đã Check-in{% endif %}</button> {# Đã chấm hoặc nghỉ phép thì khóa nút. #}
+                {% else %}<form method="post" action="{% url 'cham_cong:check_in' %}">{% csrf_token %}<button type="submit" class="hr-btn"><i class="fa-solid fa-arrow-right-to-bracket" aria-hidden="true"></i>Check-in</button></form>{% endif %} {# Gửi yêu cầu Check-in. #}
+            </article> {# Đóng thẻ Check-in. #}
+
+            <article class="cc-punch-card {% if ban_ghi.gio_checkin and not ban_ghi.gio_checkout %}cc-ready{% endif %}"> {# Thẻ Check-out. #}
+                <h2><i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>Check-out</h2> {# Tiêu đề thẻ. #}
+                <div class="cc-time">{% if ban_ghi.gio_checkout %}{{ ban_ghi.gio_checkout|time:"H:i" }}{% else %}—{% endif %}</div> {# Giờ đã ghi nhận. #}
+                <p class="hr-muted">Kết thúc ca: {{ gio_ket_thuc|time:"H:i" }}</p> {# Giờ quy định. #}
+                {% if ban_ghi.gio_checkout %}{% if ban_ghi.thoigianvesom %}<span class="cc-pill cc-warn"><i class="fa-regular fa-clock" aria-hidden="true"></i>Về sớm {{ ban_ghi.thoigianvesom|phut_gio }}</span>{% elif ban_ghi.gio_checkout > gio_ket_thuc %}<span class="cc-pill cc-ok">Làm thêm {{ ban_ghi.sogiolamthem|gio_phut }}</span>{% else %}<span class="cc-pill cc-ok">Đúng giờ</span>{% endif %}{% elif not ban_ghi.gio_checkin and not nghi_phep %}<p class="hr-muted"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Bạn cần Check-in trước khi Check-out.</p>{% endif %} {# Kết quả về sớm / làm thêm. #}
+                {% if ban_ghi.gio_checkin and not ban_ghi.gio_checkout %}<form method="post" action="{% url 'cham_cong:check_out' %}">{% csrf_token %}<button type="submit" class="hr-btn"><i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>Check-out</button></form> {# Chỉ bật sau khi đã Check-in. #}
+                {% else %}<button type="button" class="hr-btn" disabled><i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>{% if ban_ghi.gio_checkout %}Đã Check-out{% else %}Check-out{% endif %}</button>{% endif %} {# Nút bị khóa. #}
+            </article> {# Đóng thẻ Check-out. #}
+        </div> {# Đóng hai thẻ. #}
+
+        <div class="cc-today-foot"> {# Chân thẻ: ca và số giờ làm. #}
+            <span><i class="fa-regular fa-clock" aria-hidden="true"></i> Ca hành chính: <strong>{{ ca_lam }}</strong></span> {# Ca quy định. #}
+            <span><i class="fa-solid fa-chart-simple" aria-hidden="true"></i> Số giờ làm việc: <strong>{% if ban_ghi and ban_ghi.sogiolamviec is not None %}{{ ban_ghi.sogiolamviec|gio_phut }}{% else %}Chưa ghi nhận{% endif %}</strong></span> {# Giờ làm thực tế. #}
+        </div> {# Đóng chân thẻ. #}
+    </section> {# Đóng thẻ chấm công. #}
+
+    <aside class="hr-card cc-info"> {# Khung Thông tin làm việc. #}
+        <h2>Thông tin làm việc</h2> {# Tiêu đề. #}
+        <div class="cc-person"><span class="hr-avatar">{{ nv.tennv|slice:":1"|upper }}</span><div><strong>{{ nv.tennv }}</strong><p class="hr-muted">{{ nv.chucvu }} · {{ nv.manv }}</p></div></div> {# Tên, chức vụ, mã. #}
+        <dl> {# Danh sách thông tin. #}
+            <div><i class="fa-regular fa-clock" aria-hidden="true"></i><span><dt>Thời gian làm việc</dt><dd>{{ ca_lam }}</dd></span></div> {# Ca làm. #}
+            <div><i class="fa-regular fa-user" aria-hidden="true"></i><span><dt>Trạng thái trong ngày</dt><dd class="{% if ban_ghi.thoigianditre or ban_ghi.thoigianvesom %}cc-num-warn{% endif %}">{{ trang_thai_ngay }}</dd></span></div> {# Trạng thái. #}
+        </dl> {# Đóng danh sách. #}
+    </aside> {# Đóng khung thông tin. #}
+</div> {# Đóng bố cục. #}
+{% endblock %} {# Kết thúc nội dung. #}
+
+{% block extra_js %} {# Đồng hồ chạy tiếp từ giờ máy chủ (chỉ để xem, giờ lưu vẫn lấy ở máy chủ). #}
+<script>
+    const dongHo = document.getElementById('gio-he-thong'); // Ô hiển thị giờ hệ thống.
+    if (dongHo) { // Chỉ chạy khi có ô đồng hồ.
+        const lech = new Date(dongHo.dataset.gio) - new Date(); // Độ lệch giữa giờ máy chủ và máy người dùng.
+        setInterval(() => { // Cập nhật mỗi giây.
+            dongHo.textContent = new Date(Date.now() + lech).toLocaleTimeString('vi-VN', {hour12: false, timeZone: 'Asia/Ho_Chi_Minh'}); // Giờ theo máy chủ.
+        }, 1000); // Chu kỳ 1 giây.
+    } // Kết thúc kiểm tra.
+</script>
+{% endblock %} {# Kết thúc JavaScript. #}

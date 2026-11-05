@@ -1,0 +1,146 @@
+/* Màu và kích thước chung bám mockup; giữ các biến để trang khác dùng lại. */
+:root { --primary-pink: #df3477; --primary-pink-hover: #c91c60; --primary-pink-light: #fce6ef; --primary-pink-subtle: #fff4f8; --bg-canvas: #fdf4f8; --border-color: #f1e8ee; --text-heading: #302b31; --text-body: #494249; --text-muted: #8d8497; --sidebar-width: 200px; }
+.sidebar { background: #fff9fc; padding: 20px 12px; } /* Sidebar hẹp, nền hồng rất nhạt như mẫu. */
+.brand-tag { font-size: 8px; } /* Dòng phụ dưới logo. */
+.menu-section-label { font-size: 9px; letter-spacing: 0; margin: 14px 0 10px; } /* Tiêu đề nhóm menu. */
+.nav-link { font-size: 12px; padding: 13px 12px; border-radius: 9px; } /* Menu gọn để phù hợp sidebar. */
+.main-wrapper { min-width: 0; } /* Không để bảng đẩy tràn chiều ngang cả trang. */
+.content-container { padding: 28px 36px 36px; } /* Lề nội dung theo mockup. */
+.hr-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; } /* Tiêu đề và nút đầu trang. */
+.hr-head h1 { font-size: 25px; font-weight: 800; letter-spacing: -.7px; color: var(--text-heading); } /* Tiêu đề đậm. */
+.hr-personal-heading { margin: 16px 0 36px; } /* Trang cá nhân có khoảng thở phía trên thẻ. */
+.hr-compact { margin-bottom: 14px; } /* Thanh tiêu đề nhỏ trong thẻ. */
+.hr-card { padding: 24px; background: #fff; border: 1px solid var(--border-color); border-radius: 14px; margin-bottom: 20px; min-width: 0; box-shadow: 0 3px 12px #69374b05; } /* Thẻ trắng. */
+.hr-card h1 { font-size: 21px; color: var(--text-heading); } /* Tiêu đề trong hộp thoại. */
+.hr-card h2 { font-size: 16px; font-weight: 700; color: var(--text-heading); } /* Tiêu đề từng phần. */
+.hr-muted { color: var(--text-muted); font-size: 12px; line-height: 1.7; } /* Chữ mô tả phụ. */
+.hr-back { display: inline-block; margin-bottom: 10px; font-size: 12px; color: #807780; text-decoration: none; } /* Liên kết quay lại. */
+.hr-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; } /* Nhóm nút. */
+.hr-btn { display: inline-flex; justify-content: center; align-items: center; gap: 8px; padding: 10px 16px; min-height: 36px; border: 1px solid transparent; border-radius: 7px; background: var(--primary-pink); color: #fff; text-decoration: none; font-size: 12px; font-weight: 600; cursor: pointer; } /* Nút chính màu hồng. */
+.hr-btn:hover { background: var(--primary-pink-hover); } /* Phản hồi khi trỏ chuột. */
+.hr-btn.hr-secondary { background: #fff; color: var(--text-heading); border-color: #e9dfe5; } /* Nút hủy hoặc phụ. */
+.hr-btn.hr-secondary:hover { background: #fff4f8; } /* Phản hồi cho nút phụ. */
+.hr-btn.hr-danger { background: #bc193e; color: #fff; } /* Thao tác vô hiệu hóa màu đỏ. */
+.hr-btn:focus-visible, a:focus-visible, summary:focus-visible, button:focus-visible { outline: 2px solid var(--primary-pink); outline-offset: 3px; } /* Dễ sử dụng bằng bàn phím. */
+.hr-filter { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 16px; } /* Bộ lọc nằm ngoài bảng như mockup. */
+.hr-filter label { display: grid; gap: 6px; flex: 1; min-width: 130px; font-size: 11px; font-weight: 600; } /* Nhãn nhỏ phía trên. */
+.hr-filter .hr-search { flex: 2; min-width: 230px; } /* Ô tìm kiếm rộng hơn. */
+.hr-filter input, .hr-filter select, .hr-fields input, .hr-fields select, .hr-fields textarea { width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid #e8dee4; border-radius: 7px; background: #fff; color: var(--text-heading); font-size: 12px; } /* Ô nhập có viền nhạt. */
+.hr-filter input:focus, .hr-filter select:focus, .hr-fields input:focus, .hr-fields select:focus, .hr-fields textarea:focus { outline: 2px solid #fbd7e6; border-color: var(--primary-pink); } /* Đánh dấu ô đang nhập. */
+.hr-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 28px; } /* Form hai cột. */
+.hr-field { min-width: 0; } /* Nội dung dài không đẩy cột. */
+.hr-field label { display: block; margin-bottom: 7px; font-size: 12px; font-weight: 600; } /* Nhãn của trường. */
+.hr-field textarea { resize: vertical; } /* Cho phép tăng chiều cao ô địa chỉ hoặc lý do. */
+.hr-field small { display: block; margin-top: 6px; } /* Hướng dẫn dưới ô nhập. */
+.hr-field :disabled { background: #f8f6f8; color: #8b818a; } /* Trường bị khóa. */
+.hr-wide { grid-column: 1 / -1; } /* Địa chỉ và lý do chiếm trọn hàng. */
+.hr-form-section { margin: 0 0 18px; } /* Tiêu đề phần đầu form. */
+.hr-fields + .hr-form-section { margin-top: 34px; } /* Khoảng cách giữa cá nhân và công việc. */
+.hr-edit-card { padding: 28px; } /* Khoảng đệm form giống mẫu. */
+.hr-form-actions { justify-content: flex-end; margin-top: 34px; } /* Nút ở góc dưới bên phải. */
+.hr-form-actions .hr-btn { min-width: 112px; } /* Hai nút có chiều rộng cân đối. */
+.hr-errors, .hr-field .errorlist { color: #be123c; font-size: 12px; list-style: none; margin-top: 6px; } /* Lỗi xác thực. */
+.hr-errors { margin-bottom: 18px; } /* Khoảng cách sau lỗi chung. */
+.hr-table-card { padding: 0; min-height: min(550px, 68vh); overflow: visible; } /* Bảng dài trên nền trắng như mockup. */
+.hr-table-wrap { max-width: 100%; overflow-x: auto; border-radius: 12px 12px 0 0; } /* Bảng cuộn trong khung. */
+.hr-table { width: 100%; min-width: 730px; border-collapse: collapse; text-align: left; font-size: 12px; } /* Bảng dữ liệu. */
+.hr-table th, .hr-table td { padding: 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; line-height: 1.5; } /* Các hàng cách đều. */
+.hr-table th { background: #fff0f6; color: #8a7d87; font-size: 11px; font-weight: 600; } /* Hàng tiêu đề hồng nhạt. */
+.hr-table tbody tr:hover { background: #fffbfd; } /* Phản hồi khi xem hàng. */
+.hr-table a { color: var(--text-heading); text-decoration: none; } /* Tên nhân viên theo mockup. */
+.hr-table .hr-code { color: var(--primary-pink); background: #fff0f6; border-radius: 5px; padding: 4px 7px; display: inline-block; font-weight: 600; } /* Mã trong nhãn hồng. */
+.hr-empty { padding: 34px 16px; text-align: center; color: var(--text-muted); line-height: 1.8; } /* Trạng thái bảng rỗng. */
+.hr-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 20px; font-size: 10px; line-height: 1.5; white-space: nowrap; background: #f0edf2; color: #77717c; } /* Nhãn trạng thái. */
+.hr-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; } /* Chấm màu như mockup. */
+.hr-badge[data-state="1"], .hr-badge[data-state="DANGHIEULUC"] { background: #e4f7ef; color: #20936b; } /* Đang làm và đang hiệu lực. */
+.hr-badge[data-state="0"], .hr-badge[data-state="CHAMDUT"], .hr-badge[data-state="HETHAN"] { background: #fee2e2; color: #dc2626; } /* Đã nghỉ việc (màu đỏ), hết hiệu lực hoặc hết hạn. */
+.hr-badge[data-state="CHUHIEULUC"] { background: #eaf3fd; color: #4a88bd; } /* Chưa bắt đầu. */
+.hr-badge[data-state="SAP_HET_HAN"] { background: #fff4d5; color: #b77608; } /* Nhãn sắp hết hạn. */
+.hr-table small { display: block; margin-top: 4px; } /* Số ngày nằm dưới trạng thái. */
+.hr-text-danger { color: #bc193e; } /* Cảnh báo còn dưới 15 ngày. */
+.hr-text-warning { color: #9e7507; } /* Cảnh báo còn 15–30 ngày. */
+.hr-alert-banner { display: flex; align-items: center; gap: 10px; padding: 13px 18px; background: #fff5d6; color: #73571c; font-size: 12px; border-radius: 12px 12px 0 0; } /* Banner cảnh báo trên bảng hợp đồng. */
+.hr-alert-banner a { margin-left: auto; color: var(--primary-pink); text-decoration: none; font-weight: 600; } /* Liên kết lọc nhanh. */
+.hr-pager { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 14px 18px; font-size: 11px; } /* Phân trang nằm dưới bảng. */
+.hr-page { display: inline-flex; justify-content: center; align-items: center; min-width: 29px; height: 29px; padding: 0 7px; border-radius: 6px; border: 1px solid var(--border-color); color: #807481; background: #fff; text-decoration: none; } /* Nút trang gọn như mẫu. */
+.hr-page[aria-current="page"] { color: #fff; background: var(--primary-pink); border-color: var(--primary-pink); } /* Trang hiện tại. */
+.hr-row-actions { width: 36px; height: 28px; } /* Giữ nguyên kích thước ô khi mở hoặc đóng menu. */
+.hr-row-actions summary { width: 36px; height: 28px; cursor: pointer; list-style: none; color: var(--primary-pink); padding: 4px 12px; font-size: 18px; line-height: 1; } /* Nút ba chấm không thay đổi chiều rộng. */
+.hr-row-actions summary::-webkit-details-marker { display: none; } /* Bỏ dấu mở mặc định. */
+.hr-row-menu { position: fixed; z-index: 150; display: grid; gap: 7px; width: 160px; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: #fff; box-shadow: 0 6px 20px #30273018; font-size: 11px; } /* Menu nổi ngoài bố cục bảng, không làm co các cột hoặc bị khung cuộn cắt mất. */
+.hr-row-menu a:hover { color: var(--primary-pink); } /* Dễ nhận biết liên kết. */
+.hr-hero { display: grid; grid-template-columns: 1.4fr 1fr 1fr; align-items: center; gap: 24px; padding: 26px 24px; margin-bottom: 20px; background: #fff; border-left: 6px solid #dc236b; border-radius: 4px 16px 16px 4px; min-width: 0; } /* Thẻ tóm tắt có vạch hồng. */
+.hr-identity { display: flex; align-items: center; gap: 20px; min-width: 0; } /* Avatar và nhận diện. */
+.hr-identity h2 { color: var(--text-heading); font-size: 23px; font-weight: 800; letter-spacing: -.5px; overflow-wrap: anywhere; } /* Tên hoặc mã lớn. */
+.hr-identity .hr-muted { margin: 5px 0 8px; } /* Khoảng cách dưới tên. */
+.hr-identity small { color: var(--text-muted); font-size: 9px; font-weight: 700; } /* Nhãn HỢP ĐỒNG LAO ĐỘNG. */
+.hr-identity .hr-badge { margin-top: 7px; } /* Nhãn dưới tiêu đề. */
+.hr-avatar { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 76px; height: 76px; border-radius: 50%; background: #fce5ee; color: #df2368; font-size: 28px; font-weight: 800; } /* Avatar tròn theo mockup cá nhân. */
+.hr-icon-box { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: #fce5ee; color: #df2368; font-size: 22px; flex-shrink: 0; } /* Biểu tượng hợp đồng. */
+.hr-hero-meta { display: grid; gap: 8px; border-left: 1px solid var(--border-color); padding-left: 24px; min-width: 0; } /* Cột phụ tách bằng đường dọc. */
+.hr-hero-meta small { color: var(--text-muted); font-size: 9px; font-weight: 700; } /* Nhãn ngày gia nhập và cửa hàng. */
+.hr-hero-meta small i { color: var(--primary-pink); margin-right: 8px; font-size: 13px; } /* Biểu tượng nhỏ. */
+.hr-hero-meta strong { font-size: 17px; color: var(--text-heading); } /* Ngày hoặc tên cửa hàng. */
+.hr-hero-meta p { font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; } /* Thời hạn và loại hợp đồng. */
+.hr-profile-grid { display: grid; grid-template-columns: 1.65fr 1fr; gap: 20px; } /* Hai cột hồ sơ giống mockup. */
+.hr-contract-grid { display: grid; grid-template-columns: 1.8fr 1fr; gap: 20px; } /* Hai cột hợp đồng. */
+.hr-stack { min-width: 0; } /* Cột có thể co nhỏ. */
+.hr-section-title { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color); } /* Đường kẻ dưới tiêu đề thẻ. */
+.hr-section-title i { display: inline-flex; align-items: center; justify-content: center; background: #fce5ee; color: var(--primary-pink); border-radius: 7px; width: 29px; height: 29px; font-size: 14px; flex-shrink: 0; } /* Biểu tượng nền hồng. */
+.hr-info { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 26px; margin-top: 18px; } /* Thông tin cá nhân hai cột. */
+.hr-info dt, .hr-detail-rows dt { color: var(--text-muted); font-size: 12px; } /* Nhãn nhẹ. */
+.hr-info dt { margin-bottom: 5px; } /* Khoảng cách nhãn và dữ liệu. */
+.hr-info dd, .hr-detail-rows dd { color: var(--text-heading); font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; } /* Dữ liệu thực. */
+.hr-one-column { grid-template-columns: minmax(0, 1fr); } /* Khung hẹp và form xác nhận chỉ một cột. */
+.hr-detail-rows { margin-top: 6px; } /* Chi tiết hợp đồng dạng từng dòng. */
+.hr-detail-rows > div { display: grid; grid-template-columns: 1fr 1.4fr; gap: 18px; padding: 11px 0; border-bottom: 1px solid var(--border-color); } /* Nhãn trái, dữ liệu phải. */
+.hr-detail-rows > div:last-child { border: 0; } /* Bỏ đường kẻ cuối. */
+.hr-security { display: flex; align-items: flex-start; gap: 16px; } /* Thẻ bảo mật ở dưới công việc. */
+.hr-security > i { color: var(--primary-pink); margin-top: 3px; } /* Biểu tượng ổ khóa. */
+.hr-security p { margin: 7px 0; } /* Mô tả bảo mật. */
+.hr-security a { display: flex; justify-content: space-between; gap: 36px; color: var(--primary-pink); font-size: 12px; font-weight: 600; text-decoration: none; } /* Liên kết đổi mật khẩu thật. */
+.hr-footnote { padding-top: 16px; margin-top: 18px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 12px; } /* Liên kết tài khoản của hồ sơ. */
+.hr-note { padding: 13px 16px; margin-bottom: 18px; border-left: 4px solid #dfb247; border-radius: 7px; background: #fff8e4; color: #82641f; line-height: 1.7; font-size: 12px; } /* Cảnh báo thời hạn. */
+.hr-note.hr-danger { border-color: #bc193e; background: #fff0f3; color: #bc193e; } /* Cảnh báo chấm dứt hoặc gần hết hạn. */
+.hr-empty-state { text-align: center; padding: 60px 24px; } /* Trang cá nhân chưa có dữ liệu. */
+.hr-empty-state p { color: var(--text-muted); font-size: 13px; margin: 14px auto 22px; max-width: 520px; line-height: 1.8; } /* Hướng dẫn cho trạng thái rỗng. */
+.hr-empty-icon { display: inline-flex; align-items: center; justify-content: center; width: 62px; height: 62px; border-radius: 18px; background: #fce5ee; color: var(--primary-pink); font-size: 24px; margin-bottom: 18px; } /* Biểu tượng trạng thái rỗng. */
+.hr-message { padding: 12px 16px; margin-bottom: 14px; border-radius: 9px; background: #edf4fd; color: #346eab; font-size: 12px; } /* Thông báo từ view. */
+.hr-message.success { background: #e4f7ef; color: #20845f; } /* Thành công. */
+.hr-message.error { background: #fff0f3; color: #bc193e; } /* Thất bại. */
+.hr-message.warning { background: #fff8e4; color: #82641f; } /* Cảnh báo. */
+.hr-account { position: relative; } /* Mốc đặt menu tài khoản. */
+.hr-account summary { list-style: none; } /* Bỏ dấu mở mặc định. */
+.hr-account summary::-webkit-details-marker { display: none; } /* Bỏ dấu trên WebKit. */
+.hr-account-menu { position: absolute; right: 0; top: calc(100% + 10px); min-width: 285px; padding: 10px; background: #fff; border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 3px 4px 0 #f4deea; z-index: 100; } /* Dropdown theo mockup. */
+.hr-account-menu a, .hr-account-menu button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px; border: 0; border-radius: 7px; text-decoration: none; color: var(--text-heading); font-size: 12px; background: #fff; text-align: left; cursor: pointer; } /* Liên kết và nút đăng xuất. */
+.hr-account-menu a:hover, .hr-account-menu a.active { background: #fff2f7; color: var(--primary-pink); } /* Mục đang mở. */
+.hr-account-menu .hr-menu-logout { color: #df2368; margin-top: 7px; padding-top: 15px; border-top: 1px solid var(--border-color); } /* Ngăn cách nút đăng xuất. */
+.hr-menu-identity { display: flex; align-items: center; gap: 12px; padding: 8px 12px 14px; margin-bottom: 7px; border-bottom: 1px solid var(--border-color); font-size: 12px; } /* Danh tính ở đầu dropdown. */
+.hr-modal-shell { position: fixed; inset: var(--header-height) 0 0 var(--sidebar-width); background: #30273080; z-index: 55; display: flex; align-items: center; justify-content: center; padding: 24px; overflow-y: auto; } /* Nền mờ và hộp xác nhận như mockup. */
+.hr-modal { width: min(100%, 560px); margin: auto; padding: 28px; box-shadow: 0 16px 60px #30273020; } /* Hộp thoại co được trên điện thoại. */
+.hr-modal h1 { display: flex; align-items: center; gap: 14px; font-size: 19px; } /* Tiêu đề xác nhận. */
+.hr-modal h1 i { color: #d89716; } /* Biểu tượng cảnh báo. */
+.hr-confirm-copy { margin: 18px 0 22px; } /* Nội dung xác nhận. */
+@media (max-width: 1100px) { /* Laptop nhỏ và máy tính bảng. */
+    .hr-hero { grid-template-columns: 1.4fr 1fr; } /* Hai cột khi không đủ chỗ. */
+    .hr-hero-meta:last-child { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--border-color); padding: 15px 0 0; } /* Cột thời hạn chuyển xuống hàng. */
+    .hr-profile-grid, .hr-contract-grid { grid-template-columns: 1.4fr 1fr; } /* Giảm chênh lệch hai cột. */
+} /* Kết thúc màn hình trung bình. */
+@media (max-width: 900px) { /* Sidebar ẩn theo hành vi có sẵn của base.html. */
+    .hr-modal-shell { left: 0; } /* Hộp thoại phủ đủ phần nội dung khi sidebar ẩn. */
+    .content-container { padding: 24px 20px; } /* Giảm lề. */
+} /* Kết thúc máy tính bảng. */
+@media (max-width: 700px) { /* Bố cục điện thoại. */
+    .hr-fields, .hr-info, .hr-profile-grid, .hr-contract-grid, .hr-hero { grid-template-columns: minmax(0, 1fr); } /* Nội dung một cột. */
+    .hr-hero-meta, .hr-hero-meta:last-child { grid-column: auto; border-left: 0; border-top: 1px solid var(--border-color); padding: 14px 0 0; } /* Ngăn cách ngang. */
+    .hr-card, .hr-hero { padding: 20px; } /* Giảm đệm trong thẻ. */
+    .hr-identity h2 { font-size: 21px; } /* Tiêu đề không tràn. */
+    .hr-personal-heading { margin: 10px 0 24px; } /* Giảm khoảng trống đầu trang. */
+    .hr-filter label, .hr-filter .hr-search { flex-basis: 100%; min-width: 0; } /* Bộ lọc xếp dọc. */
+    .hr-account .header-profile-text, .search-box-wrapper { display: none; } /* Dành chỗ cho nút mở menu và tài khoản. */
+    .hr-account-menu { position: fixed; right: 12px; top: 62px; max-width: calc(100vw - 24px); min-width: 260px; } /* Dropdown nằm trong màn hình. */
+    .hr-alert-banner { flex-wrap: wrap; } /* Banner cảnh báo có thể xuống dòng. */
+    .hr-modal-shell { padding: 12px; } /* Giữ lề nhỏ cho hộp thoại. */
+    .hr-modal h1 { font-size: 17px; } /* Tiêu đề xác nhận vừa màn hình. */
+} /* Kết thúc cấu hình điện thoại. */

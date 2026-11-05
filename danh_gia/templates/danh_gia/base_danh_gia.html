@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% comment %}
+{% endcomment %}
+{% block extra_css %}
+<style>
+  .dg{font-size:13.5px;color:var(--text-body)}
+  .dg a{color:var(--primary-pink);text-decoration:none}
+  .dg-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:22px}
+  .dg-title{font-size:24px;font-weight:700;color:var(--text-heading);letter-spacing:-.3px}
+  .dg-sub{font-size:12.5px;color:var(--text-muted);margin-top:4px}
+
+  /* lưới 12 cột (row / col-*) */
+  .dg .row{display:flex;flex-wrap:wrap;margin:-8px}
+  .dg .row>*{flex:0 0 100%;max-width:100%;padding:8px}
+  @media (min-width:768px){
+    .dg .col-md-3{flex-basis:25%;max-width:25%}.dg .col-md-4{flex-basis:33.3333%;max-width:33.3333%}
+    .dg .col-md-5{flex-basis:41.6667%;max-width:41.6667%}.dg .col-md-6{flex-basis:50%;max-width:50%}
+    .dg .col-md-7{flex-basis:58.3333%;max-width:58.3333%}
+  }
+  @media (min-width:992px){
+    .dg .col-lg-4{flex-basis:33.3333%;max-width:33.3333%}.dg .col-lg-8{flex-basis:66.6667%;max-width:66.6667%}
+  }
+
+  /* tiện ích */
+  .dg .d-flex{display:flex}.dg .d-none{display:none!important}
+  .dg .justify-content-between{justify-content:space-between}.dg .align-items-center{align-items:center}
+  .dg .text-center{text-align:center}.dg .text-end{text-align:right}.dg .h-100{height:100%}
+  .dg .text-danger{color:#d92d4b}.dg .small{font-size:12px}.dg .fw-semibold{font-weight:600}.dg .fw-bold{font-weight:700}
+  .dg .fs-5{font-size:18px}.dg .nho{color:var(--text-muted);font-size:12px}
+  .dg .mb-0{margin-bottom:0}.dg .mb-1{margin-bottom:4px}.dg .mb-2{margin-bottom:8px}.dg .mb-3{margin-bottom:16px}.dg .mb-4{margin-bottom:24px}
+  .dg .mt-1{margin-top:4px}.dg .mt-2{margin-top:8px}.dg .mt-3{margin-top:16px}
+  .dg .border{border:1px solid var(--border-color)!important}
+
+  /* thẻ, tiêu đề thẻ, chip */
+  .dg .card-x{background:#fff;border:1px solid var(--border-color);border-radius:16px;padding:20px}
+  .dg .card-head{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border-color);padding-bottom:12px;margin-bottom:16px}
+  .dg .card-head h6{margin:0;flex:1;font-weight:700;font-size:14px;color:var(--text-heading)}
+  .dg .card-x h6{font-size:14px;font-weight:700;color:var(--text-heading);margin-bottom:6px}
+  .dg .card-x p{margin-bottom:12px}
+  .dg .ico{width:26px;height:26px;border-radius:8px;background:var(--primary-pink-light);display:inline-block}
+  .dg .chip{font-size:11px;padding:3px 10px;border-radius:999px;background:var(--primary-pink-light);color:var(--primary-pink);white-space:nowrap;font-weight:600}
+  .dg .chip-green{background:#dcf5e6;color:#1e8a4c}.dg .chip-blue{background:#dfeafd;color:#2f63c4}
+  .dg .chip-warn{background:#fff0d6;color:#b36b00}.dg .chip-gray{background:#eef0f3;color:#64748b}
+  .dg .footbar{background:#fff;border:1px solid var(--border-color);border-radius:16px;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;color:var(--text-muted);font-size:12px}
+  .dg .footbar>div{display:flex;gap:8px}
+  .dg .stat{border-radius:12px;padding:14px;background:#f7f5f6}.dg .stat.ok{background:#e4f6ec}
+  .dg .stat .v{font-size:26px;font-weight:800;color:var(--text-heading)}
+
+  /* biểu mẫu */
+  .dg .form-label{display:block;margin-bottom:6px;font-size:12.5px;font-weight:600;color:var(--text-heading)}
+  .dg .form-control,.dg .form-select{display:block;width:100%;padding:9px 12px;border:1px solid #ebdbe2;border-radius:10px;font-size:13.5px;background:#fff;color:var(--text-heading);outline:none;transition:border-color .15s,box-shadow .15s}
+  .dg textarea.form-control{resize:vertical}
+  .dg .form-control:focus,.dg .form-select:focus{border-color:var(--primary-pink);box-shadow:0 0 0 3px rgba(199,44,94,.1)}
+  .dg .form-control:read-only,.dg .form-select:disabled{background:#faf7f8;color:var(--text-body)}
+  .dg .mb-3>.form-control,.dg .mb-3>.form-select{margin-top:0}
+
+  /* nút */
+  .dg .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:10px;border:1px solid transparent;font-size:13px;font-weight:600;line-height:1.2;cursor:pointer;background:#fff;color:var(--text-heading);transition:all .15s}
+  .dg .btn-sm{padding:6px 12px;font-size:12px}
+  .dg .btn-primary{background:var(--primary-pink);border-color:var(--primary-pink);color:#fff}
+  .dg .btn-primary:hover{background:var(--primary-pink-hover);border-color:var(--primary-pink-hover);color:#fff}
+  .dg .btn-primary:disabled{opacity:.45;cursor:not-allowed}
+  .dg .btn-light{background:#fff;color:var(--text-heading)}.dg .btn-light:hover{color:var(--primary-pink)}
+  .dg .btn-outline-secondary{background:#fff;border-color:#ebdbe2;color:var(--text-body)}
+  .dg .btn-outline-secondary:hover{border-color:var(--primary-pink);color:var(--primary-pink)}
+  .dg .btn.disabled{pointer-events:none}.dg .btn-primary.disabled{opacity:1}
+  .dg .btn-group{display:inline-flex}.dg .btn-group .btn{border-radius:0;margin-left:-1px}
+  .dg .btn-group .btn:first-child{border-radius:10px 0 0 10px;margin-left:0}.dg .btn-group .btn:last-child{border-radius:0 10px 10px 0}
+  .dg .btn-group .btn:only-child{border-radius:10px}
+
+  /* thông báo */
+  .dg .alert{padding:12px 16px;border-radius:12px;margin-bottom:14px;font-size:13px;border:1px solid transparent}
+  .dg .alert-danger{background:#fdecee;color:#b4233a;border-color:#f8cdd4}
+  .dg .alert-success{background:#e6f7ee;color:#1e7a4a;border-color:#c5ebd6}
+  .dg .alert-warning{background:#fff6e0;color:#8a5a00;border-color:#fde7b0}
+  .dg .alert-info{background:#e8f1fd;color:#245fa8;border-color:#cfe1f9}
+  .dg .alert-primary{background:var(--primary-pink-subtle);color:var(--primary-pink);border-color:var(--primary-pink-light)}
+
+  /* bảng */
+  .dg .table{width:100%;border-collapse:collapse}
+  .dg .table th,.dg .table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border-color)}
+  .dg .table thead th{background:var(--primary-pink-subtle);color:var(--text-muted);font-size:12px;font-weight:600;border-bottom:1px solid var(--border-color)}
+  .dg .table.align-middle td,.dg .table.align-middle th{vertical-align:middle}
+  .dg .table tbody tr:last-child td{border-bottom:none}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dg">
+    <div class="dg-head">
+        <div>
+            <h1 class="dg-title">{% block page_title %}{% endblock %}</h1>
+            <div class="dg-sub">{% block page_sub %}{% endblock %}</div>
+        </div>
+        <div>{% block page_action %}<a class="btn btn-light border" href="{% block back_url %}{% url 'danh_gia:trang_chu' %}{% endblock %}">&larr; Quay lại</a>{% endblock %}</div>
+    </div>
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">{{ message }}</div>
+    {% endfor %}
+    {% block dg_content %}{% endblock %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.querySelectorAll('.nav-list .nav-link').forEach(function (a) {
+        var label = a.querySelector('span');
+        if (label && label.textContent.trim() === 'Đánh giá') {
+            a.setAttribute('href', "{% url 'danh_gia:trang_chu' %}");
+            a.classList.add('active');
+        }
+    });
+</script>
+{% endblock %}

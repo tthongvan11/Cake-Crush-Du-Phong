@@ -1,0 +1,49 @@
+{% extends "base.html" %} {# Dùng giao diện chung. #}
+{% block title %}Hợp đồng lao động | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+
+{% block content %} {# Bắt đầu nội dung. #}
+<div class="hr-head"> {# Tiêu đề và thao tác. #}
+    <h1>{% if co_quyen_sua %}Quản lý hợp đồng{% else %}Hợp đồng của tôi{% endif %}</h1> {# Chỉ giữ tiêu đề theo chế độ xem. #}
+</div> {# Đóng đầu trang. #}
+
+    <form method="get" class="hr-filter"> {# Bộ lọc chỉ đọc dữ liệu. #}
+        <label class="hr-search">Tìm kiếm<input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Mã hợp đồng, mã hoặc tên nhân viên"></label> {# Tên tham số khớp view. #}
+
+        <label>Loại hợp đồng<select name="loai_hd"> {# Lọc loại hợp đồng. #}
+            <option value="">Tất cả loại hợp đồng</option> {# Bỏ điều kiện loại. #}
+            {% for ma, ten in loai_hop_dong %}<option value="{{ ma }}" {% if request.GET.loai_hd == ma %}selected{% endif %}>{{ ten }}</option>{% endfor %} {# Danh mục từ model. #}
+        </select></label> {# Đóng ô loại. #}
+
+        <label>Trạng thái<select name="trang_thai"> {# Lọc trạng thái theo ngày. #}
+            <option value="">Tất cả trạng thái</option> {# Bỏ điều kiện trạng thái. #}
+            {% for ma, ten in trang_thai_hop_dong %}<option value="{{ ma }}" {% if request.GET.trang_thai == ma %}selected{% endif %}>{{ ten }}</option>{% endfor %} {# Có cả Sắp hết hạn. #}
+        </select></label> {# Đóng ô trạng thái. #}
+
+        <button type="submit" class="hr-btn">Lọc</button> {# Gửi bộ lọc. #}
+        <a class="hr-btn hr-secondary" href="{% if co_quyen_sua %}{% url 'nhan_su:danh_sach_hop_dong' %}{% else %}{% url 'nhan_su:hop_dong_cua_toi' %}{% endif %}">Đặt lại</a> {# Trở về đúng danh sách. #}
+        {% if co_quyen_sua %}<a class="hr-btn" href="{% url 'nhan_su:them_hop_dong' %}">+ Tạo hợp đồng</a>{% endif %} {# Nút tạo cùng hàng bộ lọc. #}
+    </form> {# Đóng bộ lọc. #}
+
+<section class="hr-card hr-table-card"> {# Khung bảng theo mockup. #}
+    {% if so_sap_het_han %}<div class="hr-alert-banner"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span>{{ so_sap_het_han }} hợp đồng sắp hết hạn trong 30 ngày</span><a href="{% querystring trang_thai='SAP_HET_HAN' page=None %}">Xem chi tiết</a></div>{% endif %} {# Lọc cảnh báo và giữ các tiêu chí khác. #}
+    <div class="hr-table-wrap"><table class="hr-table"> {# Bảng có thể cuộn ngang. #}
+        <thead><tr><th scope="col">Mã HĐ</th><th scope="col">Nhân viên</th><th scope="col">Loại hợp đồng</th><th scope="col">Ngày bắt đầu</th><th scope="col">Ngày hết hạn</th><th scope="col">Trạng thái</th><th scope="col">Thao tác</th></tr></thead> {# Các cột hợp đồng. #}
+        <tbody> {# Dữ liệu trang hiện tại. #}
+            {% for hd in page_obj %} {# Duyệt hợp đồng đã phân trang. #}
+                <tr> {# Một hợp đồng. #}
+                    <td><a class="hr-code" href="{% url 'nhan_su:chi_tiet_hop_dong' hd.pk %}">{{ hd.mahd }}</a></td><td>{{ hd.manv.tennv }}</td> {# Mã trong nhãn hồng. #}
+                    <td>{{ hd.get_loaihd_display }}</td><td>{{ hd.ngaybatdau|date:"d/m/Y" }}</td> {# Loại và ngày hiệu lực. #}
+                    <td>{{ hd.ngayhethan|date:"d/m/Y"|default:"Không thời hạn" }}</td> {# Ngày hết hạn nếu có. #}
+                    <td> {# Trạng thái và cảnh báo. #}
+                        <span class="hr-badge" data-state="{% if hd.sap_het_han %}SAP_HET_HAN{% else %}{{ hd.ma_trang_thai }}{% endif %}">{% if hd.sap_het_han %}Sắp hết hạn{% else %}{{ hd.nhan_trang_thai }}{% endif %}</span> {# Nhãn cảnh báo như mockup. #}
+                    </td> {# Đóng ô trạng thái. #}
+                    <td><details class="hr-row-actions"><summary aria-label="Thao tác cho {{ hd.mahd }}">⋮</summary><nav class="hr-row-menu"><a href="{% url 'nhan_su:chi_tiet_hop_dong' hd.pk %}">Xem chi tiết</a>{% if hd.manv.trangthai and hd.ma_trang_thai != 'CHAMDUT' %}<a href="{% url 'nhan_su:sua_hop_dong' hd.pk %}?next={{ request.get_full_path|urlencode }}">Chỉnh sửa</a>{% if hd.loaihd != 'KHONG_XAC_DINH' %}<a href="{% url 'nhan_su:gia_han_hop_dong' hd.pk %}?next={{ request.get_full_path|urlencode }}">Gia hạn</a>{% endif %}{% endif %}</nav></details></td> {# Giữ nguyên danh sách, bộ lọc và số trang sau chỉnh sửa hoặc gia hạn. #}
+                </tr> {# Đóng dòng. #}
+            {% empty %}<tr><td colspan="7" class="hr-empty">Chưa có hợp đồng phù hợp. Nếu cần cập nhật thông tin, vui lòng liên hệ quản lý.</td></tr> {# Thông báo rỗng. #}
+            {% endfor %} {# Kết thúc danh sách. #}
+        </tbody> {# Đóng dữ liệu. #}
+    </table></div> {# Đóng bảng. #}
+
+    {% include "nhan_su/includes/phan_trang.html" %} {# Chèn phân trang dùng chung. #}
+</section> {# Đóng khung. #}
+{% endblock %} {# Kết thúc nội dung. #}

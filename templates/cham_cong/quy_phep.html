@@ -1,0 +1,42 @@
+{% extends "base.html" %} {# Dùng khung giao diện chung. #}
+{% load static %} {# Nạp đường dẫn static. #}
+{% block title %}Quản lý quỹ phép năm | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/cham_cong.css' %}">{% endblock %} {# Giao diện riêng. #}
+
+{% block content %} {# Bắt đầu nội dung. #}
+<div class="hr-head"><h1>Quản lý quỹ phép năm</h1></div> {# Tiêu đề trang. #}
+{% include "cham_cong/includes/tabs_quan_ly_phep.html" %} {# Hai tab. #}
+
+<form method="get" class="hr-filter"> {# Bộ lọc năm và từ khóa. #}
+    <label>Năm<select name="nam">{% for n in ds_nam %}<option value="{{ n }}" {% if n == nam %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label> {# Năm. #}
+    <label class="hr-search">Tìm nhân viên<input type="search" name="q" value="{{ q }}" placeholder="Nhập tên hoặc mã nhân viên"></label> {# Từ khóa. #}
+    <button type="submit" class="hr-btn">Tìm kiếm</button> {# Gửi bộ lọc. #}
+</form> {# Đóng bộ lọc. #}
+
+<div class="cc-stats"> {# Bốn thẻ tổng hợp. #}
+    <div class="cc-stat"><span>Nhân viên</span><strong>{{ so_nv }} người</strong><small>Đang theo dõi quỹ phép</small></div> {# Số nhân viên. #}
+    <div class="cc-stat cc-pink"><span>Tổng phép năm</span><strong>{{ tong }} ngày</strong><small>{{ phep_chuan }} ngày / nhân viên</small></div> {# Tổng hạn ngạch. #}
+    <div class="cc-stat cc-pink"><span>Đã sử dụng</span><strong>{{ da_dung }} ngày</strong><small>Chỉ tính phép năm đã duyệt</small></div> {# Đã dùng. #}
+    <div class="cc-stat cc-pink"><span>Còn lại</span><strong>{{ con_lai }} ngày</strong><small>Tổng phép năm − Đã sử dụng</small></div> {# Còn lại. #}
+</div> {# Đóng thẻ. #}
+
+<section class="hr-card hr-table-card"> {# Khung bảng. #}
+    <div class="hr-table-wrap"><table class="hr-table"> {# Bảng quỹ phép. #}
+        <thead><tr><th scope="col">Nhân viên</th><th scope="col">Tổng phép</th><th scope="col">Đã dùng</th><th scope="col">Còn lại</th><th scope="col">Chờ duyệt</th><th scope="col">Cảnh báo</th><th scope="col">Chi tiết</th></tr></thead> {# Tiêu đề cột. #}
+        <tbody> {# Dữ liệu. #}
+            {% for d in page_obj %} {# Duyệt từng nhân viên. #}
+                <tr> {# Một nhân viên. #}
+                    <td>{{ d.nv.manv }} · {{ d.nv.tennv }}</td> {# Mã và tên. #}
+                    <td>{{ d.tong }} ngày</td><td>{{ d.da_dung }} ngày</td><td>{{ d.con_lai }} ngày</td><td>{{ d.cho_duyet }} ngày</td> {# Số liệu. #}
+                    <td>{% if d.vuot_quy %}<span class="hr-badge" data-state="VUOT">Vượt quỹ {{ d.vuot_quy }} ngày</span>{% elif d.cho_duyet %}<span class="hr-muted">Trong quỹ phép</span>{% else %}—{% endif %}</td> {# Cảnh báo đỏ khi vượt. #}
+                    <td>{% if d.vuot_quy %}<a class="cc-link" href="{% url 'cham_cong:duyet_don_list' %}?q={{ d.nv.manv }}">Xem đơn</a>{% else %}<a class="cc-link" href="{% url 'cham_cong:chi_tiet_quy_phep' d.nv.manv %}?nam={{ nam }}">Xem chi tiết</a>{% endif %}</td> {# Thao tác. #}
+                </tr> {# Đóng dòng. #}
+            {% empty %} {# Không có nhân viên. #}
+                <tr><td colspan="7" class="hr-empty">Không tìm thấy thông tin nhân viên</td></tr> {# Thông báo theo đặc tả. #}
+            {% endfor %} {# Kết thúc danh sách. #}
+        </tbody> {# Đóng dữ liệu. #}
+    </table></div> {# Đóng bảng. #}
+    {% if page_obj.paginator.count %}{% include "nhan_su/includes/phan_trang.html" %}{% endif %} {# Phân trang dùng chung. #}
+</section> {# Đóng khung. #}
+<div class="cc-box" style="background:#eef5fd;color:#346eab"><strong>Cách tính quỹ phép</strong>Còn lại = Tổng phép năm − Phép năm đã duyệt. Đơn chờ duyệt, bị từ chối và nghỉ không lương không bị trừ phép.</div> {# Công thức theo đặc tả. #}
+{% endblock %} {# Kết thúc nội dung. #}

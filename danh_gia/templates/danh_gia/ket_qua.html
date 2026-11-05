@@ -1,0 +1,64 @@
+{% extends "danh_gia/base_danh_gia.html" %}
+{% block page_title %}Kết quả đánh giá của tôi{% endblock %}
+{% block page_sub %}Xem điểm, xếp loại và nhận xét các kỳ đánh giá đã công bố cho bạn.{% endblock %}
+{% block dg_content %}
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card-x">
+      <div class="card-head"><span class="ico"></span>
+        <h6>{% if dg %}Kết quả {{ dg.maky.tenky }}{% else %}Kết quả đánh giá{% endif %}</h6>
+        {% if dg %}<span class="chip chip-green">Đã công bố</span>{% endif %}</div>
+
+      {% if ds %}
+      <div class="row g-3 mb-3">
+        <div class="col-md-6"><label class="form-label">Chọn kỳ đánh giá</label>
+          <select class="form-select" onchange="location.search='?ky='+encodeURIComponent(this.value)">
+            {% for d in ds %}<option value="{{ d.maky_id }}" {% if dg and d.maky_id == dg.maky_id %}selected{% endif %}>{{ d.maky.tenky }}</option>{% endfor %}
+            {% if ky_dang_xem and not dg %}<option value="{{ ky_dang_xem.maky }}" selected>{{ ky_dang_xem.tenky }}</option>{% endif %}
+          </select></div>
+        {% if dg %}<div class="col-md-6"><label class="form-label">Thời gian kỳ đánh giá</label>
+          <input class="form-control" readonly value="{{ dg.maky.thoigianbatdau|date:'d/m/Y' }} – {{ dg.maky.thoigianketthuc|date:'d/m/Y' }}"></div>{% endif %}
+      </div>
+      {% endif %}
+
+      {% if dg %}
+        <div class="row g-3 mb-3">
+          <div class="col-md-6"><div class="stat"><div class="nho">Tổng điểm</div><div class="v">{{ dg.diem_trung_binh }}</div></div></div>
+          <div class="col-md-6"><div class="stat ok"><div class="nho">Xếp loại đã lưu</div><div class="v">{{ dg.get_xeploai_display }}</div></div></div>
+        </div>
+        <table class="table">
+          <thead><tr><th>Tiêu chí đánh giá</th><th style="width:130px">Điểm đã lưu</th></tr></thead>
+          <tbody>{% for c in chi_tiet %}<tr><td>{{ c.matieuchi.tentieuchi }}</td><td>{{ c.diem }}</td></tr>{% endfor %}</tbody>
+        </table>
+        <div class="fw-semibold small mb-1">Nhận xét của người đánh giá</div>
+        <div class="mb-3">{{ dg.nhanxet|default:"(không có nhận xét)" }}</div>
+        {% if phan_hoi %}
+          <div class="fw-semibold small mb-1">Phản hồi đã gửi</div>
+          {% for p in phan_hoi %}<div class="small mb-1">{{ p.ngayphanhoi|date:"d/m/Y" }}: {{ p.noidung }}</div>{% endfor %}
+        {% endif %}
+        <a class="btn btn-primary" href="{% url 'danh_gia:phan_hoi' dg.pk %}">Gửi phản hồi</a>
+      {% else %}
+        <div class="alert alert-info mb-0">Chưa có kết quả đánh giá.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card-x mb-3">
+      <div class="card-head"><span class="ico"></span><h6>Thông tin của tôi</h6></div>
+      <div class="fw-semibold">{{ nhan_vien }}</div><div class="nho mb-3">{{ nhan_vien.pk }}</div>
+      {% if dg %}<div class="nho">Mã kết quả đánh giá</div><div class="mb-2">{{ dg.pk }}</div>
+      <span class="chip chip-green">Đã lưu và công bố</span>{% endif %}
+      <div class="nho mt-3">Bạn chỉ xem được kết quả đã lưu và công bố của chính mình.</div>
+    </div>
+    <div class="card-x">
+      <div class="card-head"><span class="ico"></span><h6>Các kỳ khác</h6></div>
+      {% for k, co in cac_ky %}
+        <div class="mb-2"><div class="fw-semibold small">{{ k.tenky }}</div>
+          {% if co %}<a class="small" href="?ky={{ k.maky }}">Có kết quả của bạn</a>
+          {% else %}<span class="nho">Chưa có kết quả đã lưu</span>{% endif %}</div>
+      {% empty %}<div class="nho">Không có kỳ nào khác.</div>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

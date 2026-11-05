@@ -1,0 +1,24 @@
+{% extends "danh_gia/base_danh_gia.html" %}
+{% block page_title %}Tạo kỳ đánh giá{% endblock %}
+{% block page_sub %}Nhập tên và thời gian để bắt đầu một kỳ đánh giá mới.{% endblock %}
+{% block back_url %}{% url 'danh_gia:ky_ds' %}{% endblock %}
+{% block dg_content %}
+<form method="post" novalidate>
+  {% csrf_token %}
+  <div class="card-x">
+    <div class="card-head"><span class="ico"></span><h6>Thông tin kỳ đánh giá</h6><span class="chip">Kỳ mới</span></div>
+    {% for e in form.non_field_errors %}<div class="alert alert-danger">{{ e }}</div>{% endfor %}
+    {% include "danh_gia/_truong.html" with f=form.tenky %}
+    <div class="row">
+      <div class="col-md-6">{% include "danh_gia/_truong.html" with f=form.thoigianbatdau %}</div>
+      <div class="col-md-6">{% include "danh_gia/_truong.html" with f=form.thoigianketthuc %}</div>
+    </div>
+    <div class="alert alert-primary mb-0 small">Kỳ đánh giá mới sẽ xuất hiện trong danh sách sau khi lưu thành công.</div>
+  </div>
+  <div class="footbar">
+    <span>Hủy hoặc quay lại sẽ không lưu thông tin đã nhập.</span>
+    <div><a class="btn btn-light border" href="{% url 'danh_gia:ky_ds' %}">Hủy</a>
+         <button class="btn btn-primary" type="submit">Lưu kỳ đánh giá</button></div>
+  </div>
+</form>
+{% endblock %}

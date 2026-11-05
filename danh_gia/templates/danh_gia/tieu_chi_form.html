@@ -1,0 +1,85 @@
+{% extends "danh_gia/base_danh_gia.html" %}
+{% block page_title %}Thiết lập tiêu chí đánh giá{% endblock %}
+{% block page_sub %}Xác định nội dung đánh giá áp dụng cho nhân viên trong kỳ đã chọn.{% endblock %}
+{% block back_url %}{% url 'danh_gia:ky_ds' %}{% endblock %}
+{% block dg_content %}
+<div class="row g-3 mb-3">
+  <div class="col-md-6"><label class="form-label">Kỳ đánh giá</label>
+    <select class="form-select" onchange="location.href=this.value">
+      {% for k in ds_ky %}<option value="{% url 'danh_gia:tieu_chi' k.maky %}" {% if k.maky == ky.maky %}selected{% endif %}>{{ k.tenky }}</option>{% endfor %}
+    </select></div>
+  <div class="col-md-6"><label class="form-label">Thời gian</label>
+    <input class="form-control" readonly value="{{ ky.thoigianbatdau|date:'d/m/Y' }} – {{ ky.thoigianketthuc|date:'d/m/Y' }}"></div>
+</div>
+
+<form method="post" novalidate>
+  {% csrf_token %}
+  {{ formset.management_form }}
+  {% for e in formset.non_form_errors %}<div class="alert alert-danger">{{ e }}</div>{% endfor %}
+
+  <div class="card-x mb-3">
+    <div class="card-head"><span class="ico"></span><h6>Danh sách tiêu chí</h6><span class="chip chip-green" id="dem-tc"></span></div>
+    <table class="table align-middle mb-1">
+      <thead><tr><th style="width:30%">Tên tiêu chí</th><th>Nội dung đánh giá</th><th style="width:90px">Thao tác</th></tr></thead>
+      <tbody id="ds-tieu-chi">
+      {% for form in formset %}
+        <tr class="dong-tc">
+          <td>{% for h in form.hidden_fields %}{{ h }}{% endfor %}{{ form.tentieuchi }}
+            {% for e in form.tentieuchi.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</td>
+          <td>{{ form.mota }}{% for e in form.mota.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</td>
+          <td>{% if form.instance.pk %}<label class="text-danger small">{{ form.DELETE }} Xóa</label>
+              {% else %}<a href="#" class="text-danger small bo-dong">Bỏ</a>{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <div class="nho">Cần có ít nhất một tiêu chí cho mỗi kỳ đánh giá. Mỗi tiêu chí cần có tên và nội dung đánh giá.</div>
+  </div>
+
+  <div class="card-x">
+    <div class="card-head"><span class="ico"></span><h6>Thêm tiêu chí</h6></div>
+    <div class="row g-3">
+      <div class="col-md-5"><label class="form-label">Tên tiêu chí *</label><input id="tc-ten" class="form-control" placeholder="Nhập tên tiêu chí"></div>
+      <div class="col-md-7"><label class="form-label">Nội dung tiêu chí *</label><input id="tc-nd" class="form-control" placeholder="Mô tả nội dung cần đánh giá"></div>
+    </div>
+    <div class="text-danger small mt-2 d-none" id="tc-loi">Yêu cầu nhập đầy đủ thông tin</div>
+    <div class="text-end mt-2"><button type="button" id="them-dong" class="btn btn-outline-secondary btn-sm">+ Thêm vào danh sách</button></div>
+  </div>
+
+  <div class="footbar">
+    <span>Hủy sẽ bỏ các thay đổi chưa lưu trong danh sách tiêu chí.</span>
+    <div><a class="btn btn-light border" href="{% url 'danh_gia:ky_ds' %}">Hủy</a>
+         <button class="btn btn-primary" type="submit">Lưu tiêu chí</button></div>
+  </div>
+</form>
+
+<template id="mau-dong">
+  <tr class="dong-tc">
+    <td>{% for h in formset.empty_form.hidden_fields %}{{ h }}{% endfor %}{{ formset.empty_form.tentieuchi }}</td>
+    <td>{{ formset.empty_form.mota }}</td>
+    <td><a href="#" class="text-danger small bo-dong">Bỏ</a></td>
+  </tr>
+</template>
+<script>
+  var tong = document.getElementById('id_{{ formset.prefix }}-TOTAL_FORMS');
+  var bang = document.getElementById('ds-tieu-chi');
+  function dem(){ document.getElementById('dem-tc').textContent = bang.querySelectorAll('.dong-tc').length + ' tiêu chí'; }
+  dem();
+  bang.addEventListener('click', function (e) {
+    if (e.target.classList.contains('bo-dong')) { e.preventDefault(); e.target.closest('tr').remove(); dem(); }
+  });
+  document.getElementById('them-dong').addEventListener('click', function () {
+    var ten = document.getElementById('tc-ten'), nd = document.getElementById('tc-nd');
+    var loi = document.getElementById('tc-loi');
+    if (!ten.value.trim() || !nd.value.trim()) { loi.classList.remove('d-none'); return; }
+    loi.classList.add('d-none');
+    var html = document.getElementById('mau-dong').innerHTML.replaceAll('__prefix__', tong.value);
+    bang.insertAdjacentHTML('beforeend', html);
+    var dong = bang.lastElementChild;
+    dong.querySelector('[name$="-tentieuchi"]').value = ten.value.trim();
+    dong.querySelector('[name$="-mota"]').value = nd.value.trim();
+    tong.value = parseInt(tong.value, 10) + 1;
+    ten.value = ''; nd.value = ''; dem();
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,5 @@
+<div class="mb-3">
+  <label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}{% if f.field.required %} *{% endif %}</label>
+  {{ f }}
+  {% for e in f.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+</div>

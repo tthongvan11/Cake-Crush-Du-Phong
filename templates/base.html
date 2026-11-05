@@ -1,3 +1,4 @@
+{% load static %} {# Cho phép sử dụng đường dẫn static. #}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -465,6 +466,9 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{% static 'css/nhan_su.css' %}?v=20261102-status"> {# Nạp giao diện đã bỏ bộ lọc ngày. #}
+    <link rel="stylesheet" href="{% static 'css/cham_cong.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dao_tao.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -479,12 +483,12 @@
                 </div>
                 <div class="brand-info">
                     <span class="brand-name">Cake Crush</span>
-                    <span class="brand-tag">{% if user.is_staff or user.is_superuser %}HUMAN RESOURCES{% else %}Staff{% endif %}</span>
+                    <span class="brand-tag">HUMAN RESOURCES</span> {# Thống nhất thương hiệu theo mockup. #}
                 </div>
             </a>
 
             <!-- Menu Category -->
-            <div class="menu-section-label">{% if user.is_staff or user.is_superuser %}KHÔNG GIAN QUẢN LÝ{% else %}KHÔNG GIAN LÀM VIỆC{% endif %}</div>
+            <div class="menu-section-label">{% if user.is_staff or user.is_superuser %}KHÔNG GIAN QUẢN LÝ{% else %}KHÔNG GIAN NHÂN VIÊN{% endif %}</div>
 
             <!-- Menu Items -->
             <ul class="nav-list">
@@ -496,38 +500,47 @@
                     </a>
                 </li>
                 {% endif %}
+                {% if user.is_staff or user.is_superuser %} {# URL cho quản lý. #}
+                    {% url 'nhan_su:danh_sach_nhan_vien' as url_ho_so %} {# Danh sách hồ sơ. #}
+                    {% url 'nhan_su:danh_sach_hop_dong' as url_hop_dong %} {# Danh sách hợp đồng. #}
+                {% else %} {# URL cho nhân viên. #}
+                    {% url 'nhan_su:ho_so_cua_toi' as url_ho_so %} {# Hồ sơ sở hữu. #}
+                    {% url 'nhan_su:hop_dong_cua_toi' as url_hop_dong %} {# Hợp đồng sở hữu. #}
+                {% endif %} {# Kết thúc chọn URL. #}
+
+                <li class="nav-item"> {# Mục hồ sơ. #}
+                    <a href="{{ url_ho_so }}" class="nav-link {% if '/quan-ly/nhan-vien/' in request.path or not user.is_staff and not user.is_superuser and request.resolver_match.url_name == 'ho_so_cua_toi' %}active{% endif %}"> {# Quản lý xem trang cá nhân không đánh dấu nhầm menu quản lý. #}
+                        <i class="fa-solid fa-user-group" aria-hidden="true"></i> {# Biểu tượng trang trí. #}
+                        <span>{% if user.is_staff or user.is_superuser %}Hồ sơ nhân viên{% else %}Hồ sơ của tôi{% endif %}</span> {# Tên theo vai trò. #}
+                    </a> {# Đóng liên kết. #}
+                </li> {# Đóng mục hồ sơ. #}
+
+                <li class="nav-item"> {# Mục hợp đồng. #}
+                    <a href="{{ url_hop_dong }}" class="nav-link {% if '/quan-ly/hop-dong/' in request.path or not user.is_staff and not user.is_superuser and '/hop-dong-cua-toi/' in request.path %}active{% endif %}"> {# Đánh dấu đúng menu theo vai trò và phạm vi trang. #}
+                        <i class="fa-regular fa-file-lines" aria-hidden="true"></i> {# Biểu tượng hợp đồng. #}
+                        <span>{% if user.is_staff or user.is_superuser %}Hợp đồng{% else %}Hợp đồng của tôi{% endif %}</span> {# Tên theo vai trò. #}
+                    </a> {# Đóng liên kết. #}
+                </li> {# Đóng mục hợp đồng. #}
+                <li class="nav-item"> {# Mục chấm công: quản lý mở bảng tổng hợp, nhân viên mở trang chấm công. #}
+                    <a href="{% if user.is_staff or user.is_superuser %}{% url 'cham_cong:bang_cham_cong' %}{% else %}{% url 'cham_cong:hom_nay' %}{% endif %}" class="nav-link {% if '/cham-cong/' in request.path %}active{% endif %}"> {# Đánh dấu cả trang con. #}
+                        <i class="fa-regular fa-clock" aria-hidden="true"></i> {# Biểu tượng đồng hồ. #}
+                        <span>Chấm công</span> {# Tên mục. #}
+                    </a> {# Đóng liên kết. #}
+                </li> {# Đóng mục chấm công. #}
+                <li class="nav-item"> {# Mục nghỉ phép: quản lý mở trang duyệt đơn, nhân viên mở đơn của tôi. #}
+                    <a href="{% if user.is_staff or user.is_superuser %}{% url 'cham_cong:duyet_don_list' %}{% else %}{% url 'cham_cong:don_cua_toi' %}{% endif %}" class="nav-link {% if '/nghi-phep/' in request.path or '/quy-phep/' in request.path %}active{% endif %}"> {# Gồm cả quỹ phép. #}
+                        <i class="fa-regular fa-calendar-days" aria-hidden="true"></i> {# Biểu tượng lịch. #}
+                        <span>Nghỉ phép</span> {# Tên mục. #}
+                    </a> {# Đóng liên kết. #}
+                </li> {# Đóng mục nghỉ phép. #}
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fa-solid fa-user-group"></i>
-                        <span>Hồ sơ nhân viên</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fa-regular fa-file-lines"></i>
-                        <span>Hợp đồng</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fa-regular fa-clock"></i>
-                        <span>Chấm công</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fa-regular fa-calendar-days"></i>
-                        <span>Nghỉ phép</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{% if user.is_staff or user.is_superuser %}{% url 'dao_tao:danh_sach_khoa' %}{% else %}{% url 'dao_tao:chuong_trinh_cua_toi' %}{% endif %}" class="nav-link {% if '/dao-tao' in request.path %}active{% endif %}">
                         <i class="fa-solid fa-chalkboard-user"></i>
                         <span>Đào tạo</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{% url 'danh_gia:trang_chu' %}" class="nav-link {% if '/danh-gia/' in request.path %}active{% endif %}">
                         <i class="fa-regular fa-star"></i>
                         <span>Đánh giá</span>
                     </a>
@@ -602,43 +615,42 @@
                 </button>
 
                 <!-- Profile Dropdown -->
-                <div class="header-profile">
-                    <div class="avatar-circle">
-                        {% if user.is_authenticated and user.first_name and user.last_name %}
-                            {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
-                        {% elif user.is_staff or user.is_superuser %}
-                            HV
-                        {% else %}
-                            MA
-                        {% endif %}
-                    </div>
-                    <div class="header-profile-text">
-                        <span class="header-profile-name">
-                            {% if user.is_authenticated and user.get_full_name %}
-                                {{ user.get_full_name }}
-                            {% elif user.is_authenticated %}
-                                {{ user.username }}
-                            {% else %}
-                                Nguyễn Thị Nhi
-                            {% endif %}
-                        </span>
-                        <span class="header-profile-role">
-                            {% if user.is_staff or user.is_superuser %}Quản lý cửa hàng{% else %}Nhân viên{% endif %}
-                        </span>
-                    </div>
-                    <i class="fa-solid fa-chevron-down chevron"></i>
-                </div>
+                <details class="hr-account"> {# Menu mở được bằng chuột và bàn phím. #}
+                    <summary class="header-profile" aria-label="Tùy chọn tài khoản"> {# Bấm để mở hoặc đóng menu. #}
+                        <span class="avatar-circle">{{ user.username|slice:":1"|upper }}</span> {# Chữ đầu tên đăng nhập. #}
+                        <span class="header-profile-text"><span class="header-profile-name">{% firstof user.get_full_name user.username %}</span></span> {# Ưu tiên họ tên nếu đã có. #}
+                        <i class="fa-solid fa-chevron-down chevron" aria-hidden="true"></i> {# Biểu tượng mở menu. #}
+                    </summary> {# Đóng phần điều khiển. #}
+                    <nav class="hr-account-menu" aria-label="Tài khoản cá nhân"> {# Menu cá nhân cho cả hai vai trò. #}
+                        <div class="hr-menu-identity"><span class="avatar-circle">{{ user.username|slice:":1"|upper }}</span><div><strong>{% firstof user.get_full_name user.username %}</strong><p class="hr-muted">{% if user.is_staff or user.is_superuser %}Quản lý cửa hàng{% else %}Nhân viên{% endif %}</p></div></div> {# Danh tính người đang đăng nhập. #}
+                        <a class="{% if request.resolver_match.url_name == 'ho_so_cua_toi' %}active{% endif %}" href="{% url 'nhan_su:ho_so_cua_toi' %}"><i class="fa-regular fa-user" aria-hidden="true"></i>Hồ sơ của tôi</a> {# Cả quản lý và nhân viên đều có lối vào cá nhân. #}
+                        <a class="{% if '/hop-dong-cua-toi/' in request.path %}active{% endif %}" href="{% url 'nhan_su:hop_dong_cua_toi' %}"><i class="fa-regular fa-file-lines" aria-hidden="true"></i>Hợp đồng của tôi</a> {# Bao gồm chi tiết sở hữu. #}
+                        <a href="{% url 'cham_cong:hom_nay' %}"><i class="fa-regular fa-clock" aria-hidden="true"></i>Chấm công của tôi</a> {# Quản lý cũng tự chấm công. #}
+                        <a href="{% url 'cham_cong:don_cua_toi' %}"><i class="fa-regular fa-calendar-days" aria-hidden="true"></i>Đơn nghỉ phép của tôi</a> {# Quản lý cũng gửi đơn nghỉ. #}
+                        <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit" class="hr-menu-logout"><i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>Đăng xuất</button></form> {# Đăng xuất bằng POST. #}
+                    </nav> {# Đóng các lựa chọn. #}
+                </details> {# Đóng menu tài khoản. #}
             </div>
         </header>
 
         <!-- Main Body -->
-        <main class="content-container">
-            {% block content %}{% endblock %}
-        </main>
+        <main class="content-container"> {# Vùng nội dung trang. #}
+            {% for message in messages %} {# Đọc thông báo từ view. #}
+                <div class="hr-message {{ message.tags }}" role="{% if message.level_tag == 'error' %}alert{% else %}status{% endif %}">{{ message }}</div> {# Hiển thị theo mức độ. #}
+            {% endfor %} {# Kết thúc thông báo. #}
+            {% block content %}{% endblock %} {# Giữ vị trí chèn nội dung trang con. #}
+        </main> {# Đóng vùng nội dung. #}
     </div>
 
     <!-- Mobile Drawer Toggle Script -->
     <script>
+        const accountMenu = document.querySelector('.hr-account'); // Menu tài khoản ở góc phải.
+        document.addEventListener('click', (event) => { // Bấm ngoài dropdown sẽ đóng menu.
+            if (accountMenu && !accountMenu.contains(event.target)) accountMenu.open = false; // Giữ nguyên thao tác bên trong menu.
+        }); // Kết thúc xử lý bấm chuột.
+        document.addEventListener('keydown', (event) => { // Hỗ trợ đóng dropdown bằng bàn phím.
+            if (event.key === 'Escape' && accountMenu) accountMenu.open = false; // Escape đóng menu.
+        }); // Kết thúc xử lý bàn phím.
         const toggleBtn = document.getElementById('sidebar-toggle');
         const sidebar = document.getElementById('sidebar');
         if (toggleBtn && sidebar) {
@@ -652,6 +664,7 @@
             });
         }
     </script>
+    <script src="{% static 'js/nhan_su.js' %}?v=20261018-1"></script> {# Đặt menu thao tác nổi sau khi bảng đã được tạo. #}
     {% block extra_js %}{% endblock %}
 </body>
 </html>

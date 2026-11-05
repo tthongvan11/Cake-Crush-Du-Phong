@@ -1,0 +1,4 @@
+<nav class="cc-tabs" aria-label="Chấm công"> {# Hai trang con của mục Chấm công cá nhân. #}
+    <a href="{% url 'cham_cong:hom_nay' %}" class="{% if request.resolver_match.url_name == 'hom_nay' %}active{% endif %}">Chấm công hôm nay</a> {# Trang Check-in/Check-out. #}
+    <a href="{% url 'cham_cong:lich_su' %}" class="{% if request.resolver_match.url_name == 'lich_su' %}active{% endif %}">Lịch sử chấm công</a> {# Trang tra cứu theo tháng. #}
+</nav> {# Đóng thanh chuyển trang. #}

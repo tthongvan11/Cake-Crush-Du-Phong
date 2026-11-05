@@ -1,0 +1,6 @@
+<div class="hr-field {% if field.name == 'diachi' or field.name == 'lydonghiviec' %}hr-wide{% endif %}"> {# Trường dài chiếm trọn hàng. #}
+    <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="hr-text-danger"> *</span>{% endif %}</label> {# Nhãn liên kết đúng ô nhập. #}
+    {{ field }} {# Django giữ dữ liệu đã nhập khi có lỗi. #}
+    {% if field.help_text %}<small class="hr-muted" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</small>{% endif %} {# Hướng dẫn liên kết tài khoản hoặc mật khẩu. #}
+    {{ field.errors }} {# Thông báo lỗi ngay dưới trường. #}
+</div> {# Đóng nhóm ô nhập. #}

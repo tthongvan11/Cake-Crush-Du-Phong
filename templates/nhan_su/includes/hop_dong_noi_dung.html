@@ -1,0 +1,34 @@
+<section class="hr-hero hr-contract-hero"> {# Thẻ hợp đồng đầu trang như mockup. #}
+    <div class="hr-identity"><span class="hr-icon-box"><i class="fa-regular fa-file-lines" aria-hidden="true"></i></span><div><small>HỢP ĐỒNG LAO ĐỘNG</small><h2>{{ hop_dong.mahd }}</h2><span class="hr-badge" data-state="{{ hop_dong.ma_trang_thai }}">{{ hop_dong.nhan_trang_thai }}</span></div></div> {# Mã và trạng thái. #}
+    <div class="hr-hero-meta"><span class="hr-muted">Loại hợp đồng</span><p>{{ hop_dong.get_loaihd_display }}</p></div> {# Loại theo đặc tả, không dùng loại mẫu 24 tháng. #}
+    <div class="hr-hero-meta"><span class="hr-muted">Thời gian hiệu lực</span><p>{{ hop_dong.ngaybatdau|date:"d/m/Y" }}{% if hop_dong.ngayhethan %} – {{ hop_dong.ngayhethan|date:"d/m/Y" }}{% else %} · Không thời hạn{% endif %}</p></div> {# Thời hạn đã ký. #}
+</section> {# Kết thúc thẻ tóm tắt. #}
+{% if hop_dong.ma_trang_thai == 'CHAMDUT' %}<p class="hr-note hr-danger">Hợp đồng đã hết hiệu lực.{% if not hop_dong.manv.trangthai %} Người lao động đã nghỉ việc{% if hop_dong.manv.ngaynghiviec %} ngày {{ hop_dong.manv.ngaynghiviec|date:"d/m/Y" }}{% endif %}.{% endif %}</p>{% endif %} {# Giải thích chấm dứt, không sửa ngày hết hạn đã ký. #}
+{% if hop_dong.sap_het_han %}<p class="hr-note {% if hop_dong.so_ngay_con_lai < 15 %}hr-danger{% endif %}">Hợp đồng sắp hết hạn vào {{ hop_dong.ngayhethan|date:"d/m/Y" }}.</p>{% elif hop_dong.ma_trang_thai == 'DANGHIEULUC' and hop_dong.so_ngay_con_lai == 0 %}<p class="hr-note">Hợp đồng hết hạn hôm nay.</p>{% endif %} {# Giữ ngày hết hạn, bỏ dòng đếm số ngày còn lại. #}
+<div class="hr-contract-grid"> {# Chi tiết rộng bên trái, chính sách bên phải. #}
+    <section class="hr-card"> {# Khung chi tiết hợp đồng. #}
+        <h2 class="hr-section-title"><i class="fa-regular fa-file-lines" aria-hidden="true"></i>Chi tiết hợp đồng</h2> {# Tiêu đề chi tiết. #}
+        <dl class="hr-detail-rows"> {# Từng hàng nhãn và giá trị như mockup. #}
+            <div><dt>Mã hợp đồng</dt><dd>{{ hop_dong.mahd }}</dd></div> {# Mã đã cấp. #}
+            <div><dt>Người lao động</dt><dd>{{ hop_dong.manv.manv }} · {{ hop_dong.manv.tennv }}</dd></div> {# Hồ sơ sở hữu. #}
+            <div><dt>Vị trí công việc</dt><dd>{{ hop_dong.manv.chucvu }}</dd></div> {# Chức vụ hiện tại trong hồ sơ. #}
+            <div><dt>Loại hợp đồng</dt><dd>{{ hop_dong.get_loaihd_display }}</dd></div> {# Nhãn theo ERD. #}
+            <div><dt>Ngày ký</dt><dd>{{ hop_dong.ngayky|date:"d/m/Y" }}</dd></div> {# Ngày ký. #}
+            <div><dt>Ngày bắt đầu</dt><dd>{{ hop_dong.ngaybatdau|date:"d/m/Y" }}</dd></div> {# Ngày bắt đầu. #}
+            <div><dt>Ngày hết hạn</dt><dd>{{ hop_dong.ngayhethan|date:"d/m/Y"|default:"Không áp dụng" }}</dd></div> {# Giữ thời hạn đã ký. #}
+            <div><dt>Ngày gia hạn</dt><dd>{{ hop_dong.ngaygiahan|date:"d/m/Y"|default:"Chưa gia hạn" }}</dd></div> {# Ngày gia hạn gần nhất. #}
+            <div><dt>Lương cơ bản</dt><dd>{{ hop_dong.luongcoban|floatformat:"0g" }} VNĐ</dd></div> {# Định dạng tiền Việt Nam. #}
+            <div><dt>Trạng thái</dt><dd><span class="hr-badge" data-state="{{ hop_dong.ma_trang_thai }}">{{ hop_dong.nhan_trang_thai }}</span></dd></div> {# Thống nhất với bộ lọc. #}
+        </dl> {# Đóng các hàng chi tiết. #}
+    </section> {# Đóng chi tiết. #}
+    <section class="hr-card"> {# Chính sách cố định theo mockup Chi tiết hợp đồng. #}
+        <h2 class="hr-section-title"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i>Chính sách áp dụng</h2> {# Tiêu đề chính sách. #}
+        <dl class="hr-info hr-one-column"> {# Dùng chung nội dung chính sách trong settings. #}
+            <div><dt>Người sử dụng lao động</dt><dd>{{ chinh_sach.nguoi_su_dung|default:"Chưa cập nhật" }}</dd></div> {# Tên pháp lý. #}
+            <div><dt>Địa điểm làm việc</dt><dd>{{ chinh_sach.dia_diem|default:"Chưa cập nhật" }}</dd></div> {# Địa điểm cố định theo mockup. #}
+            <div><dt>Thời giờ làm việc</dt><dd>{{ chinh_sach.thoi_gian|default:"Chưa cập nhật" }}</dd></div> {# Chính sách giờ làm. #}
+            <div><dt>Ngày nghỉ và phép năm</dt><dd>{{ chinh_sach.ngay_phep|default:"Chưa cập nhật" }}</dd></div> {# Chính sách phép. #}
+            <div><dt>Bảo hiểm</dt><dd>{{ chinh_sach.bao_hiem|default:"Chưa cập nhật" }}</dd></div> {# Chính sách bảo hiểm. #}
+        </dl> {# Đóng thông tin chính sách. #}
+    </section> {# Đóng thẻ chính sách. #}
+</div> {# Kết thúc bố cục hai cột. #}

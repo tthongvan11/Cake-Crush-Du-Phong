@@ -1,0 +1,40 @@
+{% extends "base.html" %} {# Dùng khung giao diện chung. #}
+{% load static %} {# Nạp đường dẫn static. #}
+{% block title %}Đơn nghỉ phép của tôi | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/cham_cong.css' %}">{% endblock %} {# Giao diện riêng. #}
+
+{% block content %} {# Bắt đầu nội dung. #}
+<div class="hr-head"><h1>Đơn nghỉ phép của tôi</h1></div> {# Tiêu đề trang. #}
+{% include "cham_cong/includes/tabs_nghi_phep.html" %} {# Hai tab. #}
+
+<form method="get" class="hr-filter"> {# Bộ lọc năm và trạng thái. #}
+    <label>Năm<select name="nam">{% for n in ds_nam %}<option value="{{ n }}" {% if n == nam %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label> {# Chọn năm. #}
+    <label>Trạng thái<select name="trang_thai"><option value="">Tất cả trạng thái</option>{% for ma, nhan in ds_trang_thai %}<option value="{{ ma }}" {% if ma == trang_thai %}selected{% endif %}>{{ nhan }}</option>{% endfor %}</select></label> {# Chọn trạng thái. #}
+    <button type="submit" class="hr-btn hr-secondary">Lọc</button> {# Gửi bộ lọc. #}
+    <a href="{% url 'cham_cong:tao_don' %}" class="hr-btn cc-filter-end">+ Tạo đơn nghỉ phép</a> {# Lối tắt tạo đơn. #}
+</form> {# Đóng bộ lọc. #}
+
+<section class="hr-card hr-table-card"> {# Khung bảng. #}
+    <div class="hr-table-wrap"><table class="hr-table"> {# Bảng đơn. #}
+        <thead><tr><th scope="col">Mã đơn</th><th scope="col">Ngày gửi</th><th scope="col">Thời gian nghỉ</th><th scope="col">Loại phép</th><th scope="col">Lý do</th><th scope="col">Số ngày</th><th scope="col">Trạng thái</th><th scope="col">Chi tiết</th></tr></thead> {# Tiêu đề cột. #}
+        <tbody> {# Dữ liệu. #}
+            {% for don in page_obj %} {# Duyệt từng đơn. #}
+                <tr> {# Một đơn. #}
+                    <td><a class="hr-code" href="{% url 'cham_cong:chi_tiet_don_cua_toi' don.pk %}">{{ don.ma_hien_thi }}</a></td> {# Mã đơn. #}
+                    <td>{{ don.thoigianguidon|date:"d/m/Y" }}</td> {# Ngày gửi. #}
+                    <td>{{ don.ngaybatdau|date:"d/m/Y" }}{% if don.ngayketthuc != don.ngaybatdau %} – {{ don.ngayketthuc|date:"d/m/Y" }}{% endif %}</td> {# Khoảng ngày nghỉ. #}
+                    <td>{{ don.maloaiphep.tenloaiphep }}</td> {# Loại phép. #}
+                    <td>{{ don.lydo|truncatechars:40 }}</td> {# Lý do rút gọn. #}
+                    <td>{{ don.songaynghi }}</td> {# Số ngày. #}
+                    <td><span class="hr-badge" data-state="{{ don.trangthai }}">{{ don.get_trangthai_display }}</span></td> {# Trạng thái. #}
+                    <td>{% if don.trangthai == 'TUCHOI' %}<a class="cc-link" href="{% url 'cham_cong:chi_tiet_don_cua_toi' don.pk %}">Xem lý do</a>{% elif don.trangthai == 'DADUYET' %}<span class="hr-muted">Đã cập nhật bảng công</span>{% else %}<span class="hr-muted">Đang chờ xử lý</span>{% endif %}</td> {# Gợi ý theo trạng thái. #}
+                </tr> {# Đóng dòng. #}
+            {% empty %} {# Không có đơn. #}
+                <tr><td colspan="8" class="hr-empty">{% if co_don %}Không có đơn phù hợp với bộ lọc.{% else %}Chưa có dữ liệu đơn nghỉ phép{% endif %}</td></tr> {# Thông báo theo đặc tả. #}
+            {% endfor %} {# Kết thúc danh sách. #}
+        </tbody> {# Đóng dữ liệu. #}
+    </table></div> {# Đóng bảng. #}
+    {% if page_obj.paginator.count %}{% include "nhan_su/includes/phan_trang.html" %}{% endif %} {# Phân trang dùng chung. #}
+</section> {# Đóng khung. #}
+<p class="cc-footnote">Bạn chỉ xem được đơn do mình tạo. Trạng thái và nội dung đơn đã xử lý được hiển thị ở chế độ chỉ đọc.</p> {# Quy tắc chỉ đọc. #}
+{% endblock %} {# Kết thúc nội dung. #}

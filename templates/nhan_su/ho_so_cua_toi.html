@@ -1,0 +1,11 @@
+{% extends "base.html" %} {# Khung chung cho quản lý và nhân viên. #}
+{% block title %}Hồ sơ của tôi | Cake Crush{% endblock %} {# Tiêu đề trang cá nhân. #}
+{% block content %} {# Bắt đầu trang cá nhân. #}
+<div class="hr-head hr-personal-heading"><h1>Hồ sơ của tôi</h1></div> {# Khoảng cách theo mockup. #}
+{% if nhan_vien %} {# Người dùng đã được quản lý liên kết hồ sơ. #}
+    {% include "nhan_su/includes/ho_so_header.html" %} {# Tên, avatar, cửa hàng và ngày gia nhập. #}
+    {% include "nhan_su/includes/ho_so_thong_tin.html" %} {# Các thẻ cá nhân, địa chỉ, công việc và bảo mật. #}
+{% else %} {# Không suy đoán hồ sơ từ email hay tên tài khoản. #}
+    <section class="hr-card hr-empty-state"><span class="hr-empty-icon"><i class="fa-regular fa-user" aria-hidden="true"></i></span><h2>Chưa có hồ sơ liên kết</h2><p>Vui lòng nhờ quản lý chọn tài khoản <strong>{{ user.username }}</strong> trong mục “Tài khoản liên kết” của hồ sơ nhân viên.</p></section> {# Hướng dẫn khắc phục đúng nguyên nhân. #}
+{% endif %} {# Đóng kiểm tra liên kết. #}
+{% endblock %} {# Kết thúc nội dung. #}

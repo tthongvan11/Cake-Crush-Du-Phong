@@ -1,0 +1,20 @@
+{% extends "base.html" %} {# Dùng khung giao diện chung. #}
+{% block title %}{{ tieu_de }} | Cake Crush{% endblock %} {# Tiêu đề biểu mẫu. #}
+{% block content %} {# Bắt đầu nội dung. #}
+{% if form.lydonghiviec %}<div class="hr-modal-shell"><section class="hr-card hr-modal" role="dialog" aria-modal="true" aria-labelledby="form-title"> {# Xác nhận dạng hộp thoại theo mockup. #}
+{% else %}<a class="hr-back" href="{{ url_huy }}">‹ Quay lại</a><div class="hr-head"><h1>{{ tieu_de }}</h1></div><section class="hr-card hr-edit-card">{% endif %} {# Tiêu đề gọn và nút quay lại đúng trang mở form. #}
+    {% if form.lydonghiviec %}<h1 id="form-title"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>Vô hiệu hóa hồ sơ nhân viên</h1><p class="hr-muted hr-confirm-copy">Chuyển <strong>{{ form.nhan_vien.tennv }} ({{ form.nhan_vien.manv }})</strong> sang “Đã nghỉ việc”. Tài khoản liên kết sẽ bị khóa, hợp đồng còn hạn sẽ hết hiệu lực. Lịch sử được giữ nguyên.</p>{% endif %} {# Nêu đầy đủ tác động trước khi gửi. #}
+    <form method="post" class="hr-form"> {# Chỉ POST mới ghi dữ liệu. #}
+        {% csrf_token %} {# Bảo vệ yêu cầu gửi form. #}
+        {% if form.non_field_errors %}<div class="hr-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %} {# Hiển thị lỗi nghiệp vụ. #}
+        {% for hidden in form.hidden_fields %}{{ hidden }}{{ hidden.errors }}{% endfor %} {# Giữ trường ẩn và lỗi nếu có. #}
+        {% if nhom_truong %} {# Biểu mẫu hồ sơ chia hai phần như mockup. #}
+            {% for ten_nhom, cac_truong in nhom_truong %}<h2 class="hr-form-section">{{ ten_nhom }}</h2><div class="hr-fields">{% for field in cac_truong %}{% include "nhan_su/includes/form_field.html" %}{% endfor %}</div>{% endfor %} {# Dùng cùng thành phần ô nhập. #}
+        {% else %}<div class="hr-fields {% if form.lydonghiviec %}hr-one-column{% endif %}">{% for field in form.visible_fields %}{% include "nhan_su/includes/form_field.html" %}{% endfor %}</div>{% endif %} {# Form hợp đồng và xác nhận nghỉ việc. #}
+        <div class="hr-actions hr-form-actions"> {# Nút cuối biểu mẫu. #}
+            <a href="{{ url_huy }}" class="hr-btn hr-secondary">Hủy</a> {# Hủy không gửi dữ liệu. #}
+            <button type="submit" class="hr-btn {% if form.lydonghiviec %}hr-danger{% endif %}">{% if form.lydonghiviec %}Xác nhận vô hiệu hóa{% elif form.old_password %}Đổi mật khẩu{% else %}<i class="fa-regular fa-floppy-disk" aria-hidden="true"></i>Lưu thông tin{% endif %}</button> {# Tên nút thể hiện hành động. #}
+        </div> {# Đóng nhóm nút. #}
+    </form> {# Đóng form. #}
+</section>{% if form.lydonghiviec %}</div>{% endif %} {# Đóng khung biểu mẫu hoặc hộp thoại. #}
+{% endblock %} {# Kết thúc nội dung. #}

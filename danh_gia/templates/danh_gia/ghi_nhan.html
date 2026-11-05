@@ -1,0 +1,63 @@
+{% extends "danh_gia/base_danh_gia.html" %}
+{% block page_title %}{{ cfg.tieu_de }}{% endblock %}
+{% block page_sub %}{{ cfg.mo_ta }}{% endblock %}
+{% block dg_content %}
+<div class="row g-3">
+  <div class="col-lg-8">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="card-x">
+        <div class="card-head"><span class="ico"></span><h6>{{ cfg.the_tieu_de }}</h6>{% if cfg.chip %}<span class="chip">{{ cfg.chip }}</span>{% endif %}</div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6"><label class="form-label">{{ cfg.nhan_vien_label }} *</label>
+            <select id="sel-nv" class="form-select" onchange="location.search='?nv='+encodeURIComponent(this.value)">
+              <option value="">— Chọn nhân viên —</option>
+              {% for n in nhan_vien %}<option value="{{ n.pk }}" {% if nv and n.pk == nv.pk %}selected{% endif %}>{{ n.pk }} • {{ n }}</option>{% endfor %}
+            </select></div>
+          <div class="col-md-6"><label class="form-label">Kết quả đánh giá tương ứng *</label>
+            <select id="sel-dg" class="form-select" {% if not ds_dg %}disabled{% endif %}
+                    onchange="location.search='?nv='+encodeURIComponent(document.getElementById('sel-nv').value)+'&dg='+encodeURIComponent(this.value)">
+              {% for d in ds_dg %}<option value="{{ d.pk }}" {% if dg and d.pk == dg.pk %}selected{% endif %}>{{ d.pk }} • {{ d.maky.tenky }}</option>{% endfor %}
+            </select></div>
+        </div>
+        {% if form %}
+          {% for e in form.non_field_errors %}<div class="alert alert-danger">{{ e }}</div>{% endfor %}
+          <div class="row">
+            <div class="col-md-7">{% include "danh_gia/_truong.html" with f=form.hinhthuc %}</div>
+            <div class="col-md-5">{% include "danh_gia/_truong.html" with f=form.ngay %}</div>
+          </div>
+          {% include "danh_gia/_truong.html" with f=form.lydo %}
+          {% include "danh_gia/_truong.html" with f=form.ghichu %}
+        {% else %}
+          <div class="nho">Chọn nhân viên và kết quả đánh giá để tiếp tục.</div>
+        {% endif %}
+      </div>
+      <div class="footbar">
+        <span>{% if dg %}Lưu cho {{ nv.pk }} và kết quả {{ dg.pk }}. Hủy sẽ không lưu thay đổi.{% else %}Chưa chọn kết quả đánh giá.{% endif %}</span>
+        <div><a class="btn btn-light border" href="{% url cfg.url %}">Hủy</a>
+             <button class="btn btn-primary" type="submit" {% if not form %}disabled{% endif %}>{{ cfg.nut_luu }}</button></div>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card-x">
+      <div class="card-head"><span class="ico"></span><h6>Kết quả tham chiếu</h6>{% if dg %}<span class="chip chip-green">Đã lưu</span>{% endif %}</div>
+      {% if dg %}
+        <div class="fw-semibold">{{ dg.manv }}</div><div class="nho mb-3">{{ dg.manv_id }}</div>
+        <div class="nho">Kỳ đánh giá</div><div class="mb-2">{{ dg.maky.tenky }}</div>
+        <div class="nho">Mã kết quả</div><div class="mb-2">{{ dg.pk }}</div>
+        <div class="nho">Xếp loại đã lưu</div><div class="mb-2"><span class="chip chip-green">{{ dg.get_xeploai_display }}</span></div>
+        <div class="nho">Điểm</div><div class="mb-2">{{ dg.diem_trung_binh }}</div>
+        {% if dg.nhanxet %}<div class="nho">Nhận xét</div><div class="mb-2">{{ dg.nhanxet }}</div>{% endif %}
+        {% if da_ghi_nhan %}
+          <hr><div class="nho">Đã ghi nhận trước đó</div>
+          {% for k in da_ghi_nhan %}<div class="small">{{ k.ngay|date:"d/m/Y" }} – {{ k.hinhthuc }}</div>{% endfor %}
+        {% endif %}
+      {% else %}
+        <div class="nho">Chưa có kết quả đánh giá được chọn.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

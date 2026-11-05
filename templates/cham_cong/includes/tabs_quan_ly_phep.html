@@ -1,0 +1,4 @@
+<nav class="cc-tabs" aria-label="Quản lý nghỉ phép"> {# Hai trang con của mục Nghỉ phép phía quản lý. #}
+    <a href="{% url 'cham_cong:duyet_don_list' %}" class="{% if '/quan-ly/nghi-phep/' in request.path %}active{% endif %}">Duyệt đơn nghỉ phép</a> {# Danh sách đơn cần duyệt. #}
+    <a href="{% url 'cham_cong:quy_phep' %}" class="{% if '/quan-ly/quy-phep/' in request.path %}active{% endif %}">Quỹ phép năm</a> {# Theo dõi quỹ phép. #}
+</nav> {# Đóng thanh chuyển trang. #}

@@ -1,0 +1,54 @@
+{% extends "base.html" %} {# Dùng khung chung. #}
+{% block title %}Hồ sơ nhân viên | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+
+{% block content %} {# Bắt đầu nội dung. #}
+<div class="hr-head"> {# Tiêu đề và thao tác chính. #}
+    <h1>Hồ sơ nhân viên</h1> {# Chỉ giữ tiêu đề trang. #}
+</div> {# Đóng đầu trang. #}
+
+    <form method="get" class="hr-filter"> {# GET chỉ lọc, không thay đổi dữ liệu. #}
+        <label class="hr-search">Tìm kiếm<input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Mã hoặc tên nhân viên"></label> {# Từ khóa khớp view. #}
+
+        <label>Phòng ban<select name="phong_ban"> {# Lọc theo mã phòng ban. #}
+            <option value="">Tất cả phòng ban</option> {# Bỏ điều kiện phòng ban. #}
+            {% for pb in phong_ban %}<option value="{{ pb.pk }}" {% if request.GET.phong_ban == pb.pk %}selected{% endif %}>{{ pb.tenphongban }}</option>{% endfor %} {# Giữ lựa chọn hiện tại. #}
+        </select></label> {# Đóng ô phòng ban. #}
+
+        <label>Chức vụ<select name="chuc_vu"> {# Lọc theo chức vụ. #}
+            <option value="">Tất cả chức vụ</option> {# Bỏ điều kiện chức vụ. #}
+            {% for cv in chuc_vu %}<option value="{{ cv }}" {% if request.GET.chuc_vu == cv %}selected{% endif %}>{{ cv }}</option>{% endfor %} {# Danh mục do view cung cấp. #}
+        </select></label> {# Đóng ô chức vụ. #}
+
+        <label>Trạng thái<select name="trang_thai"> {# Giá trị phải khớp view. #}
+            <option value="">Tất cả trạng thái</option> {# Xem cả đang làm và đã nghỉ. #}
+            <option value="1" {% if request.GET.trang_thai == '1' %}selected{% endif %}>Đang làm việc</option> {# Lọc trạng thái True. #}
+            <option value="0" {% if request.GET.trang_thai == '0' %}selected{% endif %}>Đã nghỉ việc</option> {# Lọc trạng thái False. #}
+        </select></label> {# Đóng ô trạng thái. #}
+
+        <button type="submit" class="hr-btn">Lọc</button> {# Gửi bộ lọc. #}
+        <a href="{% url 'nhan_su:danh_sach_nhan_vien' %}" class="hr-btn hr-secondary">Đặt lại</a> {# Xóa các tham số lọc. #}
+        <a href="{% url 'nhan_su:them_nhan_vien' %}" class="hr-btn">+ Thêm nhân viên</a> {# Nút thêm nằm cùng hàng bộ lọc như mockup. #}
+    </form> {# Đóng bộ lọc. #}
+
+<section class="hr-card hr-table-card"> {# Bảng trắng rộng theo mockup. #}
+    <div class="hr-table-wrap"><table class="hr-table"> {# Bảng có thể cuộn ngang. #}
+        <thead><tr><th scope="col">Mã NV</th><th scope="col">Họ và tên</th><th scope="col">Phòng ban</th><th scope="col">Chức vụ</th><th scope="col">Ngày vào làm</th><th scope="col">Trạng thái</th><th scope="col">Thao tác</th></tr></thead> {# Tiêu đề các cột. #}
+        <tbody> {# Dữ liệu trang hiện tại. #}
+            {% for nv in page_obj %} {# Duyệt danh sách đã phân trang. #}
+                <tr> {# Một hồ sơ. #}
+                    <td><a class="hr-code" href="{% url 'nhan_su:chi_tiet_nhan_vien' nv.pk %}">{{ nv.manv }}</a></td> {# Mã trong nhãn hồng. #}
+                    <td><a href="{% url 'nhan_su:chi_tiet_nhan_vien' nv.pk %}">{{ nv.tennv }}</a></td> {# Bấm tên để xem hồ sơ. #}
+                    <td>{{ nv.maphong.tenphongban }}</td><td>{{ nv.chucvu }}</td> {# Phòng ban và chức vụ. #}
+                    <td>{{ nv.ngayvaolam|date:"d/m/Y" }}</td> {# Ngày định dạng Việt Nam. #}
+                    <td><span class="hr-badge" data-state="{{ nv.trangthai|yesno:'1,0' }}">{{ nv.trangthai|yesno:"Đang làm việc,Đã nghỉ việc" }}</span></td> {# Nhãn trạng thái. #}
+                    <td><details class="hr-row-actions"><summary aria-label="Thao tác cho {{ nv.manv }}">⋮</summary><nav class="hr-row-menu"><a href="{% url 'nhan_su:chi_tiet_nhan_vien' nv.pk %}">Xem hồ sơ</a><a href="{% url 'nhan_su:sua_nhan_vien' nv.pk %}?next={{ request.get_full_path|urlencode }}">Chỉnh sửa</a>{% if nv.trangthai %}<a href="{% url 'nhan_su:vo_hieu_hoa_nhan_vien' nv.pk %}">Vô hiệu hóa</a>{% endif %}</nav></details></td> {# Ghi nhớ danh sách, bộ lọc và số trang khi mở chỉnh sửa. #}
+                </tr> {# Đóng dòng. #}
+            {% empty %} {# Không có dữ liệu phù hợp. #}
+                <tr><td colspan="7" class="hr-empty">Không có nhân viên phù hợp. Bạn có thể thay đổi bộ lọc hoặc thêm hồ sơ mới.</td></tr> {# Thông báo rỗng. #}
+            {% endfor %} {# Kết thúc danh sách. #}
+        </tbody> {# Đóng dữ liệu. #}
+    </table></div> {# Đóng bảng. #}
+
+    {% include "nhan_su/includes/phan_trang.html" %} {# Chèn phân trang dùng chung. #}
+</section> {# Đóng khung. #}
+{% endblock %} {# Kết thúc nội dung. #}

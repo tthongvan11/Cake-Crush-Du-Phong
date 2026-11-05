@@ -1,0 +1,27 @@
+{% load cham_cong_tags %} {# Bộ lọc hiển thị phút/giờ. #}
+{# Bảng công dùng chung: Lịch sử chấm công (nhân viên) và Bảng chấm công (quản lý). Biến hien_nv=True để hiện cột Nhân viên. #}
+<section class="hr-card hr-table-card"> {# Khung bảng trắng. #}
+    <div class="hr-table-wrap"><table class="hr-table"> {# Bảng có thể cuộn ngang. #}
+        <thead><tr>{% if hien_nv %}<th scope="col">Nhân viên</th>{% endif %}<th scope="col">Ngày</th><th scope="col">Check-in</th><th scope="col">Check-out</th><th scope="col">Giờ làm</th><th scope="col">Đi trễ</th><th scope="col">Về sớm</th><th scope="col">Làm thêm</th><th scope="col">Trạng thái</th></tr></thead> {# Tiêu đề cột theo mockup. #}
+        <tbody> {# Dữ liệu trang hiện tại. #}
+            {% for d in page_obj %} {# Mỗi dòng là 1 nhân viên × 1 ngày. #}
+                <tr class="{% if d.trangthai == 'VANGKHONGPHEP' %}cc-row-danger{% endif %}"> {# Dòng vắng tô nền đỏ nhạt. #}
+                    {% if hien_nv %}<td>{{ d.nv.tennv }} · {{ d.nv.manv }}</td>{% endif %} {# Tên và mã nhân viên. #}
+                    <td>{{ d.ngay|date:"d/m/Y" }}</td> {# Ngày định dạng Việt Nam. #}
+                    {% with bg=d.ban_ghi %} {# Bản ghi thật; None nếu là ngày vắng. #}
+                    <td>{% if bg.gio_checkin %}{{ bg.gio_checkin|time:"H:i" }}{% else %}<span class="cc-empty-dash">—</span>{% endif %}</td> {# Giờ vào. #}
+                    <td>{% if bg.gio_checkout %}{{ bg.gio_checkout|time:"H:i" }}{% else %}<span class="cc-empty-dash">—</span>{% endif %}</td> {# Giờ ra. #}
+                    <td>{% if bg and bg.sogiolamviec is not None %}{{ bg.sogiolamviec|gio_phut }}{% else %}<span class="cc-empty-dash">—</span>{% endif %}</td> {# Giờ làm. #}
+                    <td>{% if bg and bg.thoigianditre is not None %}<span class="{% if bg.thoigianditre %}cc-num-warn{% endif %}">{{ bg.thoigianditre|phut_gio }}</span>{% else %}<span class="cc-empty-dash">—</span>{% endif %}</td> {# Đi trễ, khác 0 tô cam. #}
+                    <td>{% if bg and bg.thoigianvesom is not None %}<span class="{% if bg.thoigianvesom %}cc-num-warn{% endif %}">{{ bg.thoigianvesom|phut_gio }}</span>{% else %}<span class="cc-empty-dash">—</span>{% endif %}</td> {# Về sớm, khác 0 tô cam. #}
+                    <td>{% if bg and bg.sogiolamthem is not None %}{{ bg.sogiolamthem|gio_phut }}{% else %}<span class="cc-empty-dash">—</span>{% endif %}</td> {# Làm thêm. #}
+                    {% endwith %} {# Kết thúc biến bản ghi. #}
+                    <td><span class="hr-badge" data-state="{{ d.trangthai }}">{{ d.nhan_trang_thai }}</span></td> {# Nhãn trạng thái có màu. #}
+                </tr> {# Đóng dòng. #}
+            {% empty %} {# Không có dòng nào. #}
+                <tr><td colspan="{% if hien_nv %}9{% else %}8{% endif %}" class="hr-empty">{{ thong_bao_rong }}</td></tr> {# Câu thông báo theo đặc tả. #}
+            {% endfor %} {# Kết thúc danh sách. #}
+        </tbody> {# Đóng dữ liệu. #}
+    </table></div> {# Đóng bảng. #}
+    {% if page_obj.paginator.count %}{% include "nhan_su/includes/phan_trang.html" %}{% endif %} {# Dùng lại phân trang của phân hệ nhân sự. #}
+</section> {# Đóng khung. #}

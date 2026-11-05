@@ -1,0 +1,38 @@
+{% extends "danh_gia/base_danh_gia.html" %}
+{% block page_title %}Gửi phản hồi{% endblock %}
+{% block page_sub %}Chia sẻ ý kiến về kết quả đánh giá của bạn trong kỳ đã công bố.{% endblock %}
+{% block back_url %}{% url 'danh_gia:ket_qua' %}{% endblock %}
+{% block dg_content %}
+<form method="post" novalidate>
+  {% csrf_token %}
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="card-x">
+        <div class="card-head"><span class="ico"></span><h6>Nội dung phản hồi</h6><span class="chip chip-gray">Chưa gửi</span></div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6"><label class="form-label">Kỳ đánh giá</label><input class="form-control" readonly value="{{ dg.maky.tenky }}"></div>
+          <div class="col-md-6"><label class="form-label">Kết quả liên quan</label><input class="form-control" readonly value="{{ dg.pk }} • Đã công bố"></div>
+        </div>
+        {% include "danh_gia/_truong.html" with f=form.noidung %}
+        <div class="nho">Phản hồi chỉ là ý kiến tham khảo, không tự thay đổi điểm hoặc xếp loại đã lưu.</div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card-x">
+        <div class="card-head"><span class="ico"></span><h6>Kết quả đang phản hồi</h6></div>
+        <div class="fw-semibold">{{ nhan_vien }}</div><div class="nho mb-3">{{ nhan_vien.pk }}</div>
+        <div class="nho">Mã kết quả</div><div class="mb-2">{{ dg.pk }}</div>
+        <div class="nho">Xếp loại đã lưu</div><div class="mb-2"><span class="chip chip-green">{{ dg.get_xeploai_display }}</span></div>
+        <div class="nho">Điểm</div><div class="mb-2">{{ dg.diem_trung_binh }}</div>
+        {% if dg.nhanxet %}<div class="nho">Nhận xét tham chiếu</div><div>{{ dg.nhanxet }}</div>{% endif %}
+        <div class="alert alert-danger small mt-3 mb-0">Gửi đúng kết quả: bạn không thể gửi phản hồi cho kết quả của nhân viên khác.</div>
+      </div>
+    </div>
+  </div>
+  <div class="footbar">
+    <span>Hủy sẽ trở về kết quả đánh giá và không lưu nội dung vừa nhập.</span>
+    <div><a class="btn btn-light border" href="{% url 'danh_gia:ket_qua' %}">Hủy</a>
+         <button class="btn btn-primary" type="submit">Gửi phản hồi</button></div>
+  </div>
+</form>
+{% endblock %}

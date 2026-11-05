@@ -1,0 +1,72 @@
+{% extends "base.html" %} {# Dùng khung giao diện chung. #}
+{% load static %} {# Nạp đường dẫn static. #}
+{% block title %}Tạo đơn xin nghỉ phép | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/cham_cong.css' %}">{% endblock %} {# Giao diện riêng. #}
+
+{% block content %} {# Bắt đầu nội dung. #}
+<div class="hr-head"><h1>Tạo đơn xin nghỉ phép</h1></div> {# Tiêu đề trang. #}
+<p class="hr-muted cc-sub">Điền thông tin ngày nghỉ, loại phép và lý do để gửi quản lý xét duyệt.</p> {# Mô tả. #}
+{% include "cham_cong/includes/tabs_nghi_phep.html" %} {# Hai tab. #}
+
+<div class="cc-form-grid"> {# Form bên trái, phép năm bên phải. #}
+    <section class="hr-card"> {# Thẻ biểu mẫu. #}
+        <h2>Thông tin đơn nghỉ phép</h2> {# Tiêu đề thẻ. #}
+        <form method="post" novalidate id="form-don" class="cc-form"> {# novalidate để hiển thị lỗi bằng tiếng Việt từ máy chủ. #}
+            {% csrf_token %} {# Bảo vệ yêu cầu gửi form. #}
+            {% if form.non_field_errors %}<div class="hr-errors cc-mt" role="alert">{{ form.non_field_errors }}</div>{% endif %} {# Lỗi trùng ngày. #}
+            <div class="hr-fields cc-mt"> {# Hàng 1: nhân viên và loại phép. #}
+                <div class="hr-field"><label>Nhân viên</label><input type="text" value="{{ nv.tennv }} · {{ nv.manv }}" disabled></div> {# Người gửi, không sửa được. #}
+                <div class="hr-field"><label for="{{ form.maloaiphep.id_for_label }}">{{ form.maloaiphep.label }} <span class="hr-text-danger">*</span></label>{{ form.maloaiphep }}{{ form.maloaiphep.errors }}</div> {# Loại phép. #}
+            </div> {# Đóng hàng 1. #}
+            <div class="cc-fields-3"> {# Hàng 2: ngày bắt đầu, kết thúc, số ngày. #}
+                <div class="hr-field"><label for="{{ form.ngaybatdau.id_for_label }}">{{ form.ngaybatdau.label }} <span class="hr-text-danger">*</span></label>{{ form.ngaybatdau }}{{ form.ngaybatdau.errors }}</div> {# Ngày bắt đầu. #}
+                <div class="hr-field"><label for="{{ form.ngayketthuc.id_for_label }}">{{ form.ngayketthuc.label }} <span class="hr-text-danger">*</span></label>{{ form.ngayketthuc }}{{ form.ngayketthuc.errors }}</div> {# Ngày kết thúc. #}
+                <div class="hr-field"><label for="so-ngay">Số ngày nghỉ</label><input id="so-ngay" type="text" value="—" readonly><small class="hr-muted">Được hệ thống tự tính.</small></div> {# Chỉ để xem; máy chủ tự tính lại khi lưu. #}
+            </div> {# Đóng hàng 2. #}
+            <div class="hr-field cc-mt"><label for="{{ form.lydo.id_for_label }}">{{ form.lydo.label }} <span class="hr-text-danger">*</span></label>{{ form.lydo }}{{ form.lydo.errors }}<small class="hr-muted">Thông tin có dấu * là bắt buộc.</small></div> {# Lý do. #}
+            <div class="hr-actions hr-form-actions"> {# Nút cuối biểu mẫu. #}
+                <a href="{% url 'cham_cong:don_cua_toi' %}" class="hr-btn hr-secondary">Hủy</a> {# Hủy không gửi dữ liệu. #}
+                <button type="submit" class="hr-btn">Gửi đơn</button> {# Gửi đơn. #}
+            </div> {# Đóng nhóm nút. #}
+        </form> {# Đóng biểu mẫu. #}
+    </section> {# Đóng thẻ biểu mẫu. #}
+
+    <aside class="hr-card"> {# Khung Phép năm của bạn. #}
+        <h2>Phép năm của bạn</h2> {# Tiêu đề. #}
+        <div class="cc-big">{{ quy_phep.con_lai }} ngày</div> {# Số phép còn lại. #}
+        <p class="hr-muted">Số ngày phép còn lại trong năm {{ nam }}</p> {# Chú thích. #}
+        <dl class="cc-kv cc-mt" style="grid-template-columns: 1fr"> {# Chi tiết quỹ phép. #}
+            <div><dt>Tổng phép năm / Đã sử dụng</dt><dd>{{ quy_phep.tong }} ngày / {{ quy_phep.da_dung }} ngày</dd></div> {# Tổng và đã dùng. #}
+            <div><dt>Còn lại nếu đơn này được duyệt</dt><dd id="con-lai-neu-duyet" data-con-lai="{{ quy_phep.con_lai }}">{{ quy_phep.con_lai }} ngày</dd></div> {# JavaScript cập nhật khi chọn ngày. #}
+        </dl> {# Đóng chi tiết. #}
+        <div class="cc-box cc-grey"><strong>Chỉ trừ phép khi đơn được duyệt.</strong>Ngày nghỉ không hưởng lương không làm giảm quỹ phép năm.</div> {# Ghi chú. #}
+    </aside> {# Đóng khung phép năm. #}
+</div> {# Đóng bố cục. #}
+<div class="cc-box cc-grey"><strong>Lưu ý khi chọn ngày nghỉ</strong>Không đăng ký trùng ngày với đơn chờ duyệt hoặc đã duyệt. Khi số phép còn lại không đủ, chọn “Nghỉ việc riêng không hưởng lương”.</div> {# Quy tắc nghiệp vụ. #}
+{% endblock %} {# Kết thúc nội dung. #}
+
+{% block extra_js %} {# Tự tính số ngày nghỉ ngay trên trình duyệt để người dùng xem trước. #}
+{{ ds_tru_phep|json_script:"ds-tru-phep" }} {# Danh sách mã loại phép có trừ phép năm. #}
+<script>
+    const truPhep = JSON.parse(document.getElementById('ds-tru-phep').textContent); // Mã các loại phép trừ quỹ.
+    const oBatDau = document.getElementById('id_ngaybatdau'); // Ô ngày bắt đầu.
+    const oKetThuc = document.getElementById('id_ngayketthuc'); // Ô ngày kết thúc.
+    const oLoai = document.getElementById('id_maloaiphep'); // Ô loại phép.
+    const oSoNgay = document.getElementById('so-ngay'); // Ô số ngày nghỉ.
+    const oConLai = document.getElementById('con-lai-neu-duyet'); // Dòng còn lại nếu duyệt.
+    function capNhat() { // Tính lại mỗi khi đổi ngày hoặc loại phép.
+        const bd = new Date(oBatDau.value), kt = new Date(oKetThuc.value); // Đọc hai ngày.
+        const soNgay = (oBatDau.value && oKetThuc.value && kt >= bd) ? Math.round((kt - bd) / 86400000) + 1 : 0; // Tính cả hai đầu.
+        oSoNgay.value = soNgay ? soNgay + ' ngày' : '—'; // Hiển thị số ngày.
+        const conLai = Number(oConLai.dataset.conLai); // Số phép còn lại hiện tại.
+        const dauNam = new Date('{{ nam }}-01-01'), cuoiNam = new Date('{{ nam }}-12-31'); // Giới hạn năm hiện tại.
+        const bdNam = bd > dauNam ? bd : dauNam, ktNam = kt < cuoiNam ? kt : cuoiNam; // Phần của đơn nằm trong năm nay.
+        const ngayNam = soNgay && ktNam >= bdNam ? Math.round((ktNam - bdNam) / 86400000) + 1 : 0; // Đơn qua năm mới chỉ trừ phần năm nay.
+        const tru = truPhep.includes(Number(oLoai.value)) ? ngayNam : 0; // Chỉ trừ khi là phép năm.
+        oConLai.textContent = (conLai - tru) + ' ngày'; // Còn lại nếu được duyệt.
+        oConLai.classList.toggle('hr-text-danger', conLai - tru < 0); // Tô đỏ khi vượt quỹ.
+    } // Kết thúc hàm.
+    [oBatDau, oKetThuc, oLoai].forEach((o) => o.addEventListener('change', capNhat)); // Gắn sự kiện thay đổi.
+    capNhat(); // Tính ngay khi mở trang (giữ dữ liệu sau khi báo lỗi).
+</script>
+{% endblock %} {# Kết thúc JavaScript. #}

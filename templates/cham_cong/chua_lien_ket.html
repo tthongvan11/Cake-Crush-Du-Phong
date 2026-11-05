@@ -1,0 +1,9 @@
+{% extends "base.html" %} {# Dùng khung chung. #}
+{% block title %}Chưa liên kết hồ sơ | Cake Crush{% endblock %} {# Tiêu đề trình duyệt. #}
+{% block content %} {# Bắt đầu nội dung. #}
+<section class="hr-card hr-empty-state"> {# Trạng thái rỗng giống trang Hồ sơ của tôi. #}
+    <span class="hr-empty-icon"><i class="fa-regular fa-clock" aria-hidden="true"></i></span> {# Biểu tượng trang trí. #}
+    <h2>Chưa có hồ sơ liên kết</h2> {# Nguyên nhân. #}
+    <p>Tài khoản <strong>{{ user.username }}</strong> chưa được liên kết với hồ sơ nhân viên nên chưa thể chấm công hoặc gửi đơn nghỉ phép. Vui lòng nhờ quản lý chọn tài khoản này trong mục “Tài khoản liên kết” của hồ sơ nhân viên.</p> {# Cách khắc phục. #}
+</section> {# Đóng khung. #}
+{% endblock %} {# Kết thúc nội dung. #}

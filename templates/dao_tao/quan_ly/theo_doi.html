@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cake Crush HR - Theo dõi đào tạo{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="hr-head" style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
+    <div>
+        <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">Theo dõi đào tạo</h1>
+        <p style="color: #64748b; font-size: 13.5px; font-weight: 500;">Chọn nhân viên và khóa được phân công để xem tiến độ.</p>
+    </div>
+    <div>
+        <a href="{% url 'dao_tao:danh_sach_khoa' %}" class="btn-top-back">
+            <i class="fa-solid fa-arrow-right"></i> Danh sách khóa
+        </a>
+    </div>
+</div>
+
+<form method="get" id="formTheoDoi">
+    <!-- Card chính -->
+    <div class="dt-card">
+        <!-- Section 1: Thông tin đào tạo -->
+        <div class="dt-card-header">
+            <span class="dt-card-badge"><i class="fa-solid fa-book-open"></i></span>
+            <span>Thông tin đào tạo</span>
+        </div>
+
+        <div class="dt-form-row dt-cols-1">
+            <!-- Chọn nhân viên -->
+            <div>
+                <label class="dt-label" for="selectNhanVien">Nhân viên</label>
+                <select name="nhanvien" id="selectNhanVien" class="dt-select" data-placeholder="Tìm kiếm nhân viên..." onchange="this.form.submit()">
+                    <option value="">Chọn nhân viên</option>
+                    {% for nv in ds_nhan_vien %}
+                        <option value="{{ nv.manv }}" {% if nhan_vien_id == nv.manv %}selected{% endif %}>
+                            {{ nv.manv }} - {{ nv.tennv }} ({{ nv.chucvu|default:"Nhân viên" }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Chọn khóa đào tạo được phân công -->
+            <div style="margin-top: 16px;">
+                <label class="dt-label" for="selectKhoa">Khóa đào tạo được phân công</label>
+                <select name="khoa" id="selectKhoa" class="dt-select" data-placeholder="Tìm kiếm khóa đào tạo..." onchange="this.form.submit()" {% if not nhan_vien_id %}disabled{% endif %}>
+                    {% if not nhan_vien_id %}
+                        <option value="">Chọn nhân viên trước</option>
+                    {% else %}
+                        <option value="">Chọn khóa đào tạo</option>
+                        {% for k in ds_khoa_cua_nv %}
+                            <option value="{{ k.makhoa }}" {% if khoa_id == k.makhoa %}selected{% endif %}>
+                                {{ k.makhoa }} - {{ k.tenkhoa }}
+                            </option>
+                        {% empty %}
+                            <option value="">Nhân viên này chưa được phân công khóa đào tạo nào</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Section 2: Tiến độ đào tạo -->
+        <div class="dt-card-header" style="margin-top: 32px;">
+            <span class="dt-card-badge"><i class="fa-regular fa-clock"></i></span>
+            <span>Tiến độ đào tạo</span>
+        </div>
+
+        <div class="dt-form-row dt-cols-3">
+            <!-- Tiến độ -->
+            <div>
+                <label class="dt-label">Tiến độ</label>
+                <div class="dt-display-box">
+                    <span>{% if phan_cong %}{{ phan_cong.tiendo }}{% else %}—{% endif %}</span>
+                </div>
+            </div>
+
+            <!-- Ngày hoàn thành -->
+            <div>
+                <label class="dt-label">Ngày hoàn thành</label>
+                <div class="dt-display-box">
+                    <span>{% if phan_cong and phan_cong.ngayhoanthanh %}{{ phan_cong.ngayhoanthanh|date:'d/m/Y' }}{% else %}—{% endif %}</span>
+                    <i class="fa-regular fa-calendar" style="color: #9ca3af;"></i>
+                </div>
+            </div>
+
+            <!-- Kết quả -->
+            <div>
+                <label class="dt-label">Kết quả</label>
+                <div class="dt-display-box">
+                    <span>{% if phan_cong %}{{ phan_cong.ketqua }}{% else %}—{% endif %}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="dt-bottom-bar">
+        {% if phan_cong %}
+            <a href="{% url 'dao_tao:cap_nhat_ket_qua_dao_tao' %}?nhanvien={{ phan_cong.nhanvien_id }}&khoa={{ phan_cong.khoadaotao_id }}" class="btn-primary-pink">
+                <i class="fa-solid fa-pen"></i> Cập nhật kết quả
+            </a>
+        {% else %}
+            <button type="button" class="btn-primary-pink" disabled>
+                <i class="fa-solid fa-pen"></i> Cập nhật kết quả
+            </button>
+        {% endif %}
+    </div>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const selectNV = document.getElementById("selectNhanVien");
+    const selectKhoa = document.getElementById("selectKhoa");
+
+    // Khởi tạo dạng search cho thanh tìm kiếm nhân viên và khóa học
+    initSearchableSelect(selectNV, "Tìm kiếm nhân viên theo tên hoặc mã...");
+    initSearchableSelect(selectKhoa, "Tìm kiếm khóa đào tạo...");
+});
+</script>
+{% endblock %}
