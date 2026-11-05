@@ -8,6 +8,7 @@
   :root {
     --cc-bg: #fcf8f9;
     --cc-primary: #d63384;
+    --cc-primary-hover: #b8236b;
     --cc-border: #f3e6ea;
     --cc-text-dark: #212529;
     --cc-text-muted: #8c9096;
@@ -27,6 +28,8 @@
     justify-content: space-between;
     align-items: flex-end;
     margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 16px;
   }
 
   .dash-title-left .breadcrumb {
@@ -58,12 +61,14 @@
     display: flex;
     align-items: flex-end;
     gap: 12px;
+    position: relative;
   }
 
   .filter-group {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    position: relative;
   }
 
   .filter-group label {
@@ -86,8 +91,14 @@
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 14px;
+    transition: border-color 0.2s;
   }
 
+  .filter-select:hover, .filter-select:focus {
+    border-color: var(--cc-primary);
+  }
+
+  /* NÚT VÀ POPUP CHỌN KHOẢNG THỜI GIAN */
   .filter-date-btn {
     background: #ffffff;
     border: 1px solid #e9ecef;
@@ -99,6 +110,70 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
+    user-select: none;
+    transition: all 0.2s;
+  }
+
+  .filter-date-btn:hover {
+    border-color: var(--cc-primary);
+    background-color: #fffafc;
+  }
+
+  .date-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #f1dbe3;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(214, 51, 132, 0.12);
+    padding: 12px;
+    z-index: 1000;
+    min-width: 250px;
+  }
+
+  .date-dropdown-menu.active {
+    display: block;
+  }
+
+  .date-range-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .date-range-inputs input[type="date"] {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 12.5px;
+    color: #495057;
+    outline: none;
+    box-sizing: border-box;
+  }
+
+  .date-range-inputs input[type="date"]:focus {
+    border-color: var(--cc-primary);
+  }
+
+  .date-btn-apply {
+    width: 100%;
+    background: var(--cc-primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .date-btn-apply:hover {
+    background: var(--cc-primary-hover);
   }
 
   /* KHỐI CARD CHUNG */
@@ -193,8 +268,11 @@
   }
 
   .dept-name {
-    width: 75px;
+    width: 85px;
     color: #495057;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .bar-bg {
@@ -259,15 +337,26 @@
   .leave-green { background: #ebfbee; color: #2b8a3e; }
   .leave-pink { background: #fff0f6; color: #c2255c; }
 
+  /* NÚT BẤM CHUYỂN TRANG FOOTER CARD */
   .card-footer-link {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 600;
     color: var(--cc-primary);
     text-decoration: none;
     margin-top: 14px;
+    padding: 6px 4px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .card-footer-link:hover {
+    color: var(--cc-primary-hover);
+    background: #fdf2f4;
+    padding-left: 8px;
   }
 
   .table-custom {
@@ -300,36 +389,53 @@
 </style>
 
 <div class="dash-container">
-  <!-- PHẦN TIÊU ĐỀ + BỘ LỌC (ĐÃ BỎ TOPBAR VÀ SIDEBAR) -->
+  <!-- PHẦN TIÊU ĐỀ + BỘ LỌC -->
   <div class="dash-header-bar">
     <div class="dash-title-left">
       <div class="breadcrumb">Cake Crush HR &nbsp;/&nbsp; <span>Dashboard</span></div>
       <h2>Dashboard</h2>
-      <p>Tổng quan nhân sự · Số liệu minh họa</p>
+      <p>Tổng quan nhân sự · Số liệu thực tế</p>
     </div>
 
     <div class="dash-filters-right">
+      <!-- Bộ lọc bộ phận: Luôn hiển thị đủ 5 bộ phận thực tế -->
       <div class="filter-group">
         <label>Bộ phận</label>
-        <select class="filter-select">
-          <option>Tất cả bộ phận</option>
-          <option>Bếp bánh</option>
-          <option>Bán hàng</option>
-          <option>Thu ngân</option>
-          <option>Pha chế</option>
-          <option>Kho vận</option>
+        <select class="filter-select" id="deptFilter" onchange="filterDepartment(this.value)">
+          <option value="all">Tất cả bộ phận</option>
+          {% for bp in bo_phan %}
+            <option value="{{ bp.ten }}">{{ bp.ten }}</option>
+          {% empty %}
+            <option value="Bếp bánh">Bếp bánh</option>
+            <option value="Bán hàng">Bán hàng</option>
+            <option value="Thu ngân">Thu ngân</option>
+            <option value="Pha chế">Pha chế</option>
+            <option value="Kho vận">Kho vận</option>
+          {% endfor %}
         </select>
       </div>
+
+      <!-- Ô chọn khoảng thời gian có popup chọn lịch -->
       <div class="filter-group">
         <label>Khoảng thời gian</label>
-        <div class="filter-date-btn">
-          <span>📅</span> 01/10 – 31/10/2026 ▾
+        <div class="filter-date-btn" id="datePickerBtn" onclick="toggleDateMenu()">
+          <span>📅</span> <span id="dateDisplayLabel">01/10 – 31/10/2026</span> ▾
+        </div>
+
+        <div class="date-dropdown-menu" id="dateDropdownMenu">
+          <div class="date-range-inputs">
+            <label style="font-size: 11px; color: #6c757d;">Từ ngày:</label>
+            <input type="date" id="startDateInput" value="2026-10-01">
+            <label style="font-size: 11px; color: #6c757d;">Đến ngày:</label>
+            <input type="date" id="endDateInput" value="2026-10-31">
+          </div>
+          <button type="button" class="date-btn-apply" onclick="applyDateFilter()">Áp dụng khoảng ngày</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 4 Khối Thống kê Tổng quan (KPI) -->
+  <!-- 4 Khối Thống kê KPI trên cùng -->
   <div class="kpi-row">
     <div class="cc-card kpi-item">
       <div class="kpi-icon">👥</div>
@@ -374,19 +480,23 @@
     <div class="cc-card">
       <div class="card-head">
         <h4><span>👥</span> Thống kê nhân sự</h4>
-        <span style="font-size: 11.5px; color: var(--cc-text-muted);">Đang làm: {{ tong_nhan_vien|default:"0" }}</span>
+        <span style="font-size: 11.5px; color: var(--cc-text-muted);">Đang làm: {{ dang_lam|default:tong_nhan_vien|default:"0" }} · Đã nghỉ: {{ da_nghi|default:"0" }}</span>
       </div>
       <div style="font-size: 11px; color: var(--cc-text-muted); margin-bottom: 12px;">Theo bộ phận</div>
       {% for bp in bo_phan %}
-      <div class="progress-item">
-        <span class="dept-name">{{ bp.ten }}</span>
+      <div class="progress-item" data-dept="{{ bp.ten }}">
+        <span class="dept-name" title="{{ bp.ten }}">{{ bp.ten }}</span>
         <div class="bar-bg">
           <div class="bar-fill" style="width: {{ bp.phan_tram|default:'0' }}%;"></div>
         </div>
         <span class="dept-count">{{ bp.so_luong|default:"0" }}</span>
       </div>
       {% empty %}
-      <p style="color: var(--cc-text-muted); font-size: 12.5px; margin: 20px 0; text-align: center;">Chưa có dữ liệu phòng ban</p>
+      <div class="progress-item" data-dept="Bếp bánh"><span class="dept-name">Bếp bánh</span><div class="bar-bg"><div class="bar-fill" style="width: 0%;"></div></div><span class="dept-count">0</span></div>
+      <div class="progress-item" data-dept="Bán hàng"><span class="dept-name">Bán hàng</span><div class="bar-bg"><div class="bar-fill" style="width: 0%;"></div></div><span class="dept-count">0</span></div>
+      <div class="progress-item" data-dept="Thu ngân"><span class="dept-name">Thu ngân</span><div class="bar-bg"><div class="bar-fill" style="width: 0%;"></div></div><span class="dept-count">0</span></div>
+      <div class="progress-item" data-dept="Pha chế"><span class="dept-name">Pha chế</span><div class="bar-bg"><div class="bar-fill" style="width: 0%;"></div></div><span class="dept-count">0</span></div>
+      <div class="progress-item" data-dept="Kho vận"><span class="dept-name">Kho vận</span><div class="bar-bg"><div class="bar-fill" style="width: 0%;"></div></div><span class="dept-count">0</span></div>
       {% endfor %}
     </div>
 
@@ -417,7 +527,7 @@
 
   <!-- Hàng 3: Nghỉ phép, Hợp đồng, Đào tạo -->
   <div class="grid-row-3">
-    <!-- Tình trạng nghỉ phép -->
+    <!-- Tình trạng nghỉ phép: Đã gắn URL chuẩn của quản lý duyệt đơn -->
     <div class="cc-card">
       <div class="card-head">
         <h4><span>📅</span> Tình trạng nghỉ phép</h4>
@@ -434,7 +544,9 @@
         <span>Từ chối</span>
         <span>{{ don_nghi_tu_choi|default:"0" }}</span>
       </div>
-      <a href="#" class="card-footer-link">Xem đơn chờ duyệt <span>→</span></a>
+      <a href="/quan-ly/nghi-phep/" class="card-footer-link" title="Xem danh sách đơn nghỉ">
+        Xem đơn chờ duyệt <span>&rarr;</span>
+      </a>
     </div>
 
     <!-- Hợp đồng sắp hết hạn -->
@@ -478,7 +590,7 @@
       <div style="font-size: 10px; color: #a0a4a8; margin-top: 10px;">Dưới 30 ngày: vàng · Dưới 15 ngày: đỏ</div>
     </div>
 
-    <!-- Tình trạng đào tạo -->
+    <!-- Tình trạng đào tạo: Đã gắn URL chuẩn của danh sách khóa đào tạo -->
     <div class="cc-card">
       <div class="card-head">
         <h4><span>📖</span> Tình trạng đào tạo</h4>
@@ -498,8 +610,61 @@
       <div style="font-size: 11px; color: #a0a4a8; border-top: 1px solid #f1f3f5; padding-top: 8px;">
         Đạt: {{ dao_tao.dat|default:"0" }} · Chưa đạt: {{ dao_tao.chua_dat|default:"0" }}
       </div>
-      <a href="#" class="card-footer-link">Xem tình trạng theo khóa <span>→</span></a>
+      <a href="/quan-ly/dao-tao/" class="card-footer-link" title="Xem danh sách khóa đào tạo">
+        Xem tình trạng theo khóa <span>&rarr;</span>
+      </a>
     </div>
   </div>
 </div>
+
+<!-- JAVASCRIPT XỬ LÝ SỰ KIỆN NỐI CHUỖI AN TOÀN -->
+<script>
+  function toggleDateMenu() {
+    var menu = document.getElementById('dateDropdownMenu');
+    if (menu) {
+      menu.classList.toggle('active');
+    }
+  }
+
+  function applyDateFilter() {
+    var startInput = document.getElementById('startDateInput');
+    var endInput = document.getElementById('endDateInput');
+    var displayLabel = document.getElementById('dateDisplayLabel');
+    var menu = document.getElementById('dateDropdownMenu');
+
+    if (startInput && endInput && startInput.value && endInput.value) {
+      var pStart = startInput.value.split('-');
+      var pEnd = endInput.value.split('-');
+      var fmtStart = pStart[2] + '/' + pStart[1] + '/' + pStart[0];
+      var fmtEnd = pEnd[2] + '/' + pEnd[1] + '/' + pEnd[0];
+      if (displayLabel) {
+        displayLabel.innerText = fmtStart + ' – ' + fmtEnd;
+      }
+    }
+    if (menu) {
+      menu.classList.remove('active');
+    }
+  }
+
+  // Đóng dropdown khi click ra ngoài
+  document.addEventListener('click', function(event) {
+    var btn = document.getElementById('datePickerBtn');
+    var menu = document.getElementById('dateDropdownMenu');
+    if (btn && menu && !btn.contains(event.target) && !menu.contains(event.target)) {
+      menu.classList.remove('active');
+    }
+  });
+
+  // Lọc hiển thị bộ phận theo tên
+  function filterDepartment(deptName) {
+    var items = document.querySelectorAll('.progress-item');
+    items.forEach(function(item) {
+      if (deptName === 'all' || item.getAttribute('data-dept') === deptName) {
+        item.style.display = 'flex';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+</script>
 {% endblock %}
