@@ -10,7 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()  # Nap bien moi truong tu file .env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +24,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-zw7dp!9^2#jtfzfl1+9^9b39m09qvkk&ie_uv1-46z7#0(g%ix'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-zw7dp!9^2#jtfzfl1+9^9b39m09qvkk&ie_uv1-46z7#0(g%ix')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
 ALLOWED_HOSTS = ['*']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.railway.app',
+    'https://*.up.railway.app',
+]
+_extra_csrf = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
+if _extra_csrf:
+    CSRF_TRUSTED_ORIGINS.extend([o.strip() for o in _extra_csrf.split(',') if o.strip()])
 
 
 # Application definition
@@ -39,13 +51,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tai_khoan',
     'nhan_su',
-    'cham_cong',  # Phân hệ Chấm công và Quản lý phép.
-    'dao_tao',    # Phân hệ Đào tạo.
-    'danh_gia',   # Phân hệ Đánh giá.
+    'cham_cong',  # Phan he Cham cong va Quan ly phep.
+    'dao_tao',    # Phan he Dao tao.
+    'danh_gia',   # Phan he Danh gia.
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -59,7 +72,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'], # Định vị thư mục chứa HTML
+        'DIRS': [BASE_DIR / 'templates'],  # Thu muc chua HTML
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,17 +87,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
+# Database - Cloudflare D1 (qua HTTP API)
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        "OPTIONS": {  # Các tùy chọn bổ sung cho SQLite.
-            "transaction_mode": "IMMEDIATE",  # Giành quyền ghi từ đầu giao dịch.
-            "timeout": 20,
-        }
+        'ENGINE': 'django_d1',
+        'CLOUDFLARE_ACCOUNT_ID':  os.environ.get('CF_ACCOUNT_ID', ''),
+        'CLOUDFLARE_DATABASE_ID': os.environ.get('CF_D1_DATABASE_ID', ''),
+        'CLOUDFLARE_TOKEN':       os.environ.get('CF_API_TOKEN', ''),
     }
 }
 
@@ -127,6 +138,16 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 
 # Email
@@ -137,24 +158,25 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
-LOGIN_REDIRECT_URL = '/'      # Sau khi đăng nhập thành công sẽ chuyển về đây
-LOGIN_URL = 'login'  # Các trang cá nhân và đổi mật khẩu dùng trang đăng nhập hiện có.
-LOGOUT_REDIRECT_URL = '/login/'  # Sau khi đăng xuất chuyển về trang login
 
-# Chính sách hiển thị cố định theo mockup Chi tiết hợp đồng.
-NHAN_SU_CHINH_SACH = {  # Dùng chung cho trang quản lý và Hợp đồng của tôi.
-    "nguoi_su_dung": "Công ty TNHH Cake Crush",  # Người sử dụng lao động trong mockup.
-    "dia_diem": "Cake Crush",  # Địa điểm làm việc cố định.
-    "thoi_gian": "48 giờ/tuần · Theo lịch phân công",  # Thời giờ làm việc theo nội dung mẫu.
-    "ngay_phep": "12 ngày phép/năm theo chính sách công ty",  # Nội dung ngày nghỉ và phép năm.
-    "bao_hiem": "BHXH, BHYT, BHTN theo quy định",  # Nội dung bảo hiểm trong mockup.
-}  # Kết thúc chính sách dùng chung.
+LOGIN_REDIRECT_URL = '/'         # Sau khi dang nhap thanh cong se chuyen ve day
+LOGIN_URL = 'login'              # Cac trang ca nhan va doi mat khau dung trang dang nhap hien co.
+LOGOUT_REDIRECT_URL = '/login/'  # Sau khi dang xuat chuyen ve trang login
 
-# Ca làm việc và quỹ phép dùng cho phân hệ Chấm công (đổi tại đây, không sửa code).
-CHAM_CONG = {  # Đọc qua cham_cong.services.cau_hinh().
-    "GIO_BAT_DAU": "08:00",  # Giờ bắt đầu ca hành chính; Check-in sau giờ này là đi trễ.
-    "GIO_KET_THUC": "17:00",  # Giờ kết thúc ca; Check-out trước là về sớm, sau là làm thêm.
-    "NGHI_TRUA_BAT_DAU": "12:00",  # Bắt đầu nghỉ trưa, không tính công.
-    "NGHI_TRUA_KET_THUC": "13:00",  # Kết thúc nghỉ trưa.
-    "PHEP_NAM": 12,  # Số ngày phép năm của mỗi nhân viên.
-}  # Kết thúc cấu hình chấm công.
+# Chinh sach hien thi co dinh theo mockup Chi tiet hop dong.
+NHAN_SU_CHINH_SACH = {  # Dung chung cho trang quan ly va Hop dong cua toi.
+    "nguoi_su_dung": "Cong ty TNHH Cake Crush",  # Nguoi su dung lao dong trong mockup.
+    "dia_diem": "Cake Crush",                     # Dia diem lam viec co dinh.
+    "thoi_gian": "48 gio/tuan · Theo lich phan cong",  # Thoi gio lam viec theo noi dung mau.
+    "ngay_phep": "12 ngay phep/nam theo chinh sach cong ty",  # Noi dung ngay nghi va phep nam.
+    "bao_hiem": "BHXH, BHYT, BHTN theo quy dinh",  # Noi dung bao hiem trong mockup.
+}  # Ket thuc chinh sach dung chung.
+
+# Ca lam viec va quy phep dung cho phan he Cham cong (doi tai day, khong sua code).
+CHAM_CONG = {  # Doc qua cham_cong.services.cau_hinh().
+    "GIO_BAT_DAU": "08:00",         # Gio bat dau ca hanh chinh; Check-in sau gio nay la di tre.
+    "GIO_KET_THUC": "17:00",        # Gio ket thuc ca; Check-out truoc la ve som, sau la lam them.
+    "NGHI_TRUA_BAT_DAU": "12:00",   # Bat dau nghi trua, khong tinh cong.
+    "NGHI_TRUA_KET_THUC": "13:00",  # Ket thuc nghi trua.
+    "PHEP_NAM": 12,                  # So ngay phep nam cua moi nhan vien.
+}  # Ket thuc cau hinh cham cong.
