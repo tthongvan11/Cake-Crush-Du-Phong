@@ -13,7 +13,7 @@
     <div class="col-md-6"><label class="form-label">Nhân viên *</label>
       <select name="nv" class="form-select" onchange="this.form.submit()">
         <option value="">— Chọn nhân viên —</option>
-        {% for n in nhan_vien %}<option value="{{ n.pk }}" {% if nv and n.pk == nv.pk %}selected{% endif %} {% if n.pk in da_danh_gia %}disabled{% endif %}>{{ n.pk }} • {{ n }}{% if n.pk in da_danh_gia %} (đã đánh giá){% endif %}</option>{% endfor %}
+        {% for n in nhan_vien %}<option value="{{ n.pk }}" {% if nv and n.pk == nv.pk %}selected{% endif %} {% if n.pk in da_danh_gia %}disabled{% endif %}>{{ n.pk }} • {{ n.tennv }}{% if n.pk in da_danh_gia %} (đã đánh giá){% endif %}</option>{% endfor %}
       </select></div>
     <div class="col-12 nho">Mỗi nhân viên chỉ được đánh giá một lần trong mỗi kỳ.</div>
   </form>

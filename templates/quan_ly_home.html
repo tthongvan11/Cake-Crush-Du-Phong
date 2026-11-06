@@ -423,7 +423,7 @@
       <div class="kpi-icon">👥</div>
       <div class="kpi-content">
         <span class="kpi-label">Nhân sự</span>
-        <span class="kpi-num">{{ tong_nhan_vien|default:"0" }}</span>
+        <span class="kpi-num" data-dashboard-key="tong_nhan_vien">{{ tong_nhan_vien|default:"0" }}</span>
         <span class="kpi-sub">Nhân viên trong hệ thống</span>
       </div>
     </div>
@@ -432,7 +432,7 @@
       <div class="kpi-icon">⏱</div>
       <div class="kpi-content">
         <span class="kpi-label">Chấm công</span>
-        <span class="kpi-num">{{ cham_cong_hom_nay|default:"0" }}</span>
+        <span class="kpi-num" data-dashboard-key="cham_cong_hom_nay">{{ cham_cong_hom_nay|default:"0" }}</span>
         <span class="kpi-sub">Đã ghi nhận trong ngày</span>
       </div>
     </div>
@@ -441,7 +441,7 @@
       <div class="kpi-icon">📅</div>
       <div class="kpi-content">
         <span class="kpi-label">Nghỉ phép</span>
-        <span class="kpi-num">{{ don_nghi_cho_duyet|default:"0" }}</span>
+        <span class="kpi-num" data-dashboard-key="don_nghi_cho_duyet">{{ don_nghi_cho_duyet|default:"0" }}</span>
         <span class="kpi-sub">Đơn đang chờ duyệt</span>
       </div>
     </div>
@@ -450,7 +450,7 @@
       <div class="kpi-icon">📄</div>
       <div class="kpi-content">
         <span class="kpi-label">Hợp đồng</span>
-        <span class="kpi-num">{{ hop_dong_sap_het_han|default:"0" }}</span>
+        <span class="kpi-num" data-dashboard-key="hop_dong_sap_het_han">{{ hop_dong_sap_het_han|default:"0" }}</span>
         <span class="kpi-sub">Sắp hết hạn trong 30 ngày</span>
       </div>
     </div>
@@ -462,14 +462,14 @@
     <div class="cc-card">
       <div class="card-head">
         <h4><span>👥</span> Thống kê nhân sự</h4>
-        <span style="font-size: 11.5px; color: var(--cc-text-muted);">Đang làm: {{ dang_lam|default:tong_nhan_vien|default:"0" }} · Đã nghỉ: {{ da_nghi|default:"0" }}</span>
+        <span style="font-size: 11.5px; color: var(--cc-text-muted);">Đang làm: <span data-dashboard-key="tong_nhan_vien">{{ dang_lam|default:tong_nhan_vien|default:"0" }}</span> · Đã nghỉ: <span data-dashboard-key="da_nghi">{{ da_nghi|default:"0" }}</span></span>
       </div>
       <div style="font-size: 11px; color: var(--cc-text-muted); margin-bottom: 12px;">Theo bộ phận</div>
       {% for bp in bo_phan %}
       <div class="progress-item" data-dept="{{ bp.ten }}">
         <span class="dept-name" title="{{ bp.ten }}">{{ bp.ten }}</span>
         <div class="bar-bg">
-          <div class="bar-fill" style="width: {{ bp.phan_tram|default:'0' }}%;"></div>
+          <div class="bar-fill" data-default-width="{{ bp.phan_tram|default:'0' }}%" style="width: {{ bp.phan_tram|default:'0' }}%;"></div>
         </div>
         <span class="dept-count">{{ bp.so_luong|default:"0" }}</span>
       </div>
@@ -490,17 +490,17 @@
       <div class="att-boxes">
         <div class="att-item att-green">
           <div class="att-title">Có mặt</div>
-          <div class="att-val">{{ diem_danh.co_mat|default:"0" }}</div>
+          <div class="att-val" data-dashboard-key="diem_danh.co_mat">{{ diem_danh.co_mat|default:"0" }}</div>
           <div class="att-sub">Nhân viên</div>
         </div>
         <div class="att-item att-yellow">
           <div class="att-title">Đi muộn</div>
-          <div class="att-val">{{ diem_danh.di_muon|default:"0" }}</div>
+          <div class="att-val" data-dashboard-key="diem_danh.di_muon">{{ diem_danh.di_muon|default:"0" }}</div>
           <div class="att-sub">Nhân viên</div>
         </div>
         <div class="att-item att-red">
           <div class="att-title">Vắng mặt</div>
-          <div class="att-val">{{ diem_danh.vang_mat|default:"0" }}</div>
+          <div class="att-val" data-dashboard-key="diem_danh.vang_mat">{{ diem_danh.vang_mat|default:"0" }}</div>
           <div class="att-sub">Nhân viên</div>
         </div>
       </div>
@@ -516,15 +516,15 @@
       </div>
       <div class="leave-item leave-yellow">
         <span>Chờ duyệt</span>
-        <span>{{ don_nghi_cho_duyet|default:"0" }}</span>
+        <span data-dashboard-key="don_nghi_cho_duyet">{{ don_nghi_cho_duyet|default:"0" }}</span>
       </div>
       <div class="leave-item leave-green">
         <span>Đã duyệt</span>
-        <span>{{ don_nghi_da_duyet|default:"0" }}</span>
+        <span data-dashboard-key="don_nghi_da_duyet">{{ don_nghi_da_duyet|default:"0" }}</span>
       </div>
       <div class="leave-item leave-pink">
         <span>Từ chối</span>
-        <span>{{ don_nghi_tu_choi|default:"0" }}</span>
+        <span data-dashboard-key="don_nghi_tu_choi">{{ don_nghi_tu_choi|default:"0" }}</span>
       </div>
       <a href="{% url 'cham_cong:duyet_don_list' %}" class="card-footer-link" title="Xem danh sách đơn nghỉ">
         Xem đơn chờ duyệt <span>&rarr;</span>
@@ -545,7 +545,7 @@
             <th>Còn lại</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="contractRows">
           {% for hd in danh_sach_hop_dong %}
           <tr>
             <td>
@@ -569,11 +569,10 @@
           {% endfor %}
         </tbody>
       </table>
-      {% if hop_dong_xem_them %}
       <details class="contract-more">
-        <summary>Xem thêm {{ hop_dong_xem_them|length }} hợp đồng</summary>
+        <summary id="contractMoreSummary">Xem thêm {{ hop_dong_xem_them|length }} hợp đồng</summary>
         <table class="table-custom">
-          <tbody>
+          <tbody id="moreContractRows">
             {% for hd in hop_dong_xem_them %}
             <tr>
               <td><span style="color: var(--cc-primary); font-weight:700;">{{ hd.ma_nv }}</span><br><span>{{ hd.ho_ten }}</span></td>
@@ -585,7 +584,6 @@
           </tbody>
         </table>
       </details>
-      {% endif %}
       <div style="font-size: 10px; color: #a0a4a8; margin-top: 10px;">Dưới 30 ngày: vàng · Dưới 15 ngày: đỏ</div>
     </div>
 
@@ -596,18 +594,18 @@
       </div>
       <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:12.5px;">
         <span style="color:#6c757d;">Khóa chưa bắt đầu</span>
-        <strong>{{ dao_tao.chua_hoc|default:"0" }}</strong>
+        <strong data-dashboard-key="dao_tao.chua_hoc">{{ dao_tao.chua_hoc|default:"0" }}</strong>
       </div>
       <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:12.5px;">
         <span style="color:#d97706; font-weight:600;">Khóa đang diễn ra</span>
-        <strong style="color:#d97706;">{{ dao_tao.dang_hoc|default:"0" }}</strong>
+        <strong style="color:#d97706;" data-dashboard-key="dao_tao.dang_hoc">{{ dao_tao.dang_hoc|default:"0" }}</strong>
       </div>
       <div style="display:flex; justify-content:space-between; margin-bottom:16px; font-size:12.5px;">
         <span style="color:#2b8a3e; font-weight:600;">Khóa đã kết thúc</span>
-        <strong style="color:#2b8a3e;">{{ dao_tao.da_hoc|default:"0" }}</strong>
+        <strong style="color:#2b8a3e;" data-dashboard-key="dao_tao.da_hoc">{{ dao_tao.da_hoc|default:"0" }}</strong>
       </div>
       <div style="font-size: 11px; color: #a0a4a8; border-top: 1px solid #f1f3f5; padding-top: 8px;">
-        Đạt: {{ dao_tao.dat|default:"0" }} · Chưa đạt: {{ dao_tao.chua_dat|default:"0" }}
+        Đạt: <span data-dashboard-key="dao_tao.dat">{{ dao_tao.dat|default:"0" }}</span> · Chưa đạt: <span data-dashboard-key="dao_tao.chua_dat">{{ dao_tao.chua_dat|default:"0" }}</span>
       </div>
       <a href="{% url 'dao_tao:danh_sach_khoa' %}" class="card-footer-link" title="Xem danh sách khóa đào tạo">
         Xem tình trạng theo khóa <span>&rarr;</span>
@@ -616,18 +614,69 @@
   </div>
 </div>
 
-<!-- Lọc biểu đồ theo bộ phận -->
+{{ dashboard_data|json_script:"dashboard-data" }}
 <script>
-  // Lọc hiển thị bộ phận theo tên
+  var dashboardData = JSON.parse(document.getElementById('dashboard-data').textContent);
   function filterDepartment(deptName) {
-    var items = document.querySelectorAll('.progress-item');
-    items.forEach(function(item) {
-      if (deptName === 'all' || item.getAttribute('data-dept') === deptName) {
-        item.style.display = 'flex';
-      } else {
-        item.style.display = 'none';
+    var data = dashboardData[deptName] || dashboardData.all;
+    document.querySelectorAll('[data-dashboard-key]').forEach(function (node) {
+      var value = data;
+      node.getAttribute('data-dashboard-key').split('.').forEach(function (key) {
+        value = value && value[key];
+      });
+      node.textContent = value == null ? '0' : value;
+    });
+
+    var contractBody = document.getElementById('contractRows');
+    if (contractBody) {
+      contractBody.replaceChildren();
+      var contracts = data.danh_sach_hop_dong || [];
+      if (!contracts.length) {
+        var emptyRow = contractBody.insertRow();
+        var emptyCell = emptyRow.insertCell();
+        emptyCell.colSpan = 4;
+        emptyCell.textContent = 'Không có hợp đồng nào sắp hết hạn';
+        emptyCell.style.cssText = 'text-align:center;color:var(--cc-text-muted);padding:24px 0';
       }
+      function addContractRow(target, contract) {
+        var row = target.insertRow();
+        var employeeCell = row.insertCell();
+        var code = document.createElement('span');
+        code.textContent = contract.ma_nv;
+        code.style.cssText = 'color:var(--cc-primary);font-weight:700';
+        var name = document.createElement('span');
+        name.textContent = contract.ho_ten;
+        employeeCell.append(code, document.createElement('br'), name);
+        row.insertCell().textContent = contract.loai;
+        row.insertCell().textContent = contract.het_han;
+        var remainingCell = row.insertCell();
+        var badge = document.createElement('span');
+        badge.className = 'pill-badge ' + (contract.canh_bao === 'do' ? 'pill-red' : 'pill-yellow');
+        badge.textContent = contract.con_lai;
+        remainingCell.appendChild(badge);
+      }
+      contracts.slice(0, 3).forEach(function (contract) {
+        addContractRow(contractBody, contract);
+      });
+      var moreRows = document.getElementById('moreContractRows');
+      if (moreRows) {
+        moreRows.replaceChildren();
+        contracts.slice(3).forEach(function (contract) { addContractRow(moreRows, contract); });
+      }
+      var moreSummary = document.getElementById('contractMoreSummary');
+      if (moreSummary) {
+        moreSummary.textContent = contracts.length > 3 ? 'Xem thêm ' + (contracts.length - 3) + ' hợp đồng' : '';
+        moreSummary.parentElement.hidden = contracts.length <= 3;
+      }
+    }
+
+    document.querySelectorAll('.progress-item[data-dept]').forEach(function (item) {
+      var selected = deptName === 'all' || item.getAttribute('data-dept') === deptName;
+      item.style.display = selected ? 'flex' : 'none';
+      var bar = item.querySelector('.bar-fill');
+      if (bar) bar.style.width = selected && deptName !== 'all' ? '100%' : bar.getAttribute('data-default-width');
     });
   }
+  filterDepartment(document.getElementById('deptFilter').value);
 </script>
 {% endblock %}
