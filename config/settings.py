@@ -12,12 +12,16 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 import os
 from pathlib import Path
+from urllib.parse import parse_qs, unquote, urlsplit
 from dotenv import load_dotenv
-
-load_dotenv()  # Nap bien moi truong tu file .env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Prefer the project-level .env, and also support local developer secrets kept
+# alongside the virtual environment. Existing process variables keep priority.
+load_dotenv(BASE_DIR / '.env')
+load_dotenv(BASE_DIR / '.venv' / '.env', override=False)
 
 
 # Quick-start development settings - unsuitable for production
@@ -87,34 +91,74 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Use local SQLite by default so a fresh clone can run without Cloudflare secrets.
-# Cloudflare D1 is selected when its HTTP API credentials are configured.
-CF_ACCOUNT_ID = os.environ.get('CF_ACCOUNT_ID', '').strip()
-CF_D1_DATABASE_ID = os.environ.get('CF_D1_DATABASE_ID', '').strip()
-CF_API_TOKEN = os.environ.get('CF_API_TOKEN', '').strip()
-CF_D1_CREDENTIALS = (CF_ACCOUNT_ID, CF_D1_DATABASE_ID, CF_API_TOKEN)
+# DATABASE_URL selects the shared PostgreSQL database. Keep SQLite as the local
+# default so a fresh clone can still run without production credentials.
+DATABASE_URL = (
+    os.environ.get('DATABASE_URL')
+    or os.environ.get('DATABASE_PUBLIC_URL', '')
+).strip()
 
-if any(CF_D1_CREDENTIALS) and not all(CF_D1_CREDENTIALS):
-    raise RuntimeError(
-        'Cloudflare D1 requires CF_ACCOUNT_ID, CF_D1_DATABASE_ID, and CF_API_TOKEN.'
-    )
+if DATABASE_URL:
+    parsed_database_url = urlsplit(DATABASE_URL)
+    if parsed_database_url.scheme not in ('postgres', 'postgresql'):
+        raise RuntimeError('DATABASE_URL must use the postgres:// or postgresql:// scheme.')
 
-if all(CF_D1_CREDENTIALS):
+    database_name = unquote(parsed_database_url.path.lstrip('/'))
+    if not database_name:
+        raise RuntimeError('DATABASE_URL must include a PostgreSQL database name.')
+
+    database_options = {
+        key: values[-1]
+        for key, values in parse_qs(parsed_database_url.query).items()
+    }
+    if 'sslmode' not in database_options:
+        database_sslmode = os.environ.get('DB_SSLMODE', '').strip()
+        if database_sslmode:
+            database_options['sslmode'] = database_sslmode
+        elif not DEBUG:
+            database_options['sslmode'] = 'require'
+
     DATABASES = {
         'default': {
-            'ENGINE': 'django_d1',
-            'CLOUDFLARE_ACCOUNT_ID': CF_ACCOUNT_ID,
-            'CLOUDFLARE_DATABASE_ID': CF_D1_DATABASE_ID,
-            'CLOUDFLARE_TOKEN': CF_API_TOKEN,
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': database_name,
+            'USER': unquote(parsed_database_url.username or ''),
+            'PASSWORD': unquote(parsed_database_url.password or ''),
+            'HOST': parsed_database_url.hostname or '',
+            'PORT': str(parsed_database_url.port or ''),
+            'OPTIONS': database_options,
+            'CONN_MAX_AGE': int(os.environ.get('DB_CONN_MAX_AGE', '60')),
+            'CONN_HEALTH_CHECKS': True,
         }
     }
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+    # Retain the prior D1 option for deployments that have not switched yet.
+    CF_ACCOUNT_ID = os.environ.get('CF_ACCOUNT_ID', '').strip()
+    CF_D1_DATABASE_ID = os.environ.get('CF_D1_DATABASE_ID', '').strip()
+    CF_API_TOKEN = os.environ.get('CF_API_TOKEN', '').strip()
+    CF_D1_CREDENTIALS = (CF_ACCOUNT_ID, CF_D1_DATABASE_ID, CF_API_TOKEN)
+
+    if any(CF_D1_CREDENTIALS) and not all(CF_D1_CREDENTIALS):
+        raise RuntimeError(
+            'Cloudflare D1 requires CF_ACCOUNT_ID, CF_D1_DATABASE_ID, and CF_API_TOKEN.'
+        )
+
+    if all(CF_D1_CREDENTIALS):
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django_d1',
+                'CLOUDFLARE_ACCOUNT_ID': CF_ACCOUNT_ID,
+                'CLOUDFLARE_DATABASE_ID': CF_D1_DATABASE_ID,
+                'CLOUDFLARE_TOKEN': CF_API_TOKEN,
+            }
         }
-    }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
 
 # Password validation

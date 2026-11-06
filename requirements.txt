@@ -7,3 +7,4 @@ django-cf==0.0.17
 python-dotenv
 gunicorn
 whitenoise
+psycopg[binary]>=3.2,<4
