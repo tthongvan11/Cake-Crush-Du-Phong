@@ -136,11 +136,11 @@
                             {% endif %}
                         </td>
                         <td style="text-align: center; position: relative;">
-                            <div class="action-dropdown">
-                                <button type="button" class="btn-dots" aria-label="Tùy chọn">
+                            <details class="action-dropdown hr-row-actions">
+                                <summary class="btn-dots" aria-label="Tùy chọn">
                                     <i class="fa-solid fa-ellipsis-vertical"></i>
-                                </button>
-                                <div class="action-menu">
+                                </summary>
+                                <div class="hr-row-menu">
                                     <a href="{% url 'dao_tao:chi_tiet_khoa' makhoa=khoa.makhoa %}" class="action-menu-item">
                                         <i class="fa-regular fa-eye"></i> Chi tiết
                                     </a>
@@ -154,7 +154,7 @@
                                         <i class="fa-solid fa-chart-line"></i> Theo dõi
                                     </a>
                                 </div>
-                            </div>
+                            </details>
                         </td>
                     </tr>
                     {% empty %}

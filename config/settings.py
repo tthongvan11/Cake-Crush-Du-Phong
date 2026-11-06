@@ -87,17 +87,34 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database - Cloudflare D1 (qua HTTP API)
-# https://docs.djangoproject.com/en/6.1/ref/settings/#databases
+# Use local SQLite by default so a fresh clone can run without Cloudflare secrets.
+# Cloudflare D1 is selected when its HTTP API credentials are configured.
+CF_ACCOUNT_ID = os.environ.get('CF_ACCOUNT_ID', '').strip()
+CF_D1_DATABASE_ID = os.environ.get('CF_D1_DATABASE_ID', '').strip()
+CF_API_TOKEN = os.environ.get('CF_API_TOKEN', '').strip()
+CF_D1_CREDENTIALS = (CF_ACCOUNT_ID, CF_D1_DATABASE_ID, CF_API_TOKEN)
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django_d1',
-        'CLOUDFLARE_ACCOUNT_ID':  os.environ.get('CF_ACCOUNT_ID', ''),
-        'CLOUDFLARE_DATABASE_ID': os.environ.get('CF_D1_DATABASE_ID', ''),
-        'CLOUDFLARE_TOKEN':       os.environ.get('CF_API_TOKEN', ''),
+if any(CF_D1_CREDENTIALS) and not all(CF_D1_CREDENTIALS):
+    raise RuntimeError(
+        'Cloudflare D1 requires CF_ACCOUNT_ID, CF_D1_DATABASE_ID, and CF_API_TOKEN.'
+    )
+
+if all(CF_D1_CREDENTIALS):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django_d1',
+            'CLOUDFLARE_ACCOUNT_ID': CF_ACCOUNT_ID,
+            'CLOUDFLARE_DATABASE_ID': CF_D1_DATABASE_ID,
+            'CLOUDFLARE_TOKEN': CF_API_TOKEN,
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -145,7 +162,9 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        # Keep URLs usable before collectstatic (including after login pages
+        # render CSS); WhiteNoise still serves the collected files in production.
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 

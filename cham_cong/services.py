@@ -300,15 +300,20 @@ def _kiem_tra_xu_ly(don, nguoi_xu_ly):  # Điều kiện chung cho duyệt và t
 def dong_bo_bang_cong(don):  # Ghi ngày nghỉ đã duyệt vào bảng chấm công.
     ngay = don.ngaybatdau  # Bắt đầu từ ngày đầu tiên của đơn.
     while ngay <= don.ngayketthuc:  # Lặp từng ngày nghỉ.
-        ChamCong.objects.get_or_create(  # Mỗi ngày một bản ghi, không tạo trùng.
+        ban_ghi, moi_tao = ChamCong.objects.get_or_create(  # Mỗi ngày một bản ghi, không tạo trùng.
             manv=don.manv, ngaychamcong=ngay,  # Nhân viên và ngày nghỉ.
             defaults={"trangthai": ChamCong.TrangThai.NGHI_PHEP, "ghichu": f"Theo đơn {don.ma_hien_thi}"},  # Ghi Nghỉ có phép.
         )  # Kết thúc tạo bản ghi.
+        if not moi_tao and ban_ghi.trangthai != ChamCong.TrangThai.NGHI_PHEP:
+            raise ValidationError(
+                f"Ngày {ngay:%d/%m/%Y} đã có dữ liệu chấm công; không thể duyệt đơn nghỉ."
+            )
         ngay += timedelta(days=1)  # Sang ngày tiếp theo.
 
 
 @transaction.atomic  # Cập nhật đơn và bảng công cùng thành công hoặc cùng hoàn tác.
 def duyet_don(don, nguoi_duyet, bay_gio=None):  # UC-QLP-3.01: phê duyệt đơn.
+    don = DonNghiPhep.objects.select_for_update().select_related("manv").get(pk=don.pk)
     _kiem_tra_xu_ly(don, nguoi_duyet)  # Kiểm tra điều kiện chung.
     don.trangthai = DonNghiPhep.TrangThai.DA_DUYET  # Đổi trạng thái thành Đã duyệt.
     don.nguoiduyet = nguoi_duyet  # Lưu quản lý trực tiếp duyệt.

@@ -3,7 +3,7 @@ asgiref==3.12.1
 sqlparse==0.6.0
 tzdata==2026.5
 openpyxl==3.1.5
-django-cf
+django-cf==0.0.17
 python-dotenv
 gunicorn
 whitenoise
